@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:id="root" prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/17.0.12">
+    <center>
+        <VBox spacing="5">
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label maxWidth="Infinity" text="%word.name" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="usernameField"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label maxWidth="Infinity" text="%word.password" HBox.hgrow="ALWAYS"/>
+                <PasswordField fx:id="passwordField"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <Label maxWidth="Infinity" text="%phrase.confirmpassword" HBox.hgrow="ALWAYS"/>
+                <PasswordField fx:id="confirmPasswordField"/>
+            </HBox>
+
+            <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-style: italic" wrapText="true"/>
+        </VBox>
+    </center>
+</BorderPane>
+

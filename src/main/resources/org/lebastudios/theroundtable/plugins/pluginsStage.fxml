@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.lebastudios.theroundtable.plugins.PluginsStageController"
+      minHeight="350" maxWidth="Infinity" spacing="10">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+    <TabPane minWidth="600" HBox.hgrow="ALWAYS" fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" />
+</HBox>
