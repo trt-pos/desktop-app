@@ -1,0 +1,3 @@
+[submodule "trt-camelot"]
+	path = trt-camelot
+	url = https://github.com/trt-pos/trt-camelot.git
