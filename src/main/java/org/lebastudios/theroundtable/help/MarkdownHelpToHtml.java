@@ -8,7 +8,7 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import java.io.File;
 import java.nio.file.Files;
 
-record MarkdownHelp(File file)
+record MarkdownHelpToHtml(File file)
 {
     private static final Parser MD_PARSER = Parser.builder().build();
     private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().build();

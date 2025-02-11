@@ -1,0 +1,13 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+type: object
+properties:
+  fileFormatVersion:
+    type: integer
+    minimum: 1
+  helpEntryType:
+    type: string
+    enum: ["MD"]
+  uiName:
+    type: string
+  defaultLocale:
+    type: string

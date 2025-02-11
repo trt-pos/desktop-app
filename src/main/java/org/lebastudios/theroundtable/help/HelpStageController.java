@@ -8,14 +8,10 @@ import javafx.scene.control.TreeView;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.StageBuilder;
-
-import java.io.File;
-import java.net.URL;
 
 public class HelpStageController extends StageController<HelpStageController>
 {
@@ -59,9 +55,9 @@ public class HelpStageController extends StageController<HelpStageController>
                             return;
                         }
 
-                        setText(helpEntry.path.getName());
+                        setText(helpEntry.metedata().uiName);
                         
-                        final var node = new IconView(helpEntry.type().getIconName());
+                        final var node = new IconView(helpEntry.metedata().helpEntryType.getIconName());
                         node.setIconSize(20);
                         
                         setGraphic(node);
@@ -74,13 +70,15 @@ public class HelpStageController extends StageController<HelpStageController>
         {
             if (newValue == null || oldValue == newValue) return;
 
-            if (newValue.getValue().type != HelpEntry.Type.MD) return;
+            HelpEntry helpEntry = newValue.getValue();
+            
+            if (helpEntry.metedata().helpEntryType != HelpEntry.Type.MD) return;
 
-            MarkdownHelp markdownHelp = new MarkdownHelp(newValue.getValue().path);
+            MarkdownHelpToHtml markdownHelpToHtml = helpEntry.intoMarkdownHelp();
             
             new Thread(() ->
             {
-                String content = markdownHelp.getContentAsHtml();
+                String content = markdownHelpToHtml.getContentAsHtml();
                 Platform.runLater(() ->  htmlView.getEngine().loadContent(content));
             }).start();
         });
@@ -110,75 +108,5 @@ public class HelpStageController extends StageController<HelpStageController>
     public boolean hasFXMLControllerDefined()
     {
         return true;
-    }
-
-    private record HelpEntry(File path, Type type, HelpEntry[] innerEntries)
-    {
-        public enum Type
-        {
-            MD, DIR, MODULE;
-            
-            public String getIconName()
-            {
-                return switch (this)
-                {
-                    case MD -> "md-help-file.png";
-                    case DIR -> "directory.png";
-                    case MODULE -> "module.png";
-                };
-            }
-        }
-
-        public TreeItem<HelpEntry> intoTreeItem()
-        {
-            TreeItem<HelpEntry> root = new TreeItem<>(this);
-
-            for (var entry : innerEntries)
-            {
-                root.getChildren().add(entry.intoTreeItem());
-            }
-
-            return root;
-        }
-
-        @SneakyThrows
-        public static HelpEntry introspectHelp(Class<?> clazz)
-        {
-            URL helpUrl = clazz.getResource("/help");
-
-            if (helpUrl == null) return null;
-
-            File entry = new File(helpUrl.toURI());
-
-            return new HelpEntry(
-                    entry,
-                    Type.MODULE,
-                    introspectHelp(entry)
-            );
-        }
-
-        public static HelpEntry[] introspectHelp(File file)
-        {
-            File[] entries = file.listFiles();
-
-            if (entries == null) return new HelpEntry[0];
-
-            HelpEntry[] helpEntries = new HelpEntry[entries.length];
-
-            for (int i = 0; i < helpEntries.length; i++)
-            {
-                File entry = entries[i];
-
-                HelpEntry helpEntry = new HelpEntry(
-                        entry,
-                        entry.isDirectory() ? Type.DIR : Type.MD,
-                        introspectHelp(entry)
-                );
-
-                helpEntries[i] = helpEntry;
-            }
-
-            return helpEntries;
-        }
     }
 }

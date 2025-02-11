@@ -37,11 +37,17 @@
             <artifactId>javafx-web</artifactId>
             <version>24-ea+19</version>
         </dependency>
-        <!-- Md into HTML -->
+        <!-- MD into HTML -->
         <dependency>
             <groupId>org.commonmark</groupId>
             <artifactId>commonmark</artifactId>
             <version>0.24.0</version>
+        </dependency>
+        <!-- YAML format files -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.3</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
