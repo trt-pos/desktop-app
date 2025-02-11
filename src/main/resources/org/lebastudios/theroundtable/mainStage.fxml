@@ -4,26 +4,23 @@
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
 <?import org.lebastudios.theroundtable.ui.TaskManager?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" prefHeight="720.0"
-            prefWidth="1080.0" minHeight="360"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" 
+            prefHeight="720.0" prefWidth="1080.0" minHeight="360"
             minWidth="480" xmlns="http://javafx.com/javafx/17.0.2-ea"
             fx:controller="org.lebastudios.theroundtable.MainStageController">
     <left>
         <VBox>
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
             <VBox spacing="10" alignment="TOP_CENTER">
-                <padding>
-                    <Insets top="5" right="5" bottom="5" left="5"/>
-                </padding>
-
                 <IconButton onAction="#openSettingsStage" mnemonicParsing="false" iconName="settings.png"/>
                 <IconButton fx:id="pluginsButton" onAction="#openPluginsStage" mnemonicParsing="false" iconName="plugins.png"/>
             </VBox>
 
             <VBox VBox.vgrow="ALWAYS" spacing="10" fx:id="leftButtons" alignment="BOTTOM_CENTER">
-                <padding>
-                    <Insets top="5" right="5" bottom="5" left="5"/>
-                </padding>
                 <TaskManager/>
+                <IconButton onAction="#openHelp" iconName="help.png" />
                 <IconButton onAction="#closeSession" iconName="close-session.png" />
             </VBox>
         </VBox>

@@ -20,6 +20,7 @@ import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.BackupDB;
+import org.lebastudios.theroundtable.help.HelpStageController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
@@ -147,7 +148,7 @@ public class MainStageController extends PaneController<MainStageController>
 
     @SneakyThrows
     @FXML
-    private void closeSession(ActionEvent actionEvent)
+    private void closeSession()
     {
         // TODO: Enable an option to let the admins decide if the users can close session without closing the cash 
         //  register. Maybe use a checkbox in the User Account to mark this behaviour
@@ -163,5 +164,11 @@ public class MainStageController extends PaneController<MainStageController>
         stage.setScene(new SceneBuilder(new MainStageController().getParent()).build());
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
         stage.show();
+    }
+    
+    @FXML
+    private void openHelp()
+    {
+        new HelpStageController().instantiate();
     }
 }
