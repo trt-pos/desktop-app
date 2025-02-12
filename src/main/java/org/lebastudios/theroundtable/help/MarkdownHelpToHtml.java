@@ -14,35 +14,46 @@ import java.util.regex.Pattern;
 record MarkdownHelpToHtml(File file)
 {
     private static final Parser MD_PARSER = Parser.builder().build();
-    private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().sanitizeUrls(true).build();
-    
+    private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().build();
+
     @SneakyThrows
     public String getContentAsHtml()
     {
         String md = Files.readString(file.toPath());
-        
+
         Node document = MD_PARSER.parse(md);
         String body = processBody(HTML_RENDERER.render(document));
-        
+
         String style = ThemeLoader.getHelpCss();
-        
-        return String.format("<head><style>%s</style></head><body>%s</body", style, body);
+
+        String hrefHandlerScript = """
+                <script>
+                    document.querySelectorAll('a').forEach(a => {
+                        a.onclick = () => {
+                            alert(a.href);
+                        };
+                    });
+                </script>
+                """;
+
+        return String.format("<head><style>%s</style></head><body>%s</body>%s", style, body, hrefHandlerScript);
     }
-    
+
     private String processBody(String body)
     {
+        // TODO: Avoid absolute paths and the ones that have a protocol (http, https, etc)
         // Setting img src to be a valid absolute URI from a relative one
         String regex = "<img[^>]*src=\"([^\"]*)\"";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(body);
-        
+
         while (matcher.find())
         {
             String relativePath = matcher.group(1);
             String absolutePath = file.getParentFile().toURI().resolve(relativePath).toString();
             body = body.replace(relativePath, absolutePath);
         }
-        
+
         return body;
     }
 }

@@ -103,6 +103,14 @@ public class HelpStageController extends StageController<HelpStageController>
         });
 
         searchBox.setOnSearch(this::searchHelpEntry);
+        
+        // TODO: Implement the redirection when an alert is triggered
+        htmlView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
+        
+        htmlView.getEngine().setOnResized(event -> System.out.println(event.getData()));
+        htmlView.getEngine().setOnStatusChanged(event -> System.out.println(event.getData()));
+        htmlView.getEngine().setOnError(System.out::println);
+        htmlView.getEngine().setOnVisibilityChanged(event -> System.out.println(event.getData()));
     }
 
     public void openHelpEntryById(String identifier)
