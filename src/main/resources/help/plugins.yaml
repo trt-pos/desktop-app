@@ -3,3 +3,4 @@ fileFormatVersion: 1
 helpEntryType: DIR
 uiName: Plugins
 defaultLocale: en
+identifier: org.lebastudios.theroundtable.plugins.PluginsStageController
