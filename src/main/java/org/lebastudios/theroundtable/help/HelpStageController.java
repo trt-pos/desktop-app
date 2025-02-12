@@ -11,25 +11,37 @@ import javafx.util.Callback;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.ui.IconView;
+import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HelpStageController extends StageController<HelpStageController>
 {
+    @FXML private SearchBox searchBox;
     @FXML private WebView htmlView;
     @FXML private TreeView<HelpEntry> indexTreeView;
 
+    private TreeItem<HelpEntry> defaultreeViewRoot;
+    private final List<HelpEntry> moduleHelpEntries = new ArrayList<>();
+    
     @Override
     protected void initialize()
     {
-        TreeItem<HelpEntry> root = new TreeItem<>();
-        indexTreeView.setRoot(root);
+        defaultreeViewRoot = new TreeItem<>();
+        indexTreeView.setRoot(defaultreeViewRoot);
         indexTreeView.setShowRoot(false);
 
         HelpEntry entry = HelpEntry.introspectHelp(Launcher.class);
 
         if (entry != null)
         {
-            root.getChildren().add(entry.intoTreeItem());
+            moduleHelpEntries.add(entry);
+            final var moduleTreeItem = entry.intoTreeItem();
+            moduleTreeItem.setExpanded(true);
+            
+            defaultreeViewRoot.getChildren().add(moduleTreeItem);
         }
         
         indexTreeView.setCellFactory(new Callback<>()
@@ -82,8 +94,35 @@ public class HelpStageController extends StageController<HelpStageController>
                 Platform.runLater(() ->  htmlView.getEngine().loadContent(content));
             }).start();
         });
+        
+        searchBox.setOnSearch(this::searchHelpEntry);
     }
+    
+    private void searchHelpEntry(String text)
+    {
+        if (text.isBlank()) 
+        {
+            indexTreeView.setRoot(defaultreeViewRoot);
+            return;
+        }
+        
+        String regex = text.matches("[\\w\\sñÑ]*") ? ".*" + text + ".*" : text;
+        
+        TreeItem<HelpEntry> filteredRoot = new TreeItem<>();
 
+        for (var moduleHelpEntry : moduleHelpEntries)
+        {
+            HelpEntry filtereded = moduleHelpEntry.filteredByKeywords(regex);
+            
+            final var moduleTreeItem = filtereded.intoTreeItem();
+            moduleTreeItem.setExpanded(true);
+            
+            filteredRoot.getChildren().add(moduleTreeItem);
+        }
+        
+        indexTreeView.setRoot(filteredRoot);
+    }
+    
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {

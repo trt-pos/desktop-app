@@ -3,3 +3,5 @@ fileFormatVersion: 1
 helpEntryType: MD
 uiName: Welcome
 defaultLocale: en
+identifier: "desktop-app:welcome"
+keywords: ["welcome", "bienvenida", "the round table", "introduction"]

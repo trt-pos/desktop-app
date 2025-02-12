@@ -18,7 +18,7 @@
         <padding>
             <Insets top="5" right="5" bottom="5" left="5" />
         </padding>
-        <SearchBox />
+        <SearchBox fx:id="searchBox"/>
         <TreeView fx:id="indexTreeView" VBox.vgrow="ALWAYS"/>
     </VBox>
     <WebView fx:id="htmlView"/>

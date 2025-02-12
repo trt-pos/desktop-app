@@ -12,6 +12,8 @@ public class HelpEntryMetadata
     public HelpEntry.Type helpEntryType;
     public String uiName;
     public String defaultLocale;
+    public String[] keywords;
+    public String identifier;
     
     public static HelpEntryMetadata module(String uiName)
     {
