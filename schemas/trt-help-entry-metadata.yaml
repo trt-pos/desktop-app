@@ -12,7 +12,7 @@ properties:
     type: string
   defaultLocale:
     type: string
-  relControllers: 
+  controllers: 
     type: array
   keywords:
     type: array

@@ -3,4 +3,4 @@ fileFormatVersion: 1
 helpEntryType: MD
 name: Main UI
 defaultLocale: en
-relControllers: ["org.lebastudios.theroundtable.MainStageController"]
+controllers: ["org.lebastudios.theroundtable.MainStageController"]

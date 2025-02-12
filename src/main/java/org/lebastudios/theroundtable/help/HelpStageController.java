@@ -126,8 +126,8 @@ public class HelpStageController extends StageController<HelpStageController>
         HelpEntry entry = treeItem.getValue();
 
         if (entry != null
-                && entry.metedata().relControllers != null
-                && Arrays.asList(entry.metedata().relControllers).contains(identifier))
+                && entry.metedata().controllers != null
+                && Arrays.asList(entry.metedata().controllers).contains(identifier))
         {
             return treeItem;
         }
