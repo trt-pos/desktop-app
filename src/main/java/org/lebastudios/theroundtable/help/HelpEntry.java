@@ -4,6 +4,7 @@ import javafx.scene.control.TreeItem;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.config.data.PreferencesConfigData;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
@@ -11,13 +12,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.IntFunction;
 
 record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries)
 {
     public enum Type
     {
-        MD, DIR, MODULE;
+        MODULE, DIR, MD;
 
         public String getIconName()
         {
@@ -33,23 +37,23 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
     public HelpEntry filteredByKeywords(String text)
     {
         List<HelpEntry> filteredInnerEntries = new ArrayList<>(innerEntries.length);
-        
+
         for (var innerEntry : innerEntries)
         {
             // DIR entries should be added and the content filtered
-            if (innerEntry.metedata.helpEntryType == Type.DIR) 
+            if (innerEntry.metedata.helpEntryType == Type.DIR)
             {
                 HelpEntry filteredInnerEnreies = innerEntry.filteredByKeywords(text);
                 filteredInnerEntries.add(filteredInnerEnreies);
                 continue;
             }
-            
+
             String[] keywords = innerEntry.metedata.keywords;
             if (keywords == null) continue;
-            
+
             boolean keywordMatchFound = false;
             int i = 0;
-            
+
             while (!(keywordMatchFound || i >= keywords.length))
             {
                 String keyword = keywords[i];
@@ -58,18 +62,18 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
                     filteredInnerEntries.add(innerEntry.filteredByKeywords(text));
                     keywordMatchFound = true;
                 }
-                
+
                 i++;
             }
         }
-        
+
         return new HelpEntry(
                 path,
                 metedata,
                 filteredInnerEntries.toArray(new HelpEntry[0])
         );
     }
-    
+
     public MarkdownHelpToHtml intoMarkdownHelp()
     {
         String lang = new JSONFile<>(PreferencesConfigData.class).get().language;
@@ -130,7 +134,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
         {
             File entryMetadata = entries[i];
             HelpEntryMetadata metadata;
-            
+
             try (FileReader fileReader = new FileReader(entryMetadata))
             {
                 metadata = HelpEntryMetadata.fromYaml(fileReader);
@@ -153,7 +157,10 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
 
             helpEntries[i] = helpEntry;
         }
-
+        
+        Arrays.sort(helpEntries, Comparator.comparingInt((HelpEntry o) -> o.metedata.helpEntryType.ordinal())
+                .thenComparing(o -> LangFileLoader.getTranslation(o.metedata.uiName)));
+        
         return helpEntries;
     }
 }
