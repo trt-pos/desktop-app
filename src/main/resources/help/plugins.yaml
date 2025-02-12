@@ -1,6 +1,6 @@
 #yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-schema.yaml
 fileFormatVersion: 1
 helpEntryType: DIR
-uiName: Plugins
+name: Plugins
 defaultLocale: en
 relControllers: ["org.lebastudios.theroundtable.plugins.PluginsStageController"]

@@ -10,16 +10,16 @@ public class HelpEntryMetadata
     
     public int fileFormatVersion = 1;
     public HelpEntry.Type helpEntryType;
-    public String uiName;
+    public String name;
     public String defaultLocale;
     public String[] keywords;
     public String[] relControllers;
     
-    public static HelpEntryMetadata module(String uiName)
+    public static HelpEntryMetadata module(String name)
     {
         HelpEntryMetadata metadata = new HelpEntryMetadata();
         metadata.helpEntryType = HelpEntry.Type.MODULE;
-        metadata.uiName = uiName;
+        metadata.name = name;
         return metadata;
     }
     

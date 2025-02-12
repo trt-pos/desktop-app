@@ -8,6 +8,8 @@ import org.lebastudios.theroundtable.apparience.ThemeLoader;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 record MarkdownHelpToHtml(File file)
 {
@@ -20,10 +22,27 @@ record MarkdownHelpToHtml(File file)
         String md = Files.readString(file.toPath());
         
         Node document = MD_PARSER.parse(md);
-        String body = HTML_RENDERER.render(document);
+        String body = processBody(HTML_RENDERER.render(document));
         
         String style = ThemeLoader.getHelpCss();
         
         return String.format("<head><style>%s</style></head><body>%s</body", style, body);
+    }
+    
+    private String processBody(String body)
+    {
+        // Setting img src to be a valid absolute URI from a relative one
+        String regex = "<img[^>]*src=\"([^\"]*)\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(body);
+        
+        while (matcher.find())
+        {
+            String relativePath = matcher.group(1);
+            String absolutePath = file.getParentFile().toURI().resolve(relativePath).toString();
+            body = body.replace(relativePath, absolutePath);
+        }
+        
+        return body;
     }
 }

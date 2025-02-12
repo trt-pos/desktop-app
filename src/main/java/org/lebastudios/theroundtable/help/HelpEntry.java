@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.IntFunction;
 
 record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries)
 {
@@ -159,7 +158,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
         }
         
         Arrays.sort(helpEntries, Comparator.comparingInt((HelpEntry o) -> o.metedata.helpEntryType.ordinal())
-                .thenComparing(o -> LangFileLoader.getTranslation(o.metedata.uiName)));
+                .thenComparing(o -> LangFileLoader.getTranslation(o.metedata.name)));
         
         return helpEntries;
     }

@@ -16,6 +16,7 @@ import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +71,7 @@ public class HelpStageController extends StageController<HelpStageController>
                             return;
                         }
 
-                        setText(LangFileLoader.getTranslation(helpEntry.metedata().uiName));
+                        setText(LangFileLoader.getTranslation(helpEntry.metedata().name));
 
                         final var node = new IconView(helpEntry.metedata().helpEntryType.getIconName());
                         node.setIconSize(20);

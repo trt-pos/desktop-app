@@ -1,3 +1,3 @@
 # Interfaz Principal
 
-![](../help-img/main-stage-ui.png)
+<img src="../help-img/main-stage-ui.png" alt="Interfaz Principal" width="100%" />

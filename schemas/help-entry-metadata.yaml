@@ -7,8 +7,8 @@ properties:
     maximum: 1
   helpEntryType:
     type: string
-    enum: ["MD"]
-  uiName:
+    enum: ["MD", "MODULE", "DIR"]
+  name:
     type: string
   defaultLocale:
     type: string
