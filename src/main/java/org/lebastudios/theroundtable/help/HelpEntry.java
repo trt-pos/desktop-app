@@ -20,7 +20,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
 {
     public enum Type
     {
-        MODULE, DIR, MD;
+        MODULE, DIR, MD, FAQ;
 
         public String getIconName()
         {
@@ -29,7 +29,13 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
                 case MD -> "md-help-file.png";
                 case DIR -> "directory.png";
                 case MODULE -> "module.png";
+                case FAQ -> "faq-help-file.png";
             };
+        }
+        
+        public boolean hasInnerEntries()
+        {
+            return this == MODULE || this == DIR;
         }
     }
 
@@ -106,19 +112,15 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
     }
 
     @SneakyThrows
-    public static HelpEntry introspectHelp(Class<?> clazz)
+    public static HelpEntry[] introspectHelp(Class<?> clazz)
     {
-        URL helpUrl = clazz.getResource("/help");
+        URL helpUrl = clazz.getResource("user-manual");
 
-        if (helpUrl == null) return null;
+        if (helpUrl == null) return new HelpEntry[0];
 
         File entry = new File(helpUrl.toURI());
 
-        return new HelpEntry(
-                entry,
-                HelpEntryMetadata.module(clazz.getSimpleName()),
-                introspectHelp(entry)
-        );
+        return introspectHelp(entry);
     }
 
     public static HelpEntry[] introspectHelp(File file)
@@ -144,7 +146,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
                 continue;
             }
 
-            HelpEntry[] innerEntries = metadata.helpEntryType == Type.DIR
+            HelpEntry[] innerEntries = metadata.helpEntryType.hasInnerEntries()
                     ? introspectHelp(new File(file, entryMetadata.getName().replace(".yaml", "")))
                     : new HelpEntry[0];
 

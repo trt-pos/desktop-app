@@ -1,4 +1,4 @@
-#yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-schema.yaml
+#yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-entry-metadata.yaml
 fileFormatVersion: 1
 helpEntryType: MD
 name: Main UI

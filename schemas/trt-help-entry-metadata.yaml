@@ -7,7 +7,7 @@ properties:
     maximum: 1
   helpEntryType:
     type: string
-    enum: ["MD", "MODULE", "DIR"]
+    enum: ["MD", "MODULE", "DIR", "FAQ"]
   name:
     type: string
   defaultLocale:

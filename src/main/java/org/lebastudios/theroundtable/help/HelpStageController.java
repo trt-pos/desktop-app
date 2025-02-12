@@ -12,11 +12,11 @@ import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,18 +37,21 @@ public class HelpStageController extends StageController<HelpStageController>
         indexTreeView.setRoot(defaultreeViewRoot);
         indexTreeView.setShowRoot(false);
 
-        HelpEntry entry = HelpEntry.introspectHelp(Launcher.class);
-
-        if (entry != null)
+        PluginLoader.getRessourcesObjects().forEach(resObj ->
         {
-            moduleHelpEntries.add(entry);
-            final var moduleTreeItem = entry.intoTreeItem();
-            moduleTreeItem.setExpanded(true);
+            HelpEntry[] entries = HelpEntry.introspectHelp(resObj.getClass());
 
-            defaultreeViewRoot.getChildren().add(moduleTreeItem);
-        }
+            for (var entry : entries)
+            {
+                moduleHelpEntries.add(entry);
+                final var moduleTreeItem = entry.intoTreeItem();
+                moduleTreeItem.setExpanded(true);
 
-        indexTreeView.setCellFactory(new Callback<>()
+                defaultreeViewRoot.getChildren().add(moduleTreeItem);
+            }
+        });
+
+         indexTreeView.setCellFactory(new Callback<>()
         {
             @Override
             public TreeCell<HelpEntry> call(TreeView<HelpEntry> param)
@@ -122,8 +125,8 @@ public class HelpStageController extends StageController<HelpStageController>
     {
         HelpEntry entry = treeItem.getValue();
 
-        if (entry != null 
-                && entry.metedata().relControllers != null 
+        if (entry != null
+                && entry.metedata().relControllers != null
                 && Arrays.asList(entry.metedata().relControllers).contains(identifier))
         {
             return treeItem;
