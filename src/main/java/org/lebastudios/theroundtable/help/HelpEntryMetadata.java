@@ -13,7 +13,7 @@ public class HelpEntryMetadata
     public String uiName;
     public String defaultLocale;
     public String[] keywords;
-    public String identifier;
+    public String[] relControllers;
     
     public static HelpEntryMetadata module(String uiName)
     {

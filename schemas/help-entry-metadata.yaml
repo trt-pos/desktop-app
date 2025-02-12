@@ -4,6 +4,7 @@ properties:
   fileFormatVersion:
     type: integer
     minimum: 1
+    maximum: 1
   helpEntryType:
     type: string
     enum: ["MD"]
@@ -11,7 +12,7 @@ properties:
     type: string
   defaultLocale:
     type: string
-  identifier: 
-    type: string
+  relControllers: 
+    type: array
   keywords:
     type: array

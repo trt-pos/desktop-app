@@ -1,4 +1,4 @@
-#yaml-language-server: $schema=https://json.schemastore.org/prettierrc
+#yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-schema.yaml
 fileFormatVersion: 1
 helpEntryType: MD
 uiName: Privileges

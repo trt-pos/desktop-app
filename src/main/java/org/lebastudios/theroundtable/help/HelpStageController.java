@@ -10,12 +10,14 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HelpStageController extends StageController<HelpStageController>
@@ -68,7 +70,7 @@ public class HelpStageController extends StageController<HelpStageController>
                             return;
                         }
 
-                        setText(helpEntry.metedata().uiName);
+                        setText(LangFileLoader.getTranslation(helpEntry.metedata().uiName));
 
                         final var node = new IconView(helpEntry.metedata().helpEntryType.getIconName());
                         node.setIconSize(20);
@@ -119,7 +121,9 @@ public class HelpStageController extends StageController<HelpStageController>
     {
         HelpEntry entry = treeItem.getValue();
 
-        if (entry != null && entry.metedata().identifier != null && entry.metedata().identifier.equals(identifier))
+        if (entry != null 
+                && entry.metedata().relControllers != null 
+                && Arrays.asList(entry.metedata().relControllers).contains(identifier))
         {
             return treeItem;
         }

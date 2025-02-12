@@ -1,5 +1,5 @@
 #yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-schema.yaml
 fileFormatVersion: 1
 helpEntryType: MD
-uiName: Installation
+uiName: Account Managment
 defaultLocale: en
