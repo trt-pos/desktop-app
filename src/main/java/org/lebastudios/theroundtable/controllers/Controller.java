@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.controllers;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -10,7 +9,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.help.HelpStageController;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
-import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -76,14 +74,14 @@ public abstract class Controller<T extends Controller<T>>
             
             if (!this.getClass().equals(HelpStageController.class)) 
             {
-                root.addEventHandler(KeyEvent.KEY_PRESSED, event ->
+                root.addEventFilter(KeyEvent.KEY_PRESSED, event ->
                 {
                     if (event.isConsumed() || event.getCode() != KeyCode.F1) return;
 
                     event.consume();
                     HelpStageController controller = new HelpStageController();
                     controller.instantiate();
-                    controller.getController().openHelpEntryById(getHelpIdentifier());
+                    controller.getController().selectHelpEntryByController(this.getClass().getName());
                 });
             }
         }
@@ -94,11 +92,6 @@ public abstract class Controller<T extends Controller<T>>
         }
 
         this.controller = fxmlLoader.getController();
-    }
-
-    public String getHelpIdentifier()
-    {
-        return this.getClass().getName();
     }
 
     public final T getController()

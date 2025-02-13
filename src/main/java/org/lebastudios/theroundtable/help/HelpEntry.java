@@ -37,19 +37,24 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
         {
             return this == MODULE || this == DIR;
         }
+        public boolean hasContentToShow() { return this == MD ||this == FAQ; }
     }
 
     public HelpEntry filteredByKeywords(String text)
     {
-        List<HelpEntry> filteredInnerEntries = new ArrayList<>(innerEntries.length);
+        List<HelpEntry> filteredEntries = new ArrayList<>(innerEntries.length);
 
         for (var innerEntry : innerEntries)
         {
-            // DIR entries should be added and the content filtered
+            // TODO: MODULE entries should be treated as DIRs
             if (innerEntry.metedata.helpEntryType == Type.DIR)
             {
-                HelpEntry filteredInnerEnreies = innerEntry.filteredByKeywords(text);
-                filteredInnerEntries.add(filteredInnerEnreies);
+                HelpEntry filtered = innerEntry.filteredByKeywords(text);
+                
+                if (filtered.innerEntries().length > 0) 
+                {
+                    filteredEntries.add(filtered);
+                }
                 continue;
             }
 
@@ -61,10 +66,10 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
 
             while (!(keywordMatchFound || i >= keywords.length))
             {
-                String keyword = keywords[i];
+                String keyword = keywords[i].toLowerCase();
                 if (keyword.matches(text))
                 {
-                    filteredInnerEntries.add(innerEntry.filteredByKeywords(text));
+                    filteredEntries.add(innerEntry.filteredByKeywords(text));
                     keywordMatchFound = true;
                 }
 
@@ -75,7 +80,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
         return new HelpEntry(
                 path,
                 metedata,
-                filteredInnerEntries.toArray(new HelpEntry[0])
+                filteredEntries.toArray(new HelpEntry[0])
         );
     }
 

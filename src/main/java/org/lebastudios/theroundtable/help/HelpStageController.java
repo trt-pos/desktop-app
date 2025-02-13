@@ -8,7 +8,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -17,6 +16,7 @@ import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +29,7 @@ public class HelpStageController extends StageController<HelpStageController>
 
     private TreeItem<HelpEntry> defaultreeViewRoot;
     private final List<HelpEntry> moduleHelpEntries = new ArrayList<>();
+    private HelpEntry renderedHelpEntry;
 
     @Override
     protected void initialize()
@@ -91,8 +92,9 @@ public class HelpStageController extends StageController<HelpStageController>
 
             HelpEntry helpEntry = newValue.getValue();
 
-            if (helpEntry.metedata().helpEntryType != HelpEntry.Type.MD) return;
+            if (!helpEntry.metedata().helpEntryType.hasContentToShow()) return;
 
+            renderedHelpEntry = helpEntry;
             MarkdownHelpToHtml markdownHelpToHtml = helpEntry.intoMarkdownHelp();
 
             new Thread(() ->
@@ -104,20 +106,34 @@ public class HelpStageController extends StageController<HelpStageController>
 
         searchBox.setOnSearch(this::searchHelpEntry);
         
-        // TODO: Implement the redirection when an alert is triggered
-        htmlView.getEngine().setOnAlert(event -> System.out.println(event.getData()));
-        
-        htmlView.getEngine().setOnResized(event -> System.out.println(event.getData()));
-        htmlView.getEngine().setOnStatusChanged(event -> System.out.println(event.getData()));
-        htmlView.getEngine().setOnError(System.out::println);
-        htmlView.getEngine().setOnVisibilityChanged(event -> System.out.println(event.getData()));
+        htmlView.getEngine().setOnAlert(event ->
+        {
+            if (renderedHelpEntry == null) 
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "The web view sended an alert while no help entry was being renderer"
+                );
+                return;
+            }
+            
+            String relFile = event.getData();
+            
+            String requestedFile = new File(renderedHelpEntry.path().getParentFile(), relFile).getPath();
+            
+            // Replacing the _lang.md by .yaml, pointing to the metadata of the file requested
+            int langPos = requestedFile.lastIndexOf("_");
+            String requestedFileMetadataFile = requestedFile.substring(0, langPos) + ".yaml";
+
+            selectHelpEntryByFile(new File(requestedFileMetadataFile));
+        });
     }
 
-    public void openHelpEntryById(String identifier)
+    public void selectHelpEntryByController(String identifier)
     {
         searchBox.clear();
 
-        TreeItem<HelpEntry> reqHelpEntry = findItemByHelpEntryId(defaultreeViewRoot, identifier);
+        TreeItem<HelpEntry> reqHelpEntry = findItemByHelpEntryController(defaultreeViewRoot, identifier);
 
         if (reqHelpEntry == null)
         {
@@ -129,7 +145,7 @@ public class HelpStageController extends StageController<HelpStageController>
         reqHelpEntry.setExpanded(true);
     }
 
-    private TreeItem<HelpEntry> findItemByHelpEntryId(TreeItem<HelpEntry> treeItem, String identifier)
+    private TreeItem<HelpEntry> findItemByHelpEntryController(TreeItem<HelpEntry> treeItem, String identifier)
     {
         HelpEntry entry = treeItem.getValue();
 
@@ -142,13 +158,47 @@ public class HelpStageController extends StageController<HelpStageController>
 
         for (TreeItem<HelpEntry> entryTreeItem : treeItem.getChildren())
         {
-            TreeItem<HelpEntry> found = findItemByHelpEntryId(entryTreeItem, identifier);
+            TreeItem<HelpEntry> found = findItemByHelpEntryController(entryTreeItem, identifier);
             if (found != null) return found;
         }
 
         return null;
     }
 
+    private void selectHelpEntryByFile(File file)
+    {
+        searchBox.clear();
+
+        TreeItem<HelpEntry> reqHelpEntry = findItemByHelpEntryFile(defaultreeViewRoot, file);
+
+        if (reqHelpEntry == null)
+        {
+            Logs.getInstance().log(Logs.LogType.WARNING, "File '" + file + "' not found inside the tree.");
+            return;
+        }
+
+        indexTreeView.getSelectionModel().select(reqHelpEntry);
+        reqHelpEntry.setExpanded(true);
+    }
+
+    private TreeItem<HelpEntry> findItemByHelpEntryFile(TreeItem<HelpEntry> treeItem, File file)
+    {
+        HelpEntry entry = treeItem.getValue();
+
+        if (entry != null && entry.path().equals(file))
+        {
+            return treeItem;
+        }
+
+        for (TreeItem<HelpEntry> entryTreeItem : treeItem.getChildren())
+        {
+            TreeItem<HelpEntry> found = findItemByHelpEntryFile(entryTreeItem, file);
+            if (found != null) return found;
+        }
+
+        return null;
+    }
+    
     private void searchHelpEntry(String text)
     {
         if (text.isBlank())
@@ -157,10 +207,14 @@ public class HelpStageController extends StageController<HelpStageController>
             return;
         }
 
+        text = text.toLowerCase();
         String regex = text.matches("[\\w\\sñÑ]*") ? ".*" + text + ".*" : text;
 
         TreeItem<HelpEntry> filteredRoot = new TreeItem<>();
 
+        // TODO: Filter also by the TreeItem UI name displayed
+        // TODO: Ignore mayus 
+        
         for (var moduleHelpEntry : moduleHelpEntries)
         {
             HelpEntry filtereded = moduleHelpEntry.filteredByKeywords(regex);
@@ -173,7 +227,7 @@ public class HelpStageController extends StageController<HelpStageController>
 
         indexTreeView.setRoot(filteredRoot);
     }
-
+    
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
