@@ -104,6 +104,29 @@ public class HelpStageController extends StageController<HelpStageController>
             }).start();
         });
 
+        indexTreeView.rootProperty().addListener((_, oldValue, newValue) ->
+        {
+            if (newValue == null || oldValue == newValue) return;
+
+            class Recursive
+            {
+                private void showIfOneChild(TreeItem<HelpEntry> treeItem)
+                {
+                    if (treeItem.isLeaf())
+                    {
+                        indexTreeView.getSelectionModel().select(treeItem);
+                    }
+                    
+                    if (treeItem.getChildren().size() == 1)
+                    {
+                        showIfOneChild(treeItem.getChildren().getFirst());
+                    }
+                }
+            }
+            
+            new Recursive().showIfOneChild(newValue);
+        });
+        
         searchBox.setOnSearch(this::searchHelpEntry);
         
         htmlView.getEngine().setOnAlert(event ->
@@ -207,22 +230,19 @@ public class HelpStageController extends StageController<HelpStageController>
             return;
         }
 
-        text = text.toLowerCase();
+        text = text.toLowerCase().trim();
         String regex = text.matches("[\\w\\sñÑ]*") ? ".*" + text + ".*" : text;
 
         TreeItem<HelpEntry> filteredRoot = new TreeItem<>();
-
-        // TODO: Filter also by the TreeItem UI name displayed
-        // TODO: Ignore mayus 
         
         for (var moduleHelpEntry : moduleHelpEntries)
         {
-            HelpEntry filtereded = moduleHelpEntry.filteredByKeywords(regex);
+            HelpEntry filtereded = moduleHelpEntry.filteredByRegex(regex);
 
-            final var moduleTreeItem = filtereded.intoTreeItem();
-            moduleTreeItem.setExpanded(true);
-
-            filteredRoot.getChildren().add(moduleTreeItem);
+            if (filtereded.innerEntries().length > 0) 
+            {
+                filteredRoot.getChildren().add(filtereded.intoTreeItem(true));
+            }
         }
 
         indexTreeView.setRoot(filteredRoot);

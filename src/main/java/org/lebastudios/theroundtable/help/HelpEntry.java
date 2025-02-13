@@ -40,16 +40,26 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
         public boolean hasContentToShow() { return this == MD ||this == FAQ; }
     }
 
-    public HelpEntry filteredByKeywords(String text)
+    public HelpEntry filteredByRegex(String regex)
     {
         List<HelpEntry> filteredEntries = new ArrayList<>(innerEntries.length);
 
+        innerEntriesLoop:
         for (var innerEntry : innerEntries)
         {
-            // TODO: MODULE entries should be treated as DIRs
-            if (innerEntry.metedata.helpEntryType == Type.DIR)
+            HelpEntryMetadata metadata = innerEntry.metedata;
+            
+            if (metadata.helpEntryType.hasInnerEntries())
             {
-                HelpEntry filtered = innerEntry.filteredByKeywords(text);
+                // If the name of the entry matches the regex, add it to the filtered entries with all his childs
+                if (LangFileLoader.getTranslation(metadata.name).toLowerCase().matches(regex))
+                {
+                    filteredEntries.add(innerEntry);
+                    continue;
+                }
+                
+                // The name didn't match, so a new entry is created with the filtered inner entries
+                HelpEntry filtered = innerEntry.filteredByRegex(regex);
                 
                 if (filtered.innerEntries().length > 0) 
                 {
@@ -58,22 +68,25 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
                 continue;
             }
 
-            String[] keywords = innerEntry.metedata.keywords;
+            // NOTE: The entries are no longer DIRs or MODULEs
+            // If the name of the entry matches the regex
+            if (LangFileLoader.getTranslation(metadata.name).toLowerCase().matches(regex)) 
+            {
+                filteredEntries.add(innerEntry);
+                continue;
+            }
+            
+            // If any keyword of the entry matches the regex
+            String[] keywords = metadata.keywords;
             if (keywords == null) continue;
 
-            boolean keywordMatchFound = false;
-            int i = 0;
-
-            while (!(keywordMatchFound || i >= keywords.length))
+            for (var keyword : keywords)
             {
-                String keyword = keywords[i].toLowerCase();
-                if (keyword.matches(text))
+                if (keyword.toLowerCase().matches(regex))
                 {
-                    filteredEntries.add(innerEntry.filteredByKeywords(text));
-                    keywordMatchFound = true;
+                    filteredEntries.add(innerEntry);
+                    continue innerEntriesLoop;
                 }
-
-                i++;
             }
         }
 
@@ -106,11 +119,17 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
 
     public TreeItem<HelpEntry> intoTreeItem()
     {
+        return intoTreeItem(false);
+    }
+    
+    public TreeItem<HelpEntry> intoTreeItem(boolean expanded)
+    {
         TreeItem<HelpEntry> root = new TreeItem<>(this);
-
+        root.setExpanded(expanded);
+        
         for (var entry : innerEntries)
         {
-            root.getChildren().add(entry.intoTreeItem());
+            root.getChildren().add(entry.intoTreeItem(expanded));
         }
 
         return root;
