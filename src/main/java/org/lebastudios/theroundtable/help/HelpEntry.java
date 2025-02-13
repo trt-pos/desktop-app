@@ -136,18 +136,18 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
     }
 
     @SneakyThrows
-    public static HelpEntry[] introspectHelp(Class<?> clazz)
+    public static HelpEntry[] introspectManual(Class<?> clazz, ManualType type)
     {
-        URL helpUrl = clazz.getResource("user-manual");
+        URL manualURL = clazz.getResource(type.getResourceFolderName());
 
-        if (helpUrl == null) return new HelpEntry[0];
+        if (manualURL == null) return new HelpEntry[0];
 
-        File entry = new File(helpUrl.toURI());
+        File entry = new File(manualURL.toURI());
 
-        return introspectHelp(entry);
+        return introspectManual(entry);
     }
 
-    public static HelpEntry[] introspectHelp(File file)
+    public static HelpEntry[] introspectManual(File file)
     {
         File[] entries = file.listFiles(fil -> fil.isFile() && fil.getName().endsWith(".yaml"));
 
@@ -171,7 +171,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
             }
 
             HelpEntry[] innerEntries = metadata.helpEntryType.hasInnerEntries()
-                    ? introspectHelp(new File(file, entryMetadata.getName().replace(".yaml", "")))
+                    ? introspectManual(new File(file, entryMetadata.getName().replace(".yaml", "")))
                     : new HelpEntry[0];
 
             HelpEntry helpEntry = new HelpEntry(

@@ -49,3 +49,5 @@ setup.error.invalidname,Username must be at least 3 characters long,El nombre de
 setup.error.passwordmatch,Passwords do not match,Las contraseñas no coinciden
 word.over,Over,Sobre
 word.qty,Qty,Cant
+manual.user,User,Usuario
+manual.tech,Tech,Técnico

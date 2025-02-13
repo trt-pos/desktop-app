@@ -11,6 +11,7 @@ public class HelpEntryMetadata
     public int fileFormatVersion = 1;
     public HelpEntry.Type helpEntryType;
     public String name;
+    public String iconName;
     public String defaultLocale;
     public String[] keywords;
     public String[] controllers;

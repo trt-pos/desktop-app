@@ -7,6 +7,8 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
 <SplitPane dividerPositions="0.33" prefHeight="500.0" prefWidth="800.0" fx:id="root"
            xmlns="http://javafx.com/javafx/11.0.14-internal"
            xmlns:fx="http://javafx.com/fxml/1"
@@ -14,12 +16,16 @@
     <padding>
         <Insets top="5" right="5" bottom="5" left="5" />
     </padding>
-    <VBox spacing="5">
-        <padding>
-            <Insets top="5" right="5" bottom="5" left="5" />
-        </padding>
-        <SearchBox fx:id="searchBox"/>
-        <TreeView fx:id="indexTreeView" VBox.vgrow="ALWAYS"/>
-    </VBox>
+    <TabPane fx:id="manualsTabPane" tabClosingPolicy="UNAVAILABLE" >
+        <Tab>
+            <VBox spacing="5">
+                <padding>
+                    <Insets top="5" right="5" bottom="5" left="5" />
+                </padding>
+                <SearchBox fx:id="searchBox"/>
+                <TreeView fx:id="indexTreeView" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </Tab>
+    </TabPane>
     <WebView fx:id="htmlView"/>
 </SplitPane>

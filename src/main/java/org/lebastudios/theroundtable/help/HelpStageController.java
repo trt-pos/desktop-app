@@ -2,9 +2,9 @@ package org.lebastudios.theroundtable.help;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.util.Callback;
@@ -23,6 +23,7 @@ import java.util.List;
 
 public class HelpStageController extends StageController<HelpStageController>
 {
+    @FXML private TabPane manualsTabPane;
     @FXML private SearchBox searchBox;
     @FXML private WebView htmlView;
     @FXML private TreeView<HelpEntry> indexTreeView;
@@ -37,21 +38,46 @@ public class HelpStageController extends StageController<HelpStageController>
         defaultreeViewRoot = new TreeItem<>();
         indexTreeView.setRoot(defaultreeViewRoot);
         indexTreeView.setShowRoot(false);
-
-        PluginLoader.getRessourcesObjects().forEach(resObj ->
+        
+        manualsTabPane.getSelectionModel().selectedItemProperty().addListener((_, oldValue, newValue) ->
         {
-            HelpEntry[] entries = HelpEntry.introspectHelp(resObj.getClass());
+            if (newValue == null || oldValue == newValue) return;
+            
+            if (oldValue != null) oldValue.setContent(null);
+            
+            newValue.setContent(indexTreeView.getParent());
+            
+            ManualType manualType = ManualType.values()[manualsTabPane.getTabs().indexOf(newValue)];
 
-            for (var entry : entries)
+            moduleHelpEntries.clear();
+            defaultreeViewRoot.getChildren().clear();
+            searchBox.clear();
+            
+            PluginLoader.getRessourcesObjects().forEach(resObj ->
             {
-                moduleHelpEntries.add(entry);
-                final var moduleTreeItem = entry.intoTreeItem();
-                moduleTreeItem.setExpanded(true);
+                HelpEntry[] entries = HelpEntry.introspectManual(resObj.getClass(), manualType);
 
-                defaultreeViewRoot.getChildren().add(moduleTreeItem);
-            }
+                for (var entry : entries)
+                {
+                    moduleHelpEntries.add(entry);
+                    TreeItem<HelpEntry> moduleTreeItem = entry.intoTreeItem();
+                    moduleTreeItem.setExpanded(true);
+
+                    defaultreeViewRoot.getChildren().add(moduleTreeItem);
+                }
+            });
         });
 
+        manualsTabPane.getTabs().clear();
+        for (var manualType : ManualType.values())
+        {
+            Tab tab = new Tab(manualType.getManualName());
+            IconView graphic = new IconView(manualType.getIconName());
+            graphic.setIconSize(20);
+            tab.setGraphic(graphic);
+            manualsTabPane.getTabs().add(tab);
+        }
+        
          indexTreeView.setCellFactory(new Callback<>()
         {
             @Override
@@ -75,9 +101,15 @@ public class HelpStageController extends StageController<HelpStageController>
                             return;
                         }
 
-                        setText(LangFileLoader.getTranslation(helpEntry.metedata().name));
+                        HelpEntryMetadata metedata = helpEntry.metedata();
+                        
+                        setText(LangFileLoader.getTranslation(metedata.name));
 
-                        final var node = new IconView(helpEntry.metedata().helpEntryType.getIconName());
+                        String iconName = metedata.iconName != null
+                                ? metedata.iconName
+                                : metedata.helpEntryType.getIconName();
+                        
+                        final var node = new IconView(iconName);
                         node.setIconSize(20);
 
                         setGraphic(node);
@@ -91,14 +123,16 @@ public class HelpStageController extends StageController<HelpStageController>
             if (newValue == null || oldValue == newValue) return;
 
             HelpEntry helpEntry = newValue.getValue();
-
+            
+            if (helpEntry == null) return;
+            
             if (!helpEntry.metedata().helpEntryType.hasContentToShow()) return;
 
             renderedHelpEntry = helpEntry;
-            MarkdownHelpToHtml markdownHelpToHtml = helpEntry.intoMarkdownHelp();
 
             new Thread(() ->
             {
+                MarkdownHelpToHtml markdownHelpToHtml = helpEntry.intoMarkdownHelp();
                 String content = markdownHelpToHtml.getContentAsHtml();
                 Platform.runLater(() -> htmlView.getEngine().loadContent(content));
             }).start();

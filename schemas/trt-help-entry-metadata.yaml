@@ -10,6 +10,8 @@ properties:
     enum: ["MD", "MODULE", "DIR", "FAQ"]
   name:
     type: string
+  iconName:
+    type: string
   defaultLocale:
     type: string
   controllers: 
