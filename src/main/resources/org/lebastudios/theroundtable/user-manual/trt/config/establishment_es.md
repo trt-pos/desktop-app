@@ -1,33 +1,22 @@
 # Establecimiento
 
-<img src="../../img/establishment-settings-form.png" width="100%">
+![Imagen de los ajustes del establecimiento](../../img/establishment-settings-form.png)
 
-Todos los campos de esta pantalla de ajustes deben de ser correctos
-y no contener ningun error. Diferentes 'plugins' los usaran como
-la información predeterminada del establecimiento y pueden ser reflejados
-en facturas u otros documentos legales.
+Es crucial que todos los campos de esta pantalla de ajustes sean 
+correctos y no contengan errores. Diferentes **plugins** utilizarán 
+esta información como datos predeterminados del establecimiento, 
+los cuales pueden reflejarse en facturas u otros documentos legales.
 
-<div id="name"/>
+### Campos de configuración
 
-- **Nombre:** Nombre legal del establecimiento.
+<div id="form"></div>
 
-<div id="identifier"/>
-
-- **Identificador:** NIF o CIF de la empresa.
-
-<div id="phone"/>
-
-- **Telefono:** Teléfono de atención al cliente.
-
-<div id="address"/>
-
-- **Direccion:** Direccion.
-
-<div id="logo"/>
-
-- **Logo:** Al hacer click sobre la imagen se abrirá el selector de archivos.
-Los formatos de imagen soportados son:
-  - BMP  
-  - GIF  
-  - JPEG  
-  - PNG   
+- **Nombre:** El nombre legal completo del establecimiento.
+- **Identificador:** Número de identificación fiscal (NIF o CIF) de la empresa.
+- **Teléfono:** Número de contacto para atención al cliente.
+- **Dirección:** Dirección física del establecimiento.
+- **Logo:** Al hacer clic sobre la imagen, se abrirá un selector de archivos. Los formatos de imagen soportados son:
+  - BMP
+  - GIF
+  - JPEG
+  - PNG

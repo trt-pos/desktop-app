@@ -3,3 +3,5 @@ fileFormatVersion: 1
 helpEntryType: DIR
 name: Config
 defaultLocale: en
+controllers:
+  - org.lebastudios.theroundtable.config.ConfigStageController

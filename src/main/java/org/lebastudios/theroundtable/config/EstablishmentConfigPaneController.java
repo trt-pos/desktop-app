@@ -20,13 +20,13 @@ import java.net.URL;
 @OpenHelp
 public class EstablishmentConfigPaneController extends SettingsPaneController
 {
-    @FXML @OpenHelp(id = "name") private TextField establishmentName;
-    @FXML @OpenHelp(id = "identifier") private TextField establishmentId;
-    @FXML @OpenHelp(id = "address") private TextField establishmentAddress;
-    @FXML @OpenHelp(id = "phone") private TextField establishmentPhone;
-    @FXML @OpenHelp(id = "address") private TextField establishmentZipCode;
-    @FXML @OpenHelp(id = "address") private TextField establishmentCity;
-    @FXML @OpenHelp(id = "logo") private ImageView establishmentLogo;
+    @FXML @OpenHelp(id = "form") private TextField establishmentName;
+    @FXML @OpenHelp(id = "form") private TextField establishmentId;
+    @FXML @OpenHelp(id = "form") private TextField establishmentAddress;
+    @FXML @OpenHelp(id = "form") private TextField establishmentPhone;
+    @FXML @OpenHelp(id = "form") private TextField establishmentZipCode;
+    @FXML @OpenHelp(id = "form") private TextField establishmentCity;
+    @FXML @OpenHelp(id = "form") private ImageView establishmentLogo;
 
     private File imageFile;
 
