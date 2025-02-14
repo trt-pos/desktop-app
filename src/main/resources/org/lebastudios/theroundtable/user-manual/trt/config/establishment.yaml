@@ -1,0 +1,10 @@
+#yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-entry-metadata.yaml
+fileFormatVersion: 1
+helpEntryType: MD
+name: Establishment
+defaultLocale: en
+keywords:
+  - establishment
+  - form
+controllers:
+  - org.lebastudios.theroundtable.config.EstablishmentConfigPaneController

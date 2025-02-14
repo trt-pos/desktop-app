@@ -20,7 +20,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
 {
     public enum Type
     {
-        MODULE, DIR, MD, FAQ;
+        MODULE, DIR, MD, LINK, FAQ;
 
         public String getIconName()
         {
@@ -29,6 +29,7 @@ record HelpEntry(File path, HelpEntryMetadata metedata, HelpEntry[] innerEntries
                 case MD -> "md-help-file.png";
                 case DIR -> "directory.png";
                 case MODULE -> "module.png";
+                case LINK -> "link-help-file.png";
                 case FAQ -> "faq-help-file.png";
             };
         }

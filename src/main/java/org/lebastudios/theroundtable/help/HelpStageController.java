@@ -1,11 +1,14 @@
 package org.lebastudios.theroundtable.help;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.util.Callback;
+import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -13,12 +16,14 @@ import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.SearchBox;
 import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@OpenHelp(disabled = true)
 public class HelpStageController extends StageController<HelpStageController>
 {
     @FXML private TabPane manualsTabPane;
@@ -124,6 +129,12 @@ public class HelpStageController extends StageController<HelpStageController>
 
             if (helpEntry == null) return;
 
+            if (helpEntry.metedata().helpEntryType == HelpEntry.Type.LINK) 
+            {
+                this.redirectTo(helpEntry.metedata().redirectTo, helpEntry);
+                return;
+            }
+            
             if (!helpEntry.metedata().helpEntryType.hasContentToShow()) return;
 
             renderedHelpEntry = helpEntry;
@@ -198,18 +209,26 @@ public class HelpStageController extends StageController<HelpStageController>
                 return;
             }
 
-            String relFile = event.getData();
-
-            String requestedFile = new File(renderedHelpEntry.path().getParentFile(), relFile).getPath();
-
-            // Replacing the _lang.md by .yaml, pointing to the metadata of the file requested
-            int langPos = requestedFile.lastIndexOf("_");
-            String requestedFileMetadataFile = requestedFile.substring(0, langPos) + ".yaml";
-
-            selectHelpEntryByFile(new File(requestedFileMetadataFile));
+            redirectTo(event.getData(), renderedHelpEntry);
         });
     }
 
+    @SneakyThrows
+    private void redirectTo(String path, HelpEntry from)
+    {
+        // TODO: If the link has a protocol behave as expected
+        String requestedFile = new File(from.path().getParentFile(), path).getPath();
+
+        if (requestedFile.matches(".*\\.md")) 
+        {
+            // Replacing the _lang.md by .yaml, pointing to the metadata of the file requested
+            int langPos = requestedFile.lastIndexOf("_");
+            requestedFile = requestedFile.substring(0, langPos) + ".yaml";
+        }
+
+        selectHelpEntryByFile(new File(requestedFile).getCanonicalFile());
+    }
+    
     public void selectHelpEntryByController(String controller)
     {
         searchBox.clear();
@@ -282,7 +301,17 @@ public class HelpStageController extends StageController<HelpStageController>
 
     public void showElementWithId(String id)
     {
-        htmlView.getEngine().executeScript(String.format("scrollToElement('%s')", id));
+        htmlView.getEngine().documentProperty().addListener(new ChangeListener<>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends Document> observable, Document oldValue, Document newValue)
+            {
+                if (newValue == null) return;
+
+                htmlView.getEngine().executeScript(String.format("scrollToElement('%s')", id));
+                htmlView.getEngine().documentProperty().removeListener(this);
+            }
+        });
     }
 
     private void searchHelpEntry(String text)

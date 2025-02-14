@@ -92,8 +92,9 @@ public abstract class Controller<T extends Controller<T>>
     {
         T uiController = getController();
 
-        // This block adds all the help support
-        if (uiController.getClass().getAnnotation(OpenHelp.class) != null)
+        OpenHelp classOpenHelp = uiController.getClass().getAnnotation(OpenHelp.class);
+        
+        if (classOpenHelp == null || !classOpenHelp.disabled())
         {
             root.addEventHandler(KeyEvent.KEY_PRESSED, event ->
             {
@@ -111,7 +112,10 @@ public abstract class Controller<T extends Controller<T>>
                 .forEach(f ->
                 {
                     if (!Node.class.isAssignableFrom(f.getType())) return;
-                    if (f.getAnnotation(OpenHelp.class) == null)  return;
+                    OpenHelp fieldOpenHelp = f.getAnnotation(OpenHelp.class);
+                    
+                    if (fieldOpenHelp == null)  return;
+                    if (fieldOpenHelp.disabled()) return;
                     
                     f.setAccessible(true);
                     Node node;
@@ -144,9 +148,11 @@ public abstract class Controller<T extends Controller<T>>
                         event.consume();
                         HelpStageController controller = new HelpStageController();
                         controller.instantiate();
-                        controller.getController().selectHelpEntryByController(uiController.getClass().getName());
+                        controller = controller.getController();
                         
-                        String id = f.getAnnotation(OpenHelp.class).id();
+                        controller.selectHelpEntryByController(uiController.getClass().getName());
+                        
+                        String id = fieldOpenHelp.id();
                         
                         if (!id.isBlank()) 
                         {

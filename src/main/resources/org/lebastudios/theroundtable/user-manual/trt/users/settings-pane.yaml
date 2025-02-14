@@ -1,5 +1,6 @@
 #yaml-language-server: $schema=https://lebastudios.org/schemas/trt-help-entry-metadata.yaml
 fileFormatVersion: 1
-helpEntryType: DIR
-name: Accounts
+helpEntryType: LINK
+redirectTo: ../config/accounts.yaml
+name: Settings
 defaultLocale: en

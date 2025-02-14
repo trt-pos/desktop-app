@@ -7,7 +7,7 @@ properties:
     maximum: 1
   helpEntryType:
     type: string
-    enum: ["MD", "MODULE", "DIR", "FAQ"]
+    enum: ["MD", "MODULE", "DIR", "FAQ", "LINK"]
   name:
     type: string
   iconName:
@@ -18,3 +18,5 @@ properties:
     type: array
   keywords:
     type: array
+  redirectTo:
+    type: string

@@ -10,21 +10,23 @@ import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.config.data.EstablishmentConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.help.OpenHelp;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 
+@OpenHelp
 public class EstablishmentConfigPaneController extends SettingsPaneController
 {
-    public TextField establishmentName;
-    public TextField establishmentId;
-    public TextField establishmentAddress;
-    public TextField establishmentPhone;
-    public TextField establishmentZipCode;
-    public TextField establishmentCity;
-    public ImageView establishmentLogo;
+    @FXML @OpenHelp(id = "name") private TextField establishmentName;
+    @FXML @OpenHelp(id = "identifier") private TextField establishmentId;
+    @FXML @OpenHelp(id = "address") private TextField establishmentAddress;
+    @FXML @OpenHelp(id = "phone") private TextField establishmentPhone;
+    @FXML @OpenHelp(id = "address") private TextField establishmentZipCode;
+    @FXML @OpenHelp(id = "address") private TextField establishmentCity;
+    @FXML @OpenHelp(id = "logo") private ImageView establishmentLogo;
 
     private File imageFile;
 

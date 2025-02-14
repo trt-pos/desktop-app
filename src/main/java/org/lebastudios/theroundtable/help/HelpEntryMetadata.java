@@ -15,7 +15,8 @@ public class HelpEntryMetadata
     public String defaultLocale;
     public String[] keywords;
     public String[] controllers;
-    
+    public String redirectTo;
+
     public static HelpEntryMetadata module(String name)
     {
         HelpEntryMetadata metadata = new HelpEntryMetadata();
