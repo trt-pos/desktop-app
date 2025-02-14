@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.controllers;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,10 +9,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.help.HelpStageController;
+import org.lebastudios.theroundtable.help.OpenHelp;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 public abstract class Controller<T extends Controller<T>>
 {
@@ -71,19 +76,6 @@ public abstract class Controller<T extends Controller<T>>
             }
 
             this.root = fxmlLoader.load();
-            
-            if (!this.getClass().equals(HelpStageController.class)) 
-            {
-                root.addEventFilter(KeyEvent.KEY_PRESSED, event ->
-                {
-                    if (event.isConsumed() || event.getCode() != KeyCode.F1) return;
-
-                    event.consume();
-                    HelpStageController controller = new HelpStageController();
-                    controller.instantiate();
-                    controller.getController().selectHelpEntryByController(this.getClass().getName());
-                });
-            }
         }
         catch (IOException e)
         {
@@ -92,6 +84,76 @@ public abstract class Controller<T extends Controller<T>>
         }
 
         this.controller = fxmlLoader.getController();
+
+        processHelpFunctionality();
+    }
+
+    private void processHelpFunctionality()
+    {
+        T uiController = getController();
+
+        // This block adds all the help support
+        if (uiController.getClass().getAnnotation(OpenHelp.class) != null)
+        {
+            root.addEventHandler(KeyEvent.KEY_PRESSED, event ->
+            {
+                if (event.isConsumed() || event.getCode() != KeyCode.F1) return;
+
+                event.consume();
+                HelpStageController controller = new HelpStageController();
+                controller.instantiate();
+                controller.getController().selectHelpEntryByController(uiController.getClass().getName());
+            });
+        }
+
+        Arrays.stream(uiController.getClass().getDeclaredFields())
+                .parallel()
+                .forEach(f ->
+                {
+                    if (!Node.class.isAssignableFrom(f.getType())) return;
+                    if (f.getAnnotation(OpenHelp.class) == null)  return;
+                    
+                    f.setAccessible(true);
+                    Node node;
+                    try
+                    {
+                        node = (Node) f.get(uiController);
+                    }
+                    catch (IllegalAccessException e)
+                    {
+                        Logs.getInstance().log("The field annotatted isn't accesible", e);
+                        return;
+                    }
+
+                    if (node == null)
+                    {
+                        Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                String.format(
+                                        "Field %s marked with OpenHelp in class %s is null. Not showing help for it.",
+                                        f.getName(), uiController.getClass().getName()
+                                )
+                        );
+                        return;
+                    }
+
+                    node.addEventFilter(KeyEvent.KEY_PRESSED, event ->
+                    {
+                        if (event.isConsumed() || event.getCode() != KeyCode.F1) return;
+
+                        event.consume();
+                        HelpStageController controller = new HelpStageController();
+                        controller.instantiate();
+                        controller.getController().selectHelpEntryByController(uiController.getClass().getName());
+                        
+                        String id = f.getAnnotation(OpenHelp.class).id();
+                        
+                        if (!id.isBlank()) 
+                        {
+                            controller.showElementWithId(id);
+                        }
+                    });
+                });
     }
 
     public final T getController()

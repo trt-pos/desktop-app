@@ -2,9 +2,7 @@ package org.lebastudios.theroundtable.help;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.util.Callback;
@@ -38,21 +36,21 @@ public class HelpStageController extends StageController<HelpStageController>
         defaultreeViewRoot = new TreeItem<>();
         indexTreeView.setRoot(defaultreeViewRoot);
         indexTreeView.setShowRoot(false);
-        
+
         manualsTabPane.getSelectionModel().selectedItemProperty().addListener((_, oldValue, newValue) ->
         {
             if (newValue == null || oldValue == newValue) return;
-            
+
             if (oldValue != null) oldValue.setContent(null);
-            
+
             newValue.setContent(indexTreeView.getParent());
-            
+
             ManualType manualType = ManualType.values()[manualsTabPane.getTabs().indexOf(newValue)];
 
             moduleHelpEntries.clear();
             defaultreeViewRoot.getChildren().clear();
             searchBox.clear();
-            
+
             PluginLoader.getRessourcesObjects().forEach(resObj ->
             {
                 HelpEntry[] entries = HelpEntry.introspectManual(resObj.getClass(), manualType);
@@ -77,8 +75,8 @@ public class HelpStageController extends StageController<HelpStageController>
             tab.setGraphic(graphic);
             manualsTabPane.getTabs().add(tab);
         }
-        
-         indexTreeView.setCellFactory(new Callback<>()
+
+        indexTreeView.setCellFactory(new Callback<>()
         {
             @Override
             public TreeCell<HelpEntry> call(TreeView<HelpEntry> param)
@@ -102,13 +100,13 @@ public class HelpStageController extends StageController<HelpStageController>
                         }
 
                         HelpEntryMetadata metedata = helpEntry.metedata();
-                        
+
                         setText(LangFileLoader.getTranslation(metedata.name));
 
                         String iconName = metedata.iconName != null
                                 ? metedata.iconName
                                 : metedata.helpEntryType.getIconName();
-                        
+
                         final var node = new IconView(iconName);
                         node.setIconSize(20);
 
@@ -123,9 +121,9 @@ public class HelpStageController extends StageController<HelpStageController>
             if (newValue == null || oldValue == newValue) return;
 
             HelpEntry helpEntry = newValue.getValue();
-            
+
             if (helpEntry == null) return;
-            
+
             if (!helpEntry.metedata().helpEntryType.hasContentToShow()) return;
 
             renderedHelpEntry = helpEntry;
@@ -133,7 +131,33 @@ public class HelpStageController extends StageController<HelpStageController>
             new Thread(() ->
             {
                 MarkdownHelpToHtml markdownHelpToHtml = helpEntry.intoMarkdownHelp();
-                String content = markdownHelpToHtml.getContentAsHtml();
+                
+                String scrollToElementScript = """
+                        <script>
+                            function scrollToElement(id) {
+                                var element = document.getElementById(id);
+                                if (element) {
+                                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }
+                            }
+                        </script>""";
+
+                String hrefHandlerScript = """
+                        <script>
+                            document.querySelectorAll('a').forEach(a => {
+                                a.onclick = () => {
+                                    alert(a.href);
+                                };
+                            });
+                        </script>""";
+
+                String content = String.format(
+                        "%s\n%s\n%s", 
+                        markdownHelpToHtml.getContentAsHtml(),
+                        scrollToElementScript, hrefHandlerScript
+                );
+                
+
                 Platform.runLater(() -> htmlView.getEngine().loadContent(content));
             }).start();
         });
@@ -150,22 +174,22 @@ public class HelpStageController extends StageController<HelpStageController>
                     {
                         indexTreeView.getSelectionModel().select(treeItem);
                     }
-                    
+
                     if (treeItem.getChildren().size() == 1)
                     {
                         showIfOneChild(treeItem.getChildren().getFirst());
                     }
                 }
             }
-            
+
             new Recursive().showIfOneChild(newValue);
         });
-        
+
         searchBox.setOnSearch(this::searchHelpEntry);
-        
+
         htmlView.getEngine().setOnAlert(event ->
         {
-            if (renderedHelpEntry == null) 
+            if (renderedHelpEntry == null)
             {
                 Logs.getInstance().log(
                         Logs.LogType.WARNING,
@@ -173,11 +197,11 @@ public class HelpStageController extends StageController<HelpStageController>
                 );
                 return;
             }
-            
+
             String relFile = event.getData();
-            
+
             String requestedFile = new File(renderedHelpEntry.path().getParentFile(), relFile).getPath();
-            
+
             // Replacing the _lang.md by .yaml, pointing to the metadata of the file requested
             int langPos = requestedFile.lastIndexOf("_");
             String requestedFileMetadataFile = requestedFile.substring(0, langPos) + ".yaml";
@@ -186,15 +210,15 @@ public class HelpStageController extends StageController<HelpStageController>
         });
     }
 
-    public void selectHelpEntryByController(String identifier)
+    public void selectHelpEntryByController(String controller)
     {
         searchBox.clear();
 
-        TreeItem<HelpEntry> reqHelpEntry = findItemByHelpEntryController(defaultreeViewRoot, identifier);
+        TreeItem<HelpEntry> reqHelpEntry = findItemByHelpEntryController(defaultreeViewRoot, controller);
 
         if (reqHelpEntry == null)
         {
-            Logs.getInstance().log(Logs.LogType.INFO, "HelpEntry with id '" + identifier + "' not found.");
+            Logs.getInstance().log(Logs.LogType.INFO, "HelpEntry with id '" + controller + "' not found.");
             return;
         }
 
@@ -255,7 +279,12 @@ public class HelpStageController extends StageController<HelpStageController>
 
         return null;
     }
-    
+
+    public void showElementWithId(String id)
+    {
+        htmlView.getEngine().executeScript(String.format("scrollToElement('%s')", id));
+    }
+
     private void searchHelpEntry(String text)
     {
         if (text.isBlank())
@@ -268,12 +297,12 @@ public class HelpStageController extends StageController<HelpStageController>
         String regex = text.matches("[\\w\\sñÑ]*") ? ".*" + text + ".*" : text;
 
         TreeItem<HelpEntry> filteredRoot = new TreeItem<>();
-        
+
         for (var moduleHelpEntry : moduleHelpEntries)
         {
             HelpEntry filtereded = moduleHelpEntry.filteredByRegex(regex);
 
-            if (filtereded.innerEntries().length > 0) 
+            if (filtereded.innerEntries().length > 0)
             {
                 filteredRoot.getChildren().add(filtereded.intoTreeItem(true));
             }
@@ -281,7 +310,7 @@ public class HelpStageController extends StageController<HelpStageController>
 
         indexTreeView.setRoot(filteredRoot);
     }
-    
+
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {

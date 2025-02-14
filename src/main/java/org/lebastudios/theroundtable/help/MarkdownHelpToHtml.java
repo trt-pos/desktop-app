@@ -26,17 +26,7 @@ record MarkdownHelpToHtml(File file)
 
         String style = ThemeLoader.getHelpCss();
 
-        String hrefHandlerScript = """
-                <script>
-                    document.querySelectorAll('a').forEach(a => {
-                        a.onclick = () => {
-                            alert(a.href);
-                        };
-                    });
-                </script>
-                """;
-
-        return String.format("<head><style>%s</style></head><body>%s</body>%s", style, body, hrefHandlerScript);
+        return String.format("<head><style>%s</style></head><body>%s</body>", style, body);
     }
 
     private String processBody(String body)
