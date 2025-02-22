@@ -1,3 +1,0 @@
-Need CUPS
-sudo apt install cups-bsd
-Need to define a default printer for better support
