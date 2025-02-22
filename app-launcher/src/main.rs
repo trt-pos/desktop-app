@@ -1,27 +1,42 @@
-use std::fs::File;
+use std::fs::{File, OpenOptions};
+use std::os::unix::process::CommandExt;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 fn main() {
     let app_dir = get_app_dir();
 
-    let stdout_file = File::create("trt-output.log").expect("Failed to create stdout file");
-    let stderr_file = File::create("trt-error.log").expect("Failed to create stderr file");
+    let stdout_path = Path::new(&app_dir).join("trt-output.log");
+    let stderr_path = Path::new(&app_dir).join("trt-error.log");
 
+    let stdout_file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&stdout_path)
+        .expect("Failed to open stdout file");
 
-    let mut child = Command::new(format!("{}/jdk/bin/java", app_dir))
-        .arg("-jar".to_string())
+    let stderr_file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&stderr_path)
+        .expect("Failed to open stderr file");
+
+    let err = Command::new(format!("{}/jdk/bin/java", app_dir))
+        .arg("-jar")
         .arg(format!("{}/bin/desktop-app.jar", app_dir))
         .stdout(Stdio::from(stdout_file))
         .stderr(Stdio::from(stderr_file))
-        .spawn()
-        .expect("Failed to execute command");
+        .exec();
 
-    // Imprime la salida del comando como texto
-    child.wait().expect("Failed to wait on child");
+    println!("Error: {:?}", err);
 }
 
-fn get_app_dir() -> String
-{
+fn get_app_dir() -> String {
     let exec_file = std::env::current_exe().expect("Should exist");
-    exec_file.parent().expect("Should have parent").to_str().expect("Should be a valid string").to_string()
+    exec_file
+        .parent()
+        .expect("Should have parent")
+        .to_str()
+        .expect("Should be a valid string")
+        .to_string()
 }
