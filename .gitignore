@@ -124,3 +124,4 @@ fabric.properties
 /bin/
 /target/
 /plugins/
+.idea

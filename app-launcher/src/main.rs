@@ -1,6 +1,8 @@
+#[cfg(target_os = "linux")]
+use std::os::unix::process::CommandExt;
+
 use std::fs;
 use std::fs::OpenOptions;
-use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
@@ -33,14 +35,28 @@ fn main() {
         .open(&stderr_path)
         .expect("Failed to open stderr file");
 
-    let err = Command::new(format!("{}/jdk/bin/java", app_dir))
-        .arg("-jar")
-        .arg(format!("{}/bin/desktop-app.jar", app_dir))
-        .stdout(Stdio::from(stdout_file))
-        .stderr(Stdio::from(stderr_file))
-        .exec();
+    #[cfg(target_os = "linux")]
+    {
+        let err = Command::new(format!("{}/jdk/bin/java", app_dir))
+            .arg("-jar")
+            .arg(format!("{}/bin/desktop-app.jar", app_dir))
+            .stdout(Stdio::from(stdout_file))
+            .stderr(Stdio::from(stderr_file))
+            .exec();
 
-    println!("Error: {:?}", err);
+        println!("Error: {:?}", err);
+    }
+    
+    #[cfg(target_os = "windows")]
+    {
+        Command::new(format!("{}/jdk/bin/java", app_dir))
+            .arg("-jar")
+            .arg(format!("{}/bin/desktop-app.jar", app_dir))
+            .stdout(Stdio::from(stdout_file))
+            .stderr(Stdio::from(stderr_file))
+            .spawn()
+            .expect("Failed to start the app");
+    }
 }
 
 fn rotate_log(log_path: &Path) {

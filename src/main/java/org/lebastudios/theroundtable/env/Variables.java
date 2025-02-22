@@ -36,13 +36,18 @@ public class Variables
         return envType;
     }
     
+    public static String getTestServerUrl()
+    {
+        return System.getenv("TRT_TEST_SERVER_URL");
+    }
+    
     private static EnvironmentType detectEnvironmentType()
     {
         String enviroment = System.getenv("TRT_ENV");
         
         if (enviroment == null) return EnvironmentType.PROD;
         
-        return switch (enviroment)
+        return switch (enviroment.toLowerCase())
         {
             case "dev" -> EnvironmentType.DEV;
             case "test" -> EnvironmentType.TEST;
