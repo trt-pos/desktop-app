@@ -127,7 +127,12 @@ public class Database
 
     }
 
-    public boolean connectTransaction(Consumer<Session> action)
+    public void connectTransaction(Consumer<Session> action)
+    {
+        connectTransactionWithBool(action);
+    }
+    
+    public boolean connectTransactionWithBool(Consumer<Session> action)
     {
         if (sessionFactory == null) throw new IllegalStateException("Database not initialized");
 
