@@ -49,7 +49,9 @@ public class ConfigStageController extends StageController<ConfigStageController
         configStage = getStage();
     }
 
-    @SneakyThrows @FXML @Override
+    @SneakyThrows
+    @FXML
+    @Override
     protected void initialize()
     {
         configSectionsTreeView.setCellFactory(_ -> new TreeCell<>()
@@ -109,34 +111,45 @@ public class ConfigStageController extends StageController<ConfigStageController
 
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.users"),
-                            "users.png", new UsersConfigPaneController()))
+                            "users.png", new UsersConfigPaneController())
+                    )
             );
         }
 
         generalConfigSection.getChildren().add(
                 new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.preferences"),
-                        "preferences.png", new PreferencesConfigPaneController()))
+                        "preferences.png", new PreferencesConfigPaneController())
+                )
         );
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.establishment"),
-                            "establishment.png", new EstablishmentConfigPaneController()))
+                            "establishment.png", new EstablishmentConfigPaneController())
+                    )
             );
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.printers"),
-                            "printer.png", new PrintersConfigPaneController()))
+                            "printer.png", new PrintersConfigPaneController())
+                    )
             );
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.database"),
-                            "database.png", new DatabaseConfigPaneController()))
+                            "database.png", new DatabaseConfigPaneController())
+                    )
+            );
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.updates"),
+                            "updates.png", new UpdatesConfigPaneController())
+                    )
             );
         }
 
         generalConfigSection.getChildren().add(
                 new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.about"),
-                        "help.png", new AboutConfigPaneController()))
+                        "help.png", new AboutConfigPaneController())
+                )
         );
 
         return generalConfigSection;
@@ -145,9 +158,9 @@ public class ConfigStageController extends StageController<ConfigStageController
     public void swapMainPane(SettingsPaneController controller)
     {
         if (controller == null) return;
-        
+
         final var root = controller.getRoot();
-        
+
         mainPane.setContent(root);
         controller.registerEvents();
         currentPaneController = controller;
