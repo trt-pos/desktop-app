@@ -12,6 +12,7 @@ import org.lebastudios.theroundtable.communications.ApiRequests;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.config.data.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconView;
@@ -138,12 +139,22 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         var pluginFile =
                 new File(new JSONFile<>(PluginsConfigData.class).get().pluginsFolder + pluginData.pluginId + ".jar");
 
-        if (pluginFile.exists() && pluginFile.isFile() && pluginFile.delete())
+        if (!pluginFile.exists() || !pluginFile.isFile()) 
+        {
+            Logs.getInstance().log(Logs.LogType.WARNING, "Plugin does not exist: " + pluginFile);
+            return;
+        }
+        
+        if (pluginFile.delete())
         {
             root.getChildren().remove(unistallButton);
             PluginLoader.uninstallPlugin(pluginData);
 
             Platform.runLater(() -> MainStageController.getInstance().requestRestart());
+        }
+        else
+        {
+            Logs.getInstance().log(Logs.LogType.WARNING, "Plugin could not be deleted: " + pluginFile);
         }
     }
 }
