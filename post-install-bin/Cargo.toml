@@ -1,0 +1,17 @@
+[package]
+name = "post_install_bin"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+reqwest = { version = "0.12.12", features = ["blocking"] }
+tokio = { version = "1.43.0", features = ["full"] }
+tar = { version = "0.4.44" }
+flate2 = { version = "1.1.0" }
+zip = { version = "2.2.2" }
+
+# Required for building using cross
+openssl = { version = '*', features = ["vendored"] }
+
+[build-dependencies]
+openssl = { version = '*', features = ["vendored"] }

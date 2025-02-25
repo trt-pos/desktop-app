@@ -24,11 +24,21 @@ build-for-platform() {
           cross build --target x86_64-unknown-linux-gnu --release -p app_launcher
           mv "target/x86_64-unknown-linux-gnu/release/app_launcher" "../$OUTPUT_DIR/start"
       )
+      (
+        cd "post-install-bin" || exit
+        cross build --target x86_64-unknown-linux-gnu --release -p post_install_bin
+        mv "target/x86_64-unknown-linux-gnu/release/post_install_bin" "../$OUTPUT_DIR/post-install-bin"
+      )
   elif [ "$PLATFORM" == "windows" ]; then
       (
           cd "app-launcher" || exit
           cross build --target x86_64-pc-windows-gnu --release -p app_launcher
           mv "target/x86_64-pc-windows-gnu/release/app_launcher.exe" "../$OUTPUT_DIR/start.exe"
+      )
+      (
+        cd "post-install-bin" || exit
+        cross build --target x86_64-pc-windows-gnu --release -p post_install_bin
+        mv "target/x86_64-pc-windows-gnu/release/post_install_bin.exe" "../$OUTPUT_DIR/post-install-bin.exe"
       )
   fi
 }

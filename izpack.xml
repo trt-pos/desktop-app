@@ -11,13 +11,14 @@
         <authors>
             <author name="Borja Castellano" email="borja.castellano@lebastudios.org" />
         </authors>
-        <run-privileged />
     </info>
 
+    <!--
     <variables>
         <variable name="TargetPanel.dir.windows" value="C:/Program Files/theroundtable"/>
         <variable name="TargetPanel.dir.unix" value="/opt/theroundtable"/>
     </variables>
+    -->
     
     <locale>
         <langpack iso3="glg"/>
@@ -50,7 +51,7 @@
     
     <packs>
         <!-- UNIX -->
-        <pack name="Launcher bin" required="yes" os="unix">
+        <pack name="Linux launcher bin" required="yes" os="unix">
             <description>The launcher Rust bin</description>
             <file src="output/theroundtable-linux-x64/start" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>
@@ -62,13 +63,27 @@
             <description>The aplication shortcut</description>
             <file src="output/theroundtable-linux-x64/theroundtable.desktop" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>
+        <pack name="Linux post install" required="yes" os="unix">
+            <description>Downloading JDK needed to execute the app</description>
+            <file src="output/theroundtable-linux-x64/post-install-bin" targetdir="${INSTALL_PATH}" />
+            <executable targetfile="$INSTALL_PATH/post-install-bin" stage="postinstall" failure="abort">
+                <os family="unix" />
+            </executable>
+        </pack>
 
         <!-- Windows -->
-        <pack name="Launcher bin" required="yes" os="windows">
+        <pack name="Windows launcher" required="yes" os="windows">
             <description>The launcher Rust bin</description>
             <file src="output/theroundtable-windows-x64/start.exe" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>
-        
+        <pack name="Windows post install" required="yes" os="windows">
+            <description>Downloading JDK needed to execute the app</description>
+            <file src="output/theroundtable-windows-x64/post-install-bin.exe" targetdir="${INSTALL_PATH}" />
+            <executable targetfile="$INSTALL_PATH/post-install-bin.exe" stage="postinstall" failure="abort">
+                <os family="windows" />
+            </executable>
+        </pack>
+
         <!-- Common -->
         <pack name="Desktop app jar" required="yes">
             <description>The desktop app JAR</description>
