@@ -54,7 +54,7 @@ static RESOURCE_EXTENSION: LazyLock<String> = LazyLock::new(|| {
 pub struct DownloadJDKAction;
 
 impl Action for DownloadJDKAction {
-    fn execute(&self) -> Pin<Box<dyn Future<Output = ()> + Send>> {
+    fn execute(&self) -> Pin<Box<dyn Future<Output = Result<(), crate::Error>> + Send>> {
         Box::pin(async {
             // Downloading the compressed JDK folder
             let url = JDK_DOWNLOAD_URL.deref();
@@ -114,6 +114,9 @@ impl Action for DownloadJDKAction {
                 .expect("Failed to remove directory");
             std::fs::rename(installation_dir.join("jdk_2"), installation_dir.join("jdk"))
                 .expect("Failed to rename folder");
+
+            Ok(())
         })
+        
     }
 }

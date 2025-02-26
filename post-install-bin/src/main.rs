@@ -1,9 +1,12 @@
 use std::pin::Pin;
 
 mod java_jdk;
+mod error;
+
+pub use error::Error;
 
 trait Action {
-    fn execute(&self) -> Pin<Box<dyn Future<Output = ()> + Send>>;
+    fn execute(&self) -> Pin<Box<dyn Future<Output = Result<(), Error>> + Send>>;
 }
 
 #[tokio::main]
