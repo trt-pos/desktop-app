@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
 <?import org.lebastudios.theroundtable.ui.IconView?>
+<?import org.lebastudios.theroundtable.ui.IconTextButton?>
 <HBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
       xmlns="http://javafx.com/javafx" alignment="CENTER_LEFT"
       styleClass="border-round" spacing="15" prefWidth="600">
@@ -20,6 +21,10 @@
         <Label wrapText="true" fx:id="pluginDescription"/>
     </VBox>
 
-    <IconButton onAction="#uninstallPlugin" fx:id="unistallButton" iconName="delete.png"/>
-    <Button minWidth="150" onAction="#onAction" fx:id="actionButton" text="Install"/>
+    <IconButton onAction="#tryUninstallPlugin" fx:id="unistallButton" iconName="delete.png"/>
+    <Button minWidth="150" onAction="#installPlugin" fx:id="installButton" text="Install"/>
+    <Button minWidth="150" onAction="#updatePlugin" fx:id="updatePlugin" text="Update"/>
+    <Button minWidth="150" onAction="#restartApp" fx:id="restartAppButton" text="Restart App"
+        style="-fx-background-color: #17cc17; -fx-border-color: #1e1e1e; -fx-border-radius: 5"/>
+    <IconTextButton iconName="unavailable.png" iconSize="24" disable="true" text="Not Available" fx:id="notInstallableButton"/>
 </HBox>

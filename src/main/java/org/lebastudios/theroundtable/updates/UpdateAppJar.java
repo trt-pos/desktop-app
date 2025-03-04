@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.updates;
 
 import javafx.application.Platform;
+import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.communications.ApiRequests;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
@@ -17,7 +18,7 @@ public class UpdateAppJar
                     {
                         if (!response) return;
 
-                        ApiRequests.getLastAppVersion();
+                        ApiRequests.getLastAppVersion(() -> MainStageController.getInstance().requestRestart());
                     }
             ).instantiate());
         }

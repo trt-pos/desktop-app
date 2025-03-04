@@ -55,17 +55,18 @@ public class ApiRequests
         }
     }
 
-    public static void getLastAppVersion()
+    public static void getLastAppVersion(Runnable afterUpdate)
     {
         downloadFile(
                 BASE_URL + "/update/desktop-app.jar",
                 TheRoundTableApplication.getAppDirectory() + "/bin",
-                "Downloading app update"
+                "Downloading app update",
+                afterUpdate
         );
     }
 
     @SneakyThrows
-    private static void downloadFile(String fileURL, String saveDir, String taskTitle)
+    private static void downloadFile(String fileURL, String saveDir, String taskTitle, Runnable afterDownload)
     {
         URL url = new URI(fileURL).toURL();
 
@@ -73,11 +74,11 @@ public class ApiRequests
 
         HttpURLConnection httpConn;
 
-        if (proxyConf != null && proxyConf.usingProxy) 
+        if (proxyConf != null && proxyConf.usingProxy)
         {
             String proxyAddress = proxyConf.proxyAddress;
             int proxyPort = proxyConf.proxyPort;
-            
+
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyAddress, proxyPort));
             httpConn = (HttpURLConnection) url.openConnection(proxy);
         }
@@ -92,7 +93,7 @@ public class ApiRequests
         {
             String fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1);
 
-            final var downloadingTask = createDownloadingTask(saveDir, fileName, httpConn, taskTitle);
+            final var downloadingTask = createDownloadingTask(saveDir, fileName, httpConn, taskTitle, afterDownload);
             TaskManager.getInstance().startNewTaskWithProgressBar(downloadingTask, false);
         }
         else
@@ -100,9 +101,9 @@ public class ApiRequests
             System.err.println("No se pudo descargar el archivo. Código de respuesta: " + responseCode);
         }
     }
-
+    
     private static AppTask createDownloadingTask(String saveDir, String fileName, HttpURLConnection httpConn,
-            String taskTitle)
+            String taskTitle, Runnable afterDownload)
     {
         var saveFile = new File(saveDir + File.separator + fileName);
         var tempFile = new File(TheRoundTableApplication.getUserDirectory() + "/.tmp/" + fileName);
@@ -147,7 +148,7 @@ public class ApiRequests
                 Files.copy(tempFile.toPath(), saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 Files.delete(tempFile.toPath());
 
-                Platform.runLater(() -> MainStageController.getInstance().requestRestart());
+                afterDownload.run();
 
                 return null;
             }
@@ -227,12 +228,13 @@ public class ApiRequests
         }
     }
 
-    public static void updatePlugin(PluginData pluginData)
+    public static void updatePlugin(PluginData pluginData, Runnable aferUpdate)
     {
         downloadFile(
                 BASE_URL + "/plugins/" + pluginData.pluginId + ".jar",
                 new JSONFile<>(PluginsConfigData.class).get().pluginsFolder,
-                "Downloading plugin update (" + pluginData.pluginName + ")"
+                "Downloading plugin update (" + pluginData.pluginName + ")",
+                aferUpdate
         );
     }
 

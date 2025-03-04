@@ -23,6 +23,8 @@ public class PluginLoader
 {
     private static final Map<String, IPlugin> pluginsLoaded = new HashMap<>();
     private static final Map<String, IPlugin> pluginsInstalled = new HashMap<>();
+    @Getter private static final Map<String, PluginData> pluginsRestartPending = new HashMap<>();
+    
     @Getter private static URLClassLoader pluginsClassLoader = new URLClassLoader(new URL[0]);
 
     public static void loadPlugins()
@@ -34,12 +36,13 @@ public class PluginLoader
         try
         {
             pluginsClassLoader = new URLClassLoader(
-                    Arrays.stream(jars).map(File::toURI).map(uri -> {
+                    Arrays.stream(jars).map(File::toURI).map(uri ->
+                    {
                         try {return uri.toURL();}
                         catch (Exception e) {return null;}
                     }).filter(Objects::nonNull).toArray(URL[]::new),
-            PluginLoader.class.getClassLoader());
-            
+                    PluginLoader.class.getClassLoader());
+
             ServiceLoader<IPlugin> serviceLoader = ServiceLoader.load(IPlugin.class, pluginsClassLoader);
 
             for (var plugin : serviceLoader)
@@ -62,10 +65,10 @@ public class PluginLoader
             for (IPlugin plugin : pluginsInstalled.values())
             {
                 var pluginData = plugin.getPluginData();
-                
+
                 if (pluginsLoaded.containsKey(pluginData.pluginId)) continue;
                 if (!canBePluginLoaded(plugin)) continue;
-                
+
                 keepTryingToLoad = true;
                 loadPlugin(plugin);
             }
@@ -78,7 +81,7 @@ public class PluginLoader
     {
         // Add plugin to loaded plugins collection
         pluginsLoaded.put(plugin.getPluginData().pluginId, plugin);
-        
+
         // Load plugin translations
         LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale());
 
@@ -90,12 +93,12 @@ public class PluginLoader
     {
 
     }
-    
+
     public static boolean canBePluginLoaded(IPlugin plugin)
     {
         Version requiredCoreVersion = new Version(plugin.getPluginData().pluginRequiredCoreVersion);
         Version actualCoreVersion = new Version(TheRoundTableApplication.getAppVersion());
-        
+
         if (actualCoreVersion.isLessThan(requiredCoreVersion)) {return false;}
 
         if (plugin.getPluginData().pluginDependencies == null) return true;
@@ -103,16 +106,42 @@ public class PluginLoader
         for (var dependency : plugin.getPluginData().pluginDependencies)
         {
             if (!pluginsLoaded.containsKey(dependency.pluginId)) return false;
-            
+
             Version requiredPluginVersion = new Version(dependency.pluginVersion);
-            Version actualPluginVersion = new Version(pluginsLoaded.get(dependency.pluginId).getPluginData().pluginVersion);
-            
+            Version actualPluginVersion =
+                    new Version(pluginsLoaded.get(dependency.pluginId).getPluginData().pluginVersion);
+
             if (actualPluginVersion.isLessThan(requiredPluginVersion)) {return false;}
         }
 
         return true;
     }
-    
+
+    public static boolean isDependencyOfOther(PluginData pluginData)
+    {
+        for (IPlugin other : pluginsInstalled.values())
+        {
+            PluginData otherPluginData = other.getPluginData();
+
+            if (Arrays.stream(otherPluginData.pluginDependencies)
+                    .anyMatch(data -> data.pluginId.equals(pluginData.pluginId)))
+            {
+                return true;
+            }
+        }
+
+        for (PluginData otherPluginData : pluginsRestartPending.values())
+        {
+            if (Arrays.stream(otherPluginData.pluginDependencies)
+                    .anyMatch(data -> data.pluginId.equals(pluginData.pluginId)))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public static List<Button> getLeftButtons()
     {
         List<Button> buttons = new ArrayList<>();
@@ -142,7 +171,7 @@ public class PluginLoader
         }
         return buttons;
     }
-    
+
     public static List<TreeItem<SettingsItem>> getSettingsTreeViews()
     {
         List<TreeItem<SettingsItem>> items = new ArrayList<>();
@@ -157,7 +186,7 @@ public class PluginLoader
 
         return items;
     }
-    
+
     public static List<Object> getRessourcesObjects()
     {
         List<Object> classes = new ArrayList<>();
@@ -177,17 +206,25 @@ public class PluginLoader
         }
         return pluginEntities;
     }
-    
+
+    ///  Installed, loaded in memory and in execution plugins
     public static Collection<IPlugin> getLoadedPlugins()
     {
         return pluginsLoaded.values();
     }
 
+    ///  Installed, loaded in memory but not in execution plugins
     public static Collection<IPlugin> getInstalledPlugins()
     {
         return pluginsInstalled.values();
     }
-
+    
+    ///  Installed but not yet loaded in memory plugins
+    public static Collection<PluginData> restartPendingPlugins()
+    {
+        return pluginsRestartPending.values();
+    }
+    
     public static void uninstallPlugin(PluginData pluginData)
     {
         pluginsInstalled.remove(pluginData.pluginId);
