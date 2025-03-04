@@ -14,6 +14,6 @@ async fn main() {
     let actions: Vec<&dyn Action> = vec![&java_jdk::DownloadJDKAction];
 
     for action in actions {
-        action.execute().await;
+        action.execute().await.expect("Failed to execute action");
     }
 }
