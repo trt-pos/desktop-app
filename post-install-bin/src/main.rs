@@ -4,6 +4,7 @@ use std::sync::LazyLock;
 
 mod error;
 mod java_jdk;
+mod shortcut;
 
 pub use error::Error;
 
@@ -22,7 +23,10 @@ trait Action {
 
 #[tokio::main]
 async fn main() {
-    let actions: Vec<&dyn Action> = vec![&java_jdk::DownloadJDKAction];
+    let actions: Vec<&dyn Action> = vec![
+        &java_jdk::DownloadJDKAction,
+        &shortcut::CreateShortcutAction
+    ];
 
     for action in actions {
         match action.execute().await {
