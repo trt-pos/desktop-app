@@ -81,7 +81,7 @@ class DatabaseUpdater
 
         statement.close();
 
-        if (oldVersion != newVersion)
+        if (oldVersion < newVersion)
         {
             try
             {
