@@ -116,4 +116,8 @@ public abstract class Controller<T extends Controller<T>>
         
         return fxmlLoader;
     }
+    
+    // TODO: Pre-compile FXML files using a custom compiler that writes into every controller a private subclass
+    //  called View that generated the node defined in the FXML file.
+    //  Also is possible to use https://github.com/Paullo612/mlfx but everything marked as @FXML will be public.
 }
