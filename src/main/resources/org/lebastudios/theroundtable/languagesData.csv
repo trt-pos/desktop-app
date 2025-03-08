@@ -49,3 +49,6 @@ setup.error.invalidname,Username must be at least 3 characters long,El nombre de
 setup.error.passwordmatch,Passwords do not match,Las contraseñas no coinciden
 word.over,Over,Sobre
 word.qty,Qty,Cant
+phrase.otherplugindepends,Other plugins need this one to work. Continue removing it?,Otros plugions necesitan de este para funcionar correctamente. ¿Continuar con la desinstalación?
+phrase.pluginsuninstall,You are about to uninstall a plugin. Are you sure about this?,Estás a punto de desinstalar un plugin. Deseas continuar?
+phrase.dependenciesnotsatisfied,Dependencies requirements not satisfied.,Las dependencias requeridas no están instaladas.

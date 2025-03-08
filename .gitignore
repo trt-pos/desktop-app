@@ -126,3 +126,5 @@ fabric.properties
 /plugins/
 .idea
 /output/
+.env
+*.iml

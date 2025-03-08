@@ -22,9 +22,11 @@
     </VBox>
 
     <IconButton onAction="#tryUninstallPlugin" fx:id="unistallButton" iconName="delete.png"/>
-    <Button minWidth="150" onAction="#installPlugin" fx:id="installButton" text="Install"/>
-    <Button minWidth="150" onAction="#updatePlugin" fx:id="updatePlugin" text="Update"/>
-    <Button minWidth="150" onAction="#restartApp" fx:id="restartAppButton" text="Restart App"
+    <Button minWidth="150" onAction="#installPlugin" fx:id="installButton" text="%word.install"/>
+    <Button minWidth="150" onAction="#updatePlugin" fx:id="updatePlugin" text="%word.update"/>
+    <Button minWidth="150" onAction="#restartApp" fx:id="restartAppButton" text="%word.restart"
         style="-fx-background-color: #17cc17; -fx-border-color: #1e1e1e; -fx-border-radius: 5"/>
-    <IconTextButton iconName="unavailable.png" iconSize="24" disable="true" text="Not Available" fx:id="notInstallableButton"/>
-</HBox>
+    <IconTextButton minWidth="150" iconName="unavailable.png" iconSize="24" 
+                    text="%phrase.notavailable" fx:id="notInstallableButton" 
+                    style="-fx-background-color: rgba(255,0,0,0.18); -fx-border-color: rgba(30,30,30,0.18); -fx-border-radius: 5"/>
+    </HBox>

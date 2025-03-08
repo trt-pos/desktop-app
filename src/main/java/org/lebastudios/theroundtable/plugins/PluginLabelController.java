@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.communications.ApiRequests;
@@ -16,6 +17,7 @@ import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 import org.lebastudios.theroundtable.ui.IconButton;
@@ -58,7 +60,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         pluginName.setText(pluginData.pluginName);
         pluginDescription.setText(pluginData.pluginDescription);
 
-        Tooltip tooltip = new Tooltip("Not all dependencies are satisfied");
+        Tooltip tooltip = new Tooltip(LangFileLoader.getTranslation("phrase.dependenciesnotsatisfied"));
+        tooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(notInstallableButton, tooltip);
 
         updateView();
@@ -117,11 +120,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         root.getChildren().remove(installButton);
         root.getChildren().add(loadingNode);
 
-        new Thread(() -> ApiRequests.updatePlugin(pluginData, () ->
-        {
-            PluginLoader.getPluginsRestartPending().put(pluginData.pluginId, pluginData);
-            onReloadLabelsRequest.invoke();
-        })).start();
+        updatePluginAsync();
     }
 
     @FXML
@@ -130,6 +129,11 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         root.getChildren().remove(updatePlugin);
         root.getChildren().add(loadingNode);
 
+        updatePluginAsync();
+    }
+
+    private void updatePluginAsync()
+    {
         new Thread(() -> ApiRequests.updatePlugin(pluginData, () ->
         {
             PluginLoader.getPluginsRestartPending().put(pluginData.pluginId, pluginData);
@@ -137,16 +141,22 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         })).start();
     }
 
+
     @FXML
     private void tryUninstallPlugin()
     {
         if (!PluginLoader.isDependencyOfOther(pluginData))
         {
-            unistallPlugin();
+            new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.pluginsuninstall"), result ->
+            {
+                if (!result) return;
+
+                unistallPlugin();
+            }).instantiate();
             return;
         }
 
-        new ConfirmationTextDialogController("Other plugins depend on this one", result ->
+        new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.otherplugindepends"), result ->
         {
             if (!result) return;
 

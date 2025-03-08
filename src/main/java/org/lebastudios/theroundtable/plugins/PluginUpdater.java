@@ -18,7 +18,7 @@ public class PluginUpdater
                 .compareTo(new Version(TheRoundTableApplication.getAppVersion())) > 0)
         {
             Logs.getInstance().log(
-                    Logs.LogType.INFO, "INFO: The plugin " + pluginData.pluginName
+                    Logs.LogType.INFO, "The plugin " + pluginData.pluginName
                             + " requires a newer version of The Round Table."
             );
             return false;
@@ -38,7 +38,7 @@ public class PluginUpdater
 
             if (pluginDependencyFound == null)
             {
-                Logs.getInstance().log(Logs.LogType.INFO, "INFO: The plugin " + pluginData.pluginName
+                Logs.getInstance().log(Logs.LogType.INFO, "The plugin " + pluginData.pluginName
                         + " requires the plugin " + pluginDependencyNeeded.pluginId + " to be installed."
                 );
                 return false;
@@ -47,7 +47,7 @@ public class PluginUpdater
             if (new Version(pluginDependencyFound.pluginVersion)
                     .compareTo(new Version(pluginDependencyNeeded.pluginVersion)) < 0)
             {
-                Logs.getInstance().log(Logs.LogType.INFO, "INFO: The plugin " + pluginData.pluginName
+                Logs.getInstance().log(Logs.LogType.INFO, "The plugin " + pluginData.pluginName
                         + " requires the plugin " + pluginDependencyNeeded.pluginId + " to be updated."
                 );
                 return false;
