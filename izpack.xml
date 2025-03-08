@@ -55,14 +55,6 @@
             <description>The launcher Rust bin</description>
             <file src="output/theroundtable-linux-x64/start" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>
-        <pack name="Uninstaller" required="no" os="unix">
-            <description>Uninstall script</description>
-            <file src="output/theroundtable-linux-x64/uninstall.sh" targetdir="${INSTALL_PATH}" override="true"/>
-        </pack>
-        <pack name="Shortcut" required="no" os="unix">
-            <description>The aplication shortcut</description>
-            <file src="output/theroundtable-linux-x64/theroundtable.desktop" targetdir="${INSTALL_PATH}" override="true"/>
-        </pack>
         <pack name="Linux post install" required="yes" os="unix">
             <description>Downloading JDK needed to execute the app</description>
             <file src="output/theroundtable-linux-x64/post-install-bin" targetdir="${INSTALL_PATH}" />
