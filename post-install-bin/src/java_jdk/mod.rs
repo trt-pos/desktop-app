@@ -1,4 +1,4 @@
-use crate::Action;
+use crate::{Action, INSTALLATION_DIR};
 use flate2::read::GzDecoder;
 use std::ops::Deref;
 use std::pin::Pin;
@@ -54,69 +54,59 @@ static RESOURCE_EXTENSION: LazyLock<String> = LazyLock::new(|| {
 pub struct DownloadJDKAction;
 
 impl Action for DownloadJDKAction {
+    fn action_name(&self) -> &'static str {
+        "Downloading and extracting JDK"
+    }
+
     fn execute(&self) -> Pin<Box<dyn Future<Output = Result<(), crate::Error>> + Send>> {
+        
         Box::pin(async {
             // Downloading the compressed JDK folder
             let url = JDK_DOWNLOAD_URL.deref();
-            let response = reqwest::get(url).await.expect("Failed to download JDK");
+            let response = reqwest::get(url).await?;
 
-            let bin_path = std::env::current_exe().expect("Failed to get current executable path");
+            let compressed_file_path = INSTALLATION_DIR.join(format!("jdk.{}", *RESOURCE_EXTENSION));
+            let mut file = File::create(&compressed_file_path).await?;
+            let content = response.bytes().await?;
 
-            let installation_dir = bin_path.parent().expect("Failed to get parent directory");
+            file.write_all(&content).await?;
 
-            let mut file =
-                File::create(installation_dir.join(format!("jdk.{}", &*RESOURCE_EXTENSION)))
-                    .await
-                    .expect("Failed to create file");
-            let content = response.bytes().await.expect("Failed to read response");
-
-            file.write_all(&content)
-                .await
-                .expect("Failed to write to file");
-
+            let file = std::fs::File::open(&compressed_file_path)?;
+            let output_path = INSTALLATION_DIR.join("jdk");
+            
             // Extracting the compressed JDK folder
             match RESOURCE_EXTENSION.deref().as_str() {
                 "zip" => {
-                    let file = std::fs::File::open(installation_dir.join("jdk.zip"))
-                        .expect("Failed to open file");
                     let reader = std::io::BufReader::new(file);
-                    let mut archive =
-                        zip::ZipArchive::new(reader).expect("Failed to open zip file");
-                    archive
-                        .extract(bin_path.join("jdk"))
-                        .expect("Failed to extract zip file");
+                    let mut archive = zip::ZipArchive::new(reader)?;
+                    archive.extract(&output_path)?;
                 }
                 "tar.gz" => {
-                    let file = std::fs::File::open(installation_dir.join("jdk.tar.gz"))
-                        .expect("Failed to open file");
                     let tar = GzDecoder::new(file);
                     let mut archive = tar::Archive::new(tar);
-                    archive
-                        .unpack(installation_dir.join("jdk"))
-                        .expect("Failed to unpack tar file");
+                    archive.unpack(&output_path)?;
                 }
-                _ => panic!("Unsupported extension: {}", &*RESOURCE_EXTENSION),
+                _ => panic!("Unsupported extension: {}", *RESOURCE_EXTENSION),
+            };
+
+            if let Err(e) = std::fs::remove_file(&compressed_file_path) {
+                eprintln!("Failed to remove the downloaded file after extracting its contents: {}", e);
             };
 
             // Moving the inner folder inside the decompressed folder to the parent folder and renaming it to "jdk"
-            let inner_folder = installation_dir
-                .join("jdk")
-                .read_dir()
-                .expect("Failed to read directory")
+            let inner_folder = output_path
+                .read_dir()?
                 .next()
-                .expect("Failed to get next entry")
-                .expect("Failed to get entry")
+                .expect("Failed to get next entry")?
                 .path();
-            std::fs::rename(&inner_folder, installation_dir.join("jdk_2"))
-                .expect("Failed to rename folder");
-            fs::remove_dir(installation_dir.join("jdk"))
-                .await
-                .expect("Failed to remove directory");
-            std::fs::rename(installation_dir.join("jdk_2"), installation_dir.join("jdk"))
-                .expect("Failed to rename folder");
+            
+            let tmp_path = INSTALLATION_DIR.join("tmp");
+            std::fs::rename(&inner_folder, &tmp_path)?;
+            
+            fs::remove_dir(&output_path).await?;
+            std::fs::rename(&tmp_path, &output_path)?;
 
             Ok(())
         })
-        
     }
 }
