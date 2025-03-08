@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.communications.LicenseValidator;
+import org.lebastudios.theroundtable.server.LicenseValidator;
 import org.lebastudios.theroundtable.config.data.AccountConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;

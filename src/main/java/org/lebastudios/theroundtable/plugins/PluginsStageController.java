@@ -10,9 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.communications.ApiRequests;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
+import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.LazyTab;
 import org.lebastudios.theroundtable.ui.StageBuilder;
@@ -42,7 +42,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
 
     private void instantiateAvailablePlugins()
     {
-        Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab("Search", ApiRequests.getPluginsDataAvailable());
+        Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab("Search", Plugins.getAllAvailablePluginsData());
 
         tabPane.getTabs().add(pluginTab);
     }
@@ -96,7 +96,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
                 list.setSpacing(5);
                 list.setPadding(new Insets(15, 0, 0, 0));
 
-                var pluginsData = ApiRequests.getPluginsDataAvailable();
+                var pluginsData = Plugins.getAllAvailablePluginsData();
 
                 if (pluginsData == null)
                 {

@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
-import org.lebastudios.theroundtable.communications.ApiRequests;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.config.data.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
@@ -20,6 +19,7 @@ import org.lebastudios.theroundtable.events.IEventMethod;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
+import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconTextButton;
 import org.lebastudios.theroundtable.ui.IconView;
@@ -89,9 +89,9 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
             new Thread(() ->
             {
-                if (ApiRequests.pluginNeedUpdate(pluginData))
+                if (Plugins.needsUpdate(pluginData))
                 {
-                    PluginData newVersionData = ApiRequests.getServerPluginData(pluginData.pluginId);
+                    PluginData newVersionData = Plugins.getAvailablePluginData(pluginData.pluginId);
 
                     Platform.runLater(() ->
                     {
@@ -120,7 +120,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         root.getChildren().remove(installButton);
         root.getChildren().add(loadingNode);
 
-        updatePluginAsync();
+        installPluginAsync();
     }
 
     @FXML
@@ -129,12 +129,12 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         root.getChildren().remove(updatePlugin);
         root.getChildren().add(loadingNode);
 
-        updatePluginAsync();
+        installPluginAsync();
     }
 
-    private void updatePluginAsync()
+    private void installPluginAsync()
     {
-        new Thread(() -> ApiRequests.updatePlugin(pluginData, () ->
+        new Thread(() -> Plugins.install(pluginData, () ->
         {
             PluginLoader.getPluginsRestartPending().put(pluginData.pluginId, pluginData);
             onReloadLabelsRequest.invoke();

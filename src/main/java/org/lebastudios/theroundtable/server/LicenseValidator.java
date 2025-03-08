@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.communications;
+package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
 import org.lebastudios.theroundtable.AppTask;
@@ -7,6 +7,7 @@ import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.server.requests.Licenses;
 import org.lebastudios.theroundtable.ui.TaskManager;
 
 import java.util.function.Consumer;
@@ -57,7 +58,7 @@ public class LicenseValidator
                 var license = new JSONFile<>(AccountConfigData.class).get().license;
 
                 updateMessage("Validating license...");
-                var validation = ApiRequests.isLicenseValid(license);
+                var validation = Licenses.isLicenseValid(license);
 
                 if (validation != null)
                 {
