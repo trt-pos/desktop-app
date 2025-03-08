@@ -58,6 +58,7 @@ public abstract class Controller<T extends Controller<T>>
         if (root != null) return;
 
         final var fxmlLoader = getFXMLLoader();
+        
         try
         {
             LangBundleLoader.loadLang(fxmlLoader, getBundleClass());
@@ -110,6 +111,9 @@ public abstract class Controller<T extends Controller<T>>
 
     public final FXMLLoader getFXMLLoader()
     {
-        return new FXMLLoader(getFXML());
+        var fxmlLoader = new FXMLLoader(getFXML());
+        fxmlLoader.setClassLoader(getClass().getClassLoader());
+        
+        return fxmlLoader;
     }
 }
