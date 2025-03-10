@@ -78,3 +78,37 @@ fn get_app_dir() -> String {
         .expect("Should be a valid string")
         .to_string()
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_rotate_log() {
+        let log_path = Path::new("test.log");
+        let rotated_log = Path::new("test.log.old");
+
+        let _ = fs::remove_file(log_path);
+        let _ = fs::remove_file(rotated_log);
+
+        let _ = fs::write(log_path, "Hello, World!");
+
+        rotate_log(log_path);
+
+        assert!(fs::metadata(log_path).is_ok());
+        assert!(fs::metadata(rotated_log).is_err());
+
+        let content = vec![0; MAX_LOG_SIZE as usize];
+        let _ = fs::write(log_path, content);
+        
+        rotate_log(log_path);
+
+        let _ = fs::write(log_path, "Hello, World!");
+        
+        assert!(fs::metadata(log_path).is_ok());
+        assert!(fs::metadata(rotated_log).is_ok());
+
+        let _ = fs::remove_file(log_path);
+        let _ = fs::remove_file(rotated_log);
+    }
+}
