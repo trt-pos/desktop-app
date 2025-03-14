@@ -11,25 +11,50 @@
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
-    
     <HBox alignment="CENTER_LEFT" spacing="5">
-        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasedir"/>
-        <Label style="-fx-font-style: italic" fx:id="databasesDirectory"/>
-        <IconButton iconSize="24" iconName="open-file.png" onAction="#selectDatabasesDirectory"/>
+        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.enableremotedb"/>
+        <CheckBox fx:id="enableRemoteDb"/>
     </HBox>
-    <HBox alignment="CENTER_LEFT" spacing="5">
-        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.activatebackups"/>
-        <CheckBox fx:id="enableBackups"/>
-    </HBox>    
-    <VBox fx:id="backupSection" spacing="15">
+    <VBox fx:id="localDbSection" spacing="5">
         <HBox alignment="CENTER_LEFT" spacing="5">
-            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasebackupdir"/>
-            <Label style="-fx-font-style: italic" fx:id="databasesBackupDirectory"/>
-            <IconButton iconSize="24" iconName="open-file.png" onAction="#selectDatabasesBackupDirectory"/>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasedir"/>
+            <Label style="-fx-font-style: italic" fx:id="databasesDirectory"/>
+            <IconButton iconSize="24" iconName="open-file.png" onAction="#selectDatabasesDirectory"/>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="5">
-            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.nummaxBackups"/>
-            <TextField prefWidth="50" fx:id="numMaxBackups"/>
+            <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.activatebackups"/>
+            <CheckBox fx:id="enableBackups"/>
+        </HBox>
+        <VBox fx:id="backupSection" spacing="15">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasebackupdir"/>
+                <Label style="-fx-font-style: italic" fx:id="databasesBackupDirectory"/>
+                <IconButton iconSize="24" iconName="open-file.png" onAction="#selectDatabasesBackupDirectory"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.nummaxBackups"/>
+                <TextField prefWidth="50" fx:id="numMaxBackups"/>
+            </HBox>
+        </VBox>
+    </VBox>
+    <VBox fx:id="remoteDbSection" spacing="5">
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <Label prefWidth="250" HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%word.namedb"/>
+            <TextField prefWidth="250" fx:id="remoteDbName"/>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <Label prefWidth="150" HBox.hgrow="SOMETIMES" maxWidth="Infinity" text="%word.host"/>
+            <TextField prefWidth="150" fx:id="remoteDbHost"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label prefWidth="150" HBox.hgrow="SOMETIMES" maxWidth="Infinity" text="%word.port"/>
+            <TextField prefWidth="150" fx:id="remoteDbPort"/>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <Label prefWidth="150" HBox.hgrow="SOMETIMES" maxWidth="Infinity" text="%word.user"/>
+            <TextField prefWidth="150" fx:id="remoteDbUser"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label prefWidth="150" HBox.hgrow="SOMETIMES" maxWidth="Infinity" text="%word.password"/>
+            <TextField prefWidth="150" fx:id="remoteDbPassword"/>
         </HBox>
     </VBox>
 </VBox>

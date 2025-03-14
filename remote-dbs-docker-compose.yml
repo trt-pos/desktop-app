@@ -1,0 +1,18 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_trt_remote_db
+    restart: always
+    environment:
+      MARIADB_USER: LOCAL_ADMIN
+      MARIADB_PASSWORD: "abc123."
+      MARIADB_DATABASE: establishment
+      MARIADB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "9000:3306"
+    networks:
+      - trt-net
+    
+networks:
+  trt-net:
+    driver: bridge

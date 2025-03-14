@@ -5,10 +5,6 @@
 <hibernate-configuration>
 
     <session-factory>
-        <!-- Configuración de la conexión JDBC -->
-        <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
-        <property name="hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
-        
         <!-- Habilitar la gestión automática del contexto de sesión de Hibernate -->
         <property name="hibernate.current_session_context_class">thread</property>
 

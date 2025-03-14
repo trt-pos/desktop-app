@@ -19,7 +19,7 @@ import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.database.BackupDB;
+import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
@@ -46,7 +46,7 @@ public class MainStageController extends PaneController<MainStageController>
     @Override
     protected void initialize()
     {
-        if (new JSONFile<>(DatabaseConfigData.class).get().enableBackups) BackupDB.getInstance().initialize();
+        if (new JSONFile<>(DatabaseConfigData.class).get().enableBackups) Database.getInstance().initBackup();
 
         pluginsButton.setDisable(!AccountManager.getInstance().isAccountAdmin());
         

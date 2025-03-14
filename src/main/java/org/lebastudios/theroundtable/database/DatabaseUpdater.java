@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.database;
 
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 
 import java.sql.Connection;
@@ -43,19 +44,25 @@ class DatabaseUpdater
             if (!exception.getMessage().contains("already exists")) throw exception;
         }
 
-        // Update the database version for the core
-        updateDatabaseFor(conn, new DesktopAppDatabaseUpdater());
-
-        // Update the database version for each plugin
-        for (var plugin : plugins)
+        try
         {
-            updateDatabaseFor(conn, plugin);
+            // Update the database version for the core
+            updateDatabaseFor(conn, new DesktopAppDatabaseUpdater());
+
+            // Update the database version for each plugin
+            for (var plugin : plugins)
+            {
+                updateDatabaseFor(conn, plugin);
+            }
         }
-        
-        conn.commit();
+        catch (Exception e)
+        {
+            Logs.getInstance().log(Logs.LogType.ERROR, "The database update couldn't be complited");
+            throw new RuntimeException(e);
+        }
     }
 
-    private void updateDatabaseFor(Connection conn, IDatabaseUpdater updater) throws SQLException
+    private void updateDatabaseFor(Connection conn, IDatabaseUpdater updater) throws Exception
     {
         var identifier = updater.getDatabaseIdentifier();
         var newVersion = updater.getDatabaseVersion();
@@ -85,6 +92,8 @@ class DatabaseUpdater
         {
             try
             {
+                conn.setAutoCommit(false);
+                
                 updater.updateDatabase(conn, oldVersion, newVersion);
 
                 sql = String.format(
@@ -94,13 +103,13 @@ class DatabaseUpdater
                         newVersion, identifier);
 
                 conn.createStatement().executeUpdate(sql);
+                conn.commit();
             }
-            catch (Exception e)
+            catch (SQLException e)
             {
-                System.err.println("Error updating database for " + identifier);
-                e.printStackTrace();
-
+                Logs.getInstance().log("Error updating database for " + identifier, e);
                 conn.rollback();
+                throw new Exception("Error updating the database");
             }
         }
     }
