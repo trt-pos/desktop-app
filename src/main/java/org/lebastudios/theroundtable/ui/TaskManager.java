@@ -55,4 +55,6 @@ public class TaskManager extends IconButton
         thread.setDaemon(daemon);
         thread.start();
     }
+    
+    // TODO: Create a task window that sows progress and block any interaction with the UI
 }
