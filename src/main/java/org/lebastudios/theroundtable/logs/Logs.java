@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.logs;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 public class Logs
 {
@@ -33,7 +32,9 @@ public class Logs
     {
         final var date = getDateString();
 
-        System.err.println(date + " [EXCEPTION] " + message + " (" + e.getMessage() + ")");
+        StackTraceElement element = e.getStackTrace()[0];
+        System.err.println(date + " [EXCEPTION] " + message + " (" + e.getMessage() + ") in "
+            + element.getClassName() + "." + element.getMethodName() + ": " + element.getLineNumber());
     }
 
     private static String getDateString()
