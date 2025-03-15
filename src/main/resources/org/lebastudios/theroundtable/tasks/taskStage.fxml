@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns="http://javafx.com/javafx" spacing="10"
+      xmlns:fx="http://javafx.com/fxml" alignment="CENTER" fx:id="root"
+      prefHeight="200.0" prefWidth="400.0">
+    <Label fx:id="taskNameLabel" />
+    <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="300.0" />
+    <Label fx:id="messageLabel" />
+    <Button fx:id="cancelButton" text="Cancel" visible="false"/>
+</VBox>

@@ -1,17 +1,20 @@
-package org.lebastudios.theroundtable.ui;
+package org.lebastudios.theroundtable.tasks;
 
 import javafx.collections.ListChangeListener;
 import lombok.Getter;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.TaskProgressView;
-import org.lebastudios.theroundtable.AppTask;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.ui.IconButton;
+import org.lebastudios.theroundtable.ui.IconView;
+
+import java.util.function.Consumer;
 
 public class TaskManager extends IconButton
 {
     @Getter private static TaskManager instance;
 
-    private final TaskProgressView<AppTask> taskProgressView;
+    private final TaskProgressView<Task<?>> taskProgressView;
 
     public TaskManager()
     {
@@ -27,7 +30,7 @@ public class TaskManager extends IconButton
         instance = this;
     }
 
-    private void onChanged(ListChangeListener.Change<? extends AppTask> c)
+    private void onChanged(ListChangeListener.Change<? extends Task<?>> c)
     {
         this.setDisable(taskProgressView.getTasks().isEmpty());
     }
@@ -42,12 +45,12 @@ public class TaskManager extends IconButton
         pop.show(this);
     }
 
-    public void startNewTaskWithProgressBar(AppTask task)
+    public void startNewBackgroundTask(Task<?> task)
     {
-        startNewTaskWithProgressBar(task, true);
+        startNewBackgroundTask(task, true);
     }
 
-    public void startNewTaskWithProgressBar(AppTask task, boolean daemon)
+    public void startNewBackgroundTask(Task<?> task, boolean daemon)
     {
         taskProgressView.getTasks().add(task);
 
@@ -55,6 +58,14 @@ public class TaskManager extends IconButton
         thread.setDaemon(daemon);
         thread.start();
     }
-    
-    // TODO: Create a task window that sows progress and block any interaction with the UI
+
+    public void startNewTask(Task<?> task)
+    {
+        startNewTask(task, true);
+    }
+
+    public void startNewTask(Task<?> task, boolean wait)
+    {
+        new TaskStageController(task).instantiate(wait);
+    }
 }

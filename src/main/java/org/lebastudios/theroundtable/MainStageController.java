@@ -23,6 +23,8 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
+import org.lebastudios.theroundtable.tasks.Task;
+import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
@@ -56,7 +58,7 @@ public class MainStageController extends PaneController<MainStageController>
         if (!PluginLoader.getHomeButtons().isEmpty())
         {
             Button homeButton = new IconButton("home.png");
-            homeButton.setOnAction(_ -> swapCentralPaneMainNode(new HomePaneController().getRoot()));
+            homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));
 
             rightButtons.getChildren().add(homeButton);
         }
@@ -91,19 +93,6 @@ public class MainStageController extends PaneController<MainStageController>
     private void openPluginsStage()
     {
         new PluginsStageController().instantiate();
-    }
-
-    @Deprecated
-    public void swapCentralPaneMainNode(Node newNode)
-    {
-        BorderPane root = (BorderPane) getRoot();
-        root.setCenter(newNode);
-    }
-
-    @Deprecated
-    public Node getCentralPaneMainNode()
-    {
-        return ((BorderPane) getRoot()).getCenter();
     }
 
     public void setCentralNode(Controller<?> controller)
@@ -149,9 +138,6 @@ public class MainStageController extends PaneController<MainStageController>
     @FXML
     private void closeSession(ActionEvent actionEvent)
     {
-        // TODO: Enable an option to let the admins decide if the users can close session without closing the cash 
-        //  register. Maybe use a checkbox in the User Account to mark this behaviour
-
         Stage stage = getStage();
 
         stage.hide();

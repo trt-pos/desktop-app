@@ -1,14 +1,14 @@
 package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
-import org.lebastudios.theroundtable.AppTask;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.config.data.AccountConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.server.requests.Licenses;
-import org.lebastudios.theroundtable.ui.TaskManager;
+import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,9 +45,9 @@ public class LicenseValidator
 
     public LicenseValidator() {}
 
-    public AppTask createValidatingLicenseTask()
+    public Task createValidatingLicenseTask()
     {
-        return new AppTask()
+        return new Task()
         {
             @Override
             protected Void call()
@@ -102,7 +102,7 @@ public class LicenseValidator
         accountData.get().license = license;
         accountData.save();
 
-        TaskManager.getInstance().startNewTaskWithProgressBar(createValidatingLicenseTask());
+        TaskManager.getInstance().startNewBackgroundTask(createValidatingLicenseTask());
     };
 
     private final Function<String, Boolean> licenseFormatValidator = license ->

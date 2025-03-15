@@ -1,10 +1,10 @@
 package org.lebastudios.theroundtable.communications;
 
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.AppTask;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.ui.TaskManager;
+import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +44,7 @@ public class FileDownloader
 
             if (!tempFile.exists()) tempFile.getParentFile().mkdirs();
 
-            var appTask = new AppTask("download.png")
+            var appTask = new Task<Void>("download.png")
             {
                 @SneakyThrows
                 @Override
@@ -86,7 +86,7 @@ public class FileDownloader
                 }
             };
             
-            TaskManager.getInstance().startNewTaskWithProgressBar(appTask, false);
+            TaskManager.getInstance().startNewBackgroundTask(appTask, false);
         }
         catch (IOException | InterruptedException e)
         {

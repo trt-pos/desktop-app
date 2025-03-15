@@ -75,6 +75,11 @@ public class StageBuilder
         stage.setResizable(resizeable);
         stage.initModality(modality);
 
+        if (modality == Modality.APPLICATION_MODAL) 
+        {
+            stage.setAlwaysOnTop(true);
+        }
+        
         stage.getIcons().add(ImageLoader.getIcon(iconName));
 
         if (stageConsumer != null) stageConsumer.accept(stage);

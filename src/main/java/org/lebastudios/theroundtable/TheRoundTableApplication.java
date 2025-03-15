@@ -15,8 +15,9 @@ import org.lebastudios.theroundtable.locale.AppLocale;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
-import org.lebastudios.theroundtable.ui.TaskManager;
+import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.updates.UpdateAppJar;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -101,7 +102,7 @@ public class TheRoundTableApplication extends Application
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
-            TaskManager.getInstance().startNewTaskWithProgressBar(createCheckingForUpdateTask());
+            TaskManager.getInstance().startNewBackgroundTask(createCheckingForUpdateTask());
         }
 
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->
@@ -116,9 +117,9 @@ public class TheRoundTableApplication extends Application
         });
     }
 
-    private AppTask createCheckingForUpdateTask()
+    private Task createCheckingForUpdateTask()
     {
-        return new AppTask()
+        return new Task()
         {
             @Override
             protected Void call()

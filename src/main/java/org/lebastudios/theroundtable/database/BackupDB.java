@@ -1,13 +1,13 @@
 package org.lebastudios.theroundtable.database;
 
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.AppTask;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.Zip;
 import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.ui.TaskManager;
+import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -67,12 +67,12 @@ class BackupDB
 
     public void realizeBackup()
     {
-        TaskManager.getInstance().startNewTaskWithProgressBar(creatingBackup());
+        TaskManager.getInstance().startNewBackgroundTask(creatingBackup());
     }
 
-    private AppTask creatingBackup()
+    private Task creatingBackup()
     {
-        return new AppTask()
+        return new Task()
         {
             @Override
             protected Void call()
