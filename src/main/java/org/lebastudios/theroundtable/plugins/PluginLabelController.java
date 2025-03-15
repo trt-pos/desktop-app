@@ -95,7 +95,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
                     Platform.runLater(() ->
                     {
-                        root.getChildren().add(PluginUpdater.areDependenciesInstalled(newVersionData)
+                        root.getChildren().add(PluginUpdater.hasDependenciesInstalled(newVersionData)
                                 ? updatePlugin
                                 : notInstallableButton
                         );
@@ -108,7 +108,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         }
 
         root.getChildren().add(
-                PluginUpdater.areDependenciesInstalled(this.pluginData)
+                PluginUpdater.hasDependenciesInstalled(this.pluginData)
                         ? installButton
                         : notInstallableButton
         );

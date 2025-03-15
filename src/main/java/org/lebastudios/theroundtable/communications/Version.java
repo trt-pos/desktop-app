@@ -86,6 +86,8 @@ public class Version implements Comparable<Version>
         return compareTo(o) == 0;
     }
     
+    public boolean hasSameMajor(Version o) { return major == o.major; }
+    
     @Override
     public int compareTo(Version o)
     {

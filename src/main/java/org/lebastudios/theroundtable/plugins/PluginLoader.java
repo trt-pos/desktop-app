@@ -67,7 +67,7 @@ public class PluginLoader
                 var pluginData = plugin.getPluginData();
 
                 if (pluginsLoaded.containsKey(pluginData.pluginId)) continue;
-                if (!canBePluginLoaded(plugin)) continue;
+                if (!PluginUpdater.hasDependenciesInstalled(plugin.getPluginData())) continue;
 
                 keepTryingToLoad = true;
                 loadPlugin(plugin);
@@ -94,6 +94,7 @@ public class PluginLoader
 
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean canBePluginLoaded(IPlugin plugin)
     {
         Version requiredCoreVersion = new Version(plugin.getPluginData().pluginRequiredCoreVersion);

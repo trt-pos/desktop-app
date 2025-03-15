@@ -8,14 +8,26 @@ import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PluginUpdater
+class PluginUpdater
 {
-    public static boolean areDependenciesInstalled(PluginData pluginData)
+    public static boolean hasDependenciesInstalled(PluginData pluginData)
     {
         if (pluginData == null) return false;
 
-        if (new Version(pluginData.pluginRequiredCoreVersion)
-                .compareTo(new Version(TheRoundTableApplication.getAppVersion())) > 0)
+        final Version requiredCoreVersion = new Version(pluginData.pluginRequiredCoreVersion);
+        final Version actualCoreVersion = new Version(TheRoundTableApplication.getAppVersion());
+
+        if (!requiredCoreVersion.hasSameMajor(actualCoreVersion))
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.INFO,
+                    "The plugin " + pluginData.pluginName
+                            + " requires a different major version of The Round Table."
+            );
+            return false;
+        }
+
+        if (actualCoreVersion.isLessThan(requiredCoreVersion))
         {
             Logs.getInstance().log(
                     Logs.LogType.INFO, "The plugin " + pluginData.pluginName
@@ -44,8 +56,21 @@ public class PluginUpdater
                 return false;
             }
 
-            if (new Version(pluginDependencyFound.pluginVersion)
-                    .compareTo(new Version(pluginDependencyNeeded.pluginVersion)) < 0)
+
+            final var installedDependencyVersion = new Version(pluginDependencyFound.pluginVersion);
+            final var neededDependencyVersion = new Version(pluginDependencyNeeded.pluginVersion);
+
+            if (!installedDependencyVersion.hasSameMajor(neededDependencyVersion))
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.INFO,
+                        "The plugin " + pluginData.pluginName
+                                + " requires a different major version of the plugin " + pluginDependencyNeeded.pluginId
+                );
+                return false;
+            }
+
+            if (installedDependencyVersion.isLessThan(neededDependencyVersion))
             {
                 Logs.getInstance().log(Logs.LogType.INFO, "The plugin " + pluginData.pluginName
                         + " requires the plugin " + pluginDependencyNeeded.pluginId + " to be updated."
