@@ -20,48 +20,7 @@ class DatabaseMigrator
             from.setAutoCommit(false);
             to.setAutoCommit(false);
 
-            DatabaseMetaData fromMetadata = from.getMetaData();
-            DatabaseMetaData toMetadata = to.getMetaData();
-
-            List<Table> fromTables = Table.introspectTables(fromMetadata);
-            List<Table> toTables = Table.introspectTables(toMetadata);
-
-            if (toMetadata.getDatabaseProductName().equals("MariaDB")) 
-            {
-                to.createStatement().execute("SET FOREIGN_KEY_CHECKS=0");
-            }
-            
-            for (Table table : fromTables)
-            {
-                // This table gets created and updated when initializing hibernate
-                if (table.name.equals("core_database_version")) continue;
-
-                if (!toTables.contains(table))
-                {
-                    Logs.getInstance().log(Logs.LogType.INFO,
-                            "Table " + table.name + " not found in destination database, maybe a plugin isn't " +
-                                    "installed"
-                    );
-                    continue;
-                }
-
-                try (PreparedStatement select = createSelectStatementForTable(table);
-                     ResultSet rs = select.executeQuery();
-                     PreparedStatement insert = createInsertStatementForTable(table))
-                {
-                    while (rs.next())
-                    {
-                        for (int i = 0; i < table.columns.size(); i++)
-                        {
-                            insert.setObject(i + 1, rs.getObject(i + 1));
-                        }
-
-                        insert.addBatch();
-                    }
-
-                    insert.executeBatch();
-                }
-            }
+            new CoreMigrationStrategy().migrate();
 
             from.commit();
             to.commit();
@@ -121,6 +80,16 @@ class DatabaseMigrator
         return from.prepareStatement(preparedSelect);
     }
 
+    private static boolean isTableEmpty(String tableName, Connection conn) throws SQLException
+    {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select count(*) from " + tableName))
+        {
+            rs.next();
+            return rs.getInt(1) == 0;
+        }
+    }
+    
     private record Table(String name, List<String> columns)
     {
         private static final List<String> ignoredMariaDbTables = List.of(
@@ -129,11 +98,11 @@ class DatabaseMigrator
                 "session_status"
         );
 
-        public static List<Table> introspectTables(DatabaseMetaData metadata) throws SQLException
+        public static List<Table> introspectTables(DatabaseMetaData metadata, String tableNamePattern) throws SQLException
         {
             List<Table> tables = new ArrayList<>();
 
-            try (ResultSet rs = metadata.getTables(null, null, "%", new String[]{"TABLE"}))
+            try (ResultSet rs = metadata.getTables(null, null, tableNamePattern, new String[]{"TABLE"}))
             {
                 while (rs.next())
                 {
@@ -180,6 +149,54 @@ class DatabaseMigrator
         public int hashCode()
         {
             return name.hashCode();
+        }
+    }
+    
+    private interface IMigratorStrategy
+    {
+        void migrate() throws SQLException;
+    }
+
+    private class CoreMigrationStrategy implements IMigratorStrategy
+    {
+        @Override
+        public void migrate() throws SQLException
+        {
+            DatabaseMetaData fromMetadata = from.getMetaData();
+            DatabaseMetaData toMetadata = to.getMetaData();
+
+            List<Table> fromTables = Table.introspectTables(fromMetadata, "core_%");
+
+            if (toMetadata.getDatabaseProductName().equals("MariaDB"))
+            {
+                to.createStatement().execute("SET FOREIGN_KEY_CHECKS = 0");
+            }
+
+            for (Table table : fromTables)
+            {
+                // This table gets created and updated when initializing hibernate
+                if (!isTableEmpty(table.name, to)) continue;
+
+                try (PreparedStatement select = createSelectStatementForTable(table);
+                     ResultSet rs = select.executeQuery();
+                     PreparedStatement insert = createInsertStatementForTable(table))
+                {
+                    while (rs.next())
+                    {
+                        for (int i = 0; i < table.columns.size(); i++)
+                        {
+                            insert.setObject(i + 1, rs.getObject(i + 1));
+                        }
+
+                        insert.execute();
+                    }
+                }
+            }
+
+            if (toMetadata.getDatabaseProductName().equals("MariaDB"))
+            {
+                to.createStatement().execute("SET FOREIGN_KEY_CHECKS = 1");
+            }
         }
     }
 }
