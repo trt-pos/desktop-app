@@ -7,7 +7,6 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.database.IDatabaseUpdater;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
 import java.io.File;

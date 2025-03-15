@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable.plugins;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 
 import java.util.List;
 import java.util.stream.Collectors;

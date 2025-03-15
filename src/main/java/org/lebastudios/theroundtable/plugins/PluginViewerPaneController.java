@@ -8,8 +8,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
-import org.lebastudios.theroundtable.plugins.pluginData.PluginDependency;
 import org.lebastudios.theroundtable.ui.IconView;
 
 public class PluginViewerPaneController extends PaneController<PluginViewerPaneController>

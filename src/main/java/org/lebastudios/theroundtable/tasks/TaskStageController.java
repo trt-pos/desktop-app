@@ -4,45 +4,34 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.ui.LoadingPaneController;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 class TaskStageController extends StageController<TaskStageController>
 {
-    @FXML private Label taskNameLabel;
+    @FXML private Label taskTitleLabel;
     @FXML private ProgressBar progressBar;
     @FXML private Label messageLabel;
     @FXML private Button cancelButton;
     
     private final Task<?> task;
-    private final boolean cancelable;
 
-    public TaskStageController(Task<?> task, boolean cancelable)
-    {
-        this.task = task;
-        this.cancelable = cancelable;
-    }
-    
     public TaskStageController(Task<?> task)
     {
-        this(task, false);
+        this.task = task;
     }
 
     @Override
     @FXML
     protected void initialize()
     {
-        taskNameLabel.setText(task.getTaskName());
-        
-        cancelButton.setVisible(cancelable);
+        cancelButton.setVisible(task.cancelable);
 
         cancelButton.setOnAction(_ -> task.cancel());
-
+        
         task.progressProperty().addListener((_, _, newValue) ->
         {
             progressBar.setProgress(newValue.doubleValue());
@@ -53,10 +42,17 @@ class TaskStageController extends StageController<TaskStageController>
             messageLabel.setText(newValue);
         });
 
+        task.titleProperty().addListener((_, _, newValue) ->
+        {
+            if (newValue != null)
+            {
+                taskTitleLabel.setText(newValue);
+            }
+        });
+        
+        // TODO: The task creator maybe needs control over this 3 events
         task.setOnSucceeded(_ -> close());
-
         task.setOnFailed(_ -> close());
-
         task.setOnCancelled(_ -> close());
 
         new Thread(task).start();

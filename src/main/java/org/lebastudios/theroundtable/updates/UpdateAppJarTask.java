@@ -5,10 +5,12 @@ import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.server.requests.Updates;
+import org.lebastudios.theroundtable.tasks.Task;
 
-public class UpdateAppJar
+public class UpdateAppJarTask extends Task<Void>
 {
-    public void update()
+    @Override
+    protected Void call() throws Exception
     {
         if (Updates.isUpdateAvailable())
         {
@@ -22,5 +24,7 @@ public class UpdateAppJar
                     }
             ).instantiate());
         }
+        
+        return null;
     }
 }

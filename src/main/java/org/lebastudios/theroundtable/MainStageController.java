@@ -23,17 +23,15 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
-import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
 
-import java.net.URL;
-
 public class MainStageController extends PaneController<MainStageController>
 {
     @Getter private static MainStageController instance;
+    @FXML private IconButton openTasksPopupButton;
     @FXML private IconButton pluginsButton;
     @FXML private VBox leftButtons;
     @FXML private VBox rightButtons;
@@ -62,24 +60,6 @@ public class MainStageController extends PaneController<MainStageController>
 
             rightButtons.getChildren().add(homeButton);
         }
-    }
-
-    @Override
-    public Class<?> getBundleClass()
-    {
-        return Launcher.class;
-    }
-
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return MainStageController.class.getResource("mainStage.fxml");
     }
 
     @SneakyThrows
@@ -134,6 +114,12 @@ public class MainStageController extends PaneController<MainStageController>
                 .show();
     }
 
+    @FXML
+    private void openTasksPopup()
+    {
+        TaskManager.getInstance().getTasksPopOver().show(openTasksPopupButton);
+    }
+    
     @SneakyThrows
     @FXML
     private void closeSession(ActionEvent actionEvent)
@@ -149,5 +135,17 @@ public class MainStageController extends PaneController<MainStageController>
         stage.setScene(new SceneBuilder(new MainStageController().getParent()).build());
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
         stage.show();
+    }
+
+    @Override
+    public Class<?> getBundleClass()
+    {
+        return Launcher.class;
+    }
+
+    @Override
+    public boolean hasFXMLControllerDefined()
+    {
+        return true;
     }
 }

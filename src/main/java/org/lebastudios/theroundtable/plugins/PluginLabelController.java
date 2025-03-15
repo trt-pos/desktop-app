@@ -18,7 +18,6 @@ import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.pluginData.PluginData;
 import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconTextButton;

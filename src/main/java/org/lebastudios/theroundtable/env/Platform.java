@@ -2,6 +2,8 @@ package org.lebastudios.theroundtable.env;
 
 import lombok.Getter;
 
+import java.io.File;
+
 public class Platform
 {
     @Getter private static final PlatformType platformType = detectPlatformType();
@@ -25,5 +27,10 @@ public class Platform
         if (os.contains("droid")) return PlatformType.ANDROID;
         
         return PlatformType.UNKNOWN;
+    }
+    
+    public static File getTempDir()
+    {
+        return new File(System.getProperty("java.io.tmpdir"));
     }
 }

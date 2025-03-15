@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
-<?import org.lebastudios.theroundtable.tasks.TaskManager?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" prefHeight="720.0"
             prefWidth="1080.0" minHeight="360"
             minWidth="480" xmlns="http://javafx.com/javafx/17.0.2-ea"
@@ -23,7 +22,7 @@
                 <padding>
                     <Insets top="5" right="5" bottom="5" left="5"/>
                 </padding>
-                <TaskManager/>
+                <IconButton onAction="#openTasksPopup" iconName="task.png" fx:id="openTasksPopupButton"/>
                 <IconButton onAction="#closeSession" iconName="close-session.png" />
             </VBox>
         </VBox>

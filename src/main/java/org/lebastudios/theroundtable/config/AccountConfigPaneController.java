@@ -8,7 +8,6 @@ import org.lebastudios.theroundtable.server.LicenseValidator;
 import org.lebastudios.theroundtable.config.data.AccountConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
-import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.net.URL;
 import java.util.function.Consumer;
@@ -34,10 +33,7 @@ public class AccountConfigPaneController extends SettingsPaneController
         accountData.get().license = licenseId.getText();
         accountData.save();
 
-        TaskManager.getInstance().startNewBackgroundTask(
-                new LicenseValidator(onLicenseValidated)
-                        .createValidatingLicenseTask()
-        );
+        new LicenseValidator(onLicenseValidated).execute();
     }
 
     private final Consumer<Boolean> onLicenseValidated = validation ->

@@ -1,20 +1,26 @@
 package org.lebastudios.theroundtable.tasks;
 
+import javafx.concurrent.Worker;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.function.Consumer;
 
 public abstract class Task<T> extends javafx.concurrent.Task<T>
 {
     @Getter private final String iconName;
-    @Getter @Setter private String taskName = "";
     private Task<?> rootTask;
+    boolean cancelable;
 
     public Task(String iconName, Consumer<T> onTaskComplete)
     {
         this.iconName = iconName;
-        this.setOnSucceeded(_ -> onTaskComplete.accept(this.getValue()));
+        this.stateProperty().addListener((_, _, newValue) ->
+        {
+            if (newValue == Worker.State.SUCCEEDED)
+            {
+                onTaskComplete.accept(this.getValue());
+            }
+        });
     }
     
     public Task(String iconName)
@@ -27,7 +33,7 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
         this("task.png");
     }
     
-    protected void addAndExecuteTask(Task<?> task)
+    protected void addTask(Task<?> task)
     {
         Task<?> rootTask = this.rootTask == null ? this : this.rootTask;
         task.rootTask = rootTask;
@@ -41,5 +47,25 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
         });
         
         task.run();
+    }
+
+    public void execute(boolean wait)
+    {
+        TaskManager.getInstance().startNewTask(this, wait);
+    }
+    
+    public void execute()
+    {
+        execute(true);
+    }
+
+    public void executeInBackGround(boolean daemon)
+    {
+        TaskManager.getInstance().startNewBackgroundTask(this, daemon);
+    }
+    
+    public void executeInBackGround()
+    {
+        executeInBackGround(false);
     }
 }

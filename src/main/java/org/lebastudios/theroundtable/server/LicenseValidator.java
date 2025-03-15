@@ -8,12 +8,11 @@ import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.server.requests.Licenses;
-import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class LicenseValidator
+public class LicenseValidator extends Task<Void>
 {
     private static int tries = 0;
 
@@ -45,47 +44,41 @@ public class LicenseValidator
 
     public LicenseValidator() {}
 
-    public Task createValidatingLicenseTask()
+    @Override
+    protected Void call() throws Exception
     {
-        return new Task()
+        tries++;
+
+        updateMessage("Reading license...");
+        var license = new JSONFile<>(AccountConfigData.class).get().license;
+
+        updateMessage("Validating license...");
+        var validation = Licenses.isLicenseValid(license);
+
+        if (validation != null)
         {
-            @Override
-            protected Void call()
+            computeResult.accept(validation);
+        }
+        else
+        {
+            if (license == null || license.isEmpty())
             {
-                tries++;
-
-                updateMessage("Reading license...");
-                var license = new JSONFile<>(AccountConfigData.class).get().license;
-
-                updateMessage("Validating license...");
-                var validation = Licenses.isLicenseValid(license);
-
-                if (validation != null)
+                Platform.runLater(() ->
                 {
-                    computeResult.accept(validation);
-                }
-                else
-                {
-                    if (license == null || license.isEmpty())
-                    {
-                        Platform.runLater(() ->
-                        {
-                            new InformationTextDialogController(
-                                    "An error ocurred while validating your license. " +
-                                            "Check your internet connection and try again."
-                            ).instantiate(true);
+                    new InformationTextDialogController(
+                            "An error ocurred while validating your license. " +
+                                    "Check your internet connection and try again."
+                    ).instantiate(true);
 
-                            AppLifeCicleEvents.OnAppClose.invoke(null);
-                            Platform.exit();
-                        });
-
-                        return null;
-                    }
-                }
+                    AppLifeCicleEvents.OnAppClose.invoke(null);
+                    Platform.exit();
+                });
 
                 return null;
             }
-        };
+        }
+
+        return null;
     }
 
     private final Consumer<String> onLicenseIntroduced = license ->
@@ -102,7 +95,7 @@ public class LicenseValidator
         accountData.get().license = license;
         accountData.save();
 
-        TaskManager.getInstance().startNewBackgroundTask(createValidatingLicenseTask());
+        this.execute();
     };
 
     private final Function<String, Boolean> licenseFormatValidator = license ->

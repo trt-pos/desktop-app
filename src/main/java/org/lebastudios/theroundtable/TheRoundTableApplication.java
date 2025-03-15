@@ -18,7 +18,7 @@ import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
 import org.lebastudios.theroundtable.tasks.TaskManager;
-import org.lebastudios.theroundtable.updates.UpdateAppJar;
+import org.lebastudios.theroundtable.updates.UpdateAppJarTask;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -49,8 +49,6 @@ public class TheRoundTableApplication extends Application
 
                     if (node.getNodeName().equals("version")) return node.getTextContent();
                 }
-
-                return "0";
             }
             catch (Exception _) {}
         }
@@ -66,8 +64,8 @@ public class TheRoundTableApplication extends Application
             }
             catch (Exception _) {}
         }
-        
-        return "2.5.0";
+
+        return "0";
     }
 
     public static String getUserDirectory()
@@ -102,7 +100,7 @@ public class TheRoundTableApplication extends Application
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
-            TaskManager.getInstance().startNewBackgroundTask(createCheckingForUpdateTask());
+            new UpdateAppJarTask().executeInBackGround();
         }
 
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->
@@ -117,19 +115,4 @@ public class TheRoundTableApplication extends Application
         });
     }
 
-    private Task createCheckingForUpdateTask()
-    {
-        return new Task()
-        {
-            @Override
-            protected Void call()
-            {
-                updateMessage("Checking for updates...");
-
-                new UpdateAppJar().update();
-
-                return null;
-            }
-        };
-    }
 }

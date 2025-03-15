@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.plugins.pluginData;
+package org.lebastudios.theroundtable.plugins;
 
 import java.util.Objects;
 
