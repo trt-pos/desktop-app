@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.database;
 
 import org.hibernate.Session;
+import org.lebastudios.theroundtable.tasks.Task;
 
 import java.sql.Connection;
 import java.util.function.Consumer;
@@ -19,21 +20,21 @@ public class Database
         return instance;
     }
 
-    public static void init()
+    public Task<Void> initTask()
     {
-        HibernateManager.getInstance().init();
+        return HibernateManager.getInstance().initTask();
     }
 
-    public void reloadDatabase()
+    public Task<Void> reloadTask()
     {
-        HibernateManager.getInstance().reload();
+        return HibernateManager.getInstance().reloadTask();
     }
 
     public void initBackup()
     {
         BackupDB.getInstance().initialize();
     }
-    
+
     public void stopBackup()
     {
         BackupDB.getInstance().stop();

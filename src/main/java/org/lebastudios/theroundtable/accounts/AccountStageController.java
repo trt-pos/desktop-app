@@ -17,7 +17,7 @@ import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.ui.LoadingPaneController;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.net.URL;
@@ -33,21 +33,30 @@ public class AccountStageController extends StageController<AccountStageControll
 
     private Account accountSelected;
 
-    @FXML @Override protected void initialize()
+    @FXML
+    @Override
+    protected void initialize()
     {
-        root.setCenter(new LoadingPaneController().getRoot());
-        new Thread(() ->
+        new Task<Void>()
         {
-            Database.init();
-            Database.getInstance().connectQuery(session ->
+            @Override
+            protected Void call() throws Exception
             {
-                List<Account> accounts = session.createQuery("from Account", Account.class).list();
+                updateTitle("Loading users");
+                executeSubtask(Database.getInstance().initTask());
 
-                accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
-            });
+                Database.getInstance().connectQuery(session ->
+                {
+                    List<Account> accounts = session.createQuery("from Account", Account.class).list();
 
-            Platform.runLater(() -> root.setCenter(accountsBox));
-        }).start();
+                    accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
+                });
+                
+                return null;
+            }
+        }.execute(true);
+        
+        Platform.runLater(() -> root.setCenter(accountsBox));
     }
 
     @SneakyThrows
@@ -101,12 +110,12 @@ public class AccountStageController extends StageController<AccountStageControll
     }
 
     @Override
-    protected void customizeStageBuilder(StageBuilder stageBuilder) 
+    protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setStageConsumer(stage -> stage.setOnCloseRequest(e ->
         {
             AppLifeCicleEvents.OnAppCloseRequest.invoke(e);
-            
+
             if (!e.isConsumed())
             {
                 AppLifeCicleEvents.OnAppClose.invoke(e);

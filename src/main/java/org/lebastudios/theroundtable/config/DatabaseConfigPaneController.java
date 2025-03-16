@@ -122,14 +122,14 @@ public class DatabaseConfigPaneController extends SettingsPaneController
             // Reload should happend first so the plugins can create the db structure in the new database
             if (!data.get().getJdbcUrl().equals(oldConf.get().getJdbcUrl())) 
             {
-                Database.getInstance().reloadDatabase();
+                Database.getInstance().reloadTask().execute(true);
 
                 final Exception migrationError = Database.getInstance().migrateTables(oldDbConnection, newDbConnection);
                 if (migrationError != null)
                 {
                     new InformationTextDialogController("Migration failed\n" + migrationError).instantiate();
                     oldConf.save(); // If the migration failed, we roll back the configuration and reload the db connections
-                    Database.getInstance().reloadDatabase();
+                    Database.getInstance().reloadTask().execute(true);
                     return;
                 }
             }
@@ -146,7 +146,7 @@ public class DatabaseConfigPaneController extends SettingsPaneController
         catch (Exception e)
         {
             oldConf.save();
-            Database.getInstance().reloadDatabase();
+            Database.getInstance().reloadTask().execute(true);
             Logs.getInstance().log("Couldn't validate the new db conn string", e);
 
             UIEffects.shakeNode(data.get().enableRemoteDb
@@ -208,7 +208,7 @@ public class DatabaseConfigPaneController extends SettingsPaneController
             }
             catch (Exception ignore) {}
 
-            Database.getInstance().reloadDatabase();
+            Database.getInstance().reloadTask().execute(true);
         }
     }
 

@@ -43,8 +43,7 @@ public class AccountSetupPaneController extends SetupPaneController
         Account account = new Account(usernameField.getText(), 
                 LocalPasswordValidator.hashPassword(passwordField.getText()), 
                 Account.AccountType.ROOT);
-
-        Database.init();
+        
         Database.getInstance().connectTransaction(session -> session.persist(account));
     }
 

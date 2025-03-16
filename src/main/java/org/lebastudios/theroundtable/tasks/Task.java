@@ -2,7 +2,9 @@ package org.lebastudios.theroundtable.tasks;
 
 import javafx.concurrent.Worker;
 import lombok.Getter;
+import org.lebastudios.theroundtable.logs.Logs;
 
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public abstract class Task<T> extends javafx.concurrent.Task<T>
@@ -11,21 +13,9 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     private Task<?> rootTask;
     boolean cancelable;
 
-    public Task(String iconName, Consumer<T> onTaskComplete)
-    {
-        this.iconName = iconName;
-        this.stateProperty().addListener((_, _, newValue) ->
-        {
-            if (newValue == Worker.State.SUCCEEDED)
-            {
-                onTaskComplete.accept(this.getValue());
-            }
-        });
-    }
-    
     public Task(String iconName)
     {
-        this(iconName, _ -> {});
+        this.iconName = iconName;
     }
 
     public Task()
@@ -33,27 +23,23 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
         this("task.png");
     }
     
-    protected void addTask(Task<?> task)
+    public Task<T> setCancelable(boolean cancelable)
     {
-        Task<?> rootTask = this.rootTask == null ? this : this.rootTask;
-        task.rootTask = rootTask;
-        
-        task.messageProperty().addListener((_, _, newValue) -> {
-            rootTask.updateMessage(newValue);
-        });
-        
-        task.progressProperty().addListener((_, _, newValue) -> {
-            rootTask.updateProgress(newValue.doubleValue(), 1);
-        });
-        
-        task.run();
+        this.cancelable = cancelable;
+        return this;
     }
-
+    
+    public Task<T> setOnTaskComplete(Consumer<T> onTaskComplete)
+    {
+        this.setOnSucceeded((_) -> onTaskComplete.accept(this.getValue()));
+        return this;
+    }
+    
     public void execute(boolean wait)
     {
         TaskManager.getInstance().startNewTask(this, wait);
     }
-    
+
     public void execute()
     {
         execute(true);
@@ -63,9 +49,34 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     {
         TaskManager.getInstance().startNewBackgroundTask(this, daemon);
     }
-    
+
     public void executeInBackGround()
     {
         executeInBackGround(false);
+    }
+
+    protected <R> R executeSubtask(Task<R> task)
+    {
+        Task<?> rootTask = this.rootTask == null ? this : this.rootTask;
+        task.rootTask = rootTask;
+
+        task.messageProperty().addListener((_, _, newValue) -> {
+            rootTask.updateMessage(newValue);
+        });
+
+        task.progressProperty().addListener((_, _, newValue) -> {
+            rootTask.updateProgress(newValue.doubleValue(), 1);
+        });
+
+        try
+        {
+            task.run();
+            return task.get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            Logs.getInstance().log("Error executing subtask " + task.getTitle(), e);
+            return null;
+        }
     }
 }

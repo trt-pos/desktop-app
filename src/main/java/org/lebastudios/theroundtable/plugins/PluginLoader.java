@@ -73,7 +73,7 @@ public class PluginLoader
             }
         }
 
-        Database.getInstance().reloadDatabase();
+        Database.getInstance().reloadTask().execute(true);
     }
 
     public static void loadPlugin(IPlugin plugin)

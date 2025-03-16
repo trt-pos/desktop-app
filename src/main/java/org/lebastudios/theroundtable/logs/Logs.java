@@ -28,7 +28,7 @@ public class Logs
         }
     }
     
-    public void log(String message, Exception e)
+    public void log(String message, Throwable e)
     {
         final var date = getDateString();
 

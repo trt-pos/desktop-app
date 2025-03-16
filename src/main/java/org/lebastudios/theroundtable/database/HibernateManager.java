@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.database;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
@@ -12,9 +13,12 @@ import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.tasks.Task;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,7 +28,7 @@ class HibernateManager
     private static HibernateManager instance;
 
     private SessionFactory sessionFactory;
-    
+
     public static HibernateManager getInstance()
     {
         if (instance == null) instance = new HibernateManager();
@@ -33,75 +37,15 @@ class HibernateManager
     }
 
     private HibernateManager() {}
-
-    public void init()
+    
+    public Task<Void> initTask()
     {
-        if (getInstance().sessionFactory != null) return;
-
-        getInstance().sessionFactory = buildSessionFactory();
-        DatabaseEvents.onDatabaseInit.invoke();
-
-        AppLifeCicleEvents.OnAppClose.addListener((_) ->
-        {
-            DatabaseEvents.onDatabaseClose.invoke();
-            getInstance().sessionFactory.close();
-        });
+        return new InitDatabaseTask();
     }
     
-    public void reload()
+    public Task<Void> reloadTask()
     {
-        DatabaseEvents.onDatabaseClose.invoke();
-        sessionFactory.close();
-
-        sessionFactory = buildSessionFactory();
-        DatabaseEvents.onDatabaseInit.invoke();
-    }
-    
-    private SessionFactory buildSessionFactory()
-    {
-        DatabaseConfigData databaseConfigData = new JSONFile<>(DatabaseConfigData.class).get();
-
-        if (!prepareDatabaseForHibernate(databaseConfigData)) return null;
-
-        try
-        {
-            var config = databaseConfigData.getHibernateConf();
-
-            config.addAnnotatedClass(Account.class)
-                    .addAnnotatedClass(DatabaseVersion.class);
-
-            // Loading all the plugin entities to the Hibernate configuration from the Plugins
-            PluginLoader.getPluginEntities().forEach(config::addAnnotatedClass);
-
-            // Adding the plugin ClassLoader to the Hibernate configuration
-            StandardServiceRegistry serviceRegistry =
-                    new StandardServiceRegistryBuilder(
-                            new BootstrapServiceRegistryBuilder().applyClassLoader(PluginLoader.getPluginsClassLoader())
-                                    .build())
-                            .applySettings(config.getProperties())
-                            .build();
-
-            return config.buildSessionFactory(serviceRegistry);
-        }
-        catch (Exception ex)
-        {
-            Logs.getInstance().log("SessionFactory creation failed.", ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    private boolean prepareDatabaseForHibernate(DatabaseConfigData databaseConfigData)
-    {
-        try (Connection conn = databaseConfigData.getConnection())
-        {
-            DatabaseUpdater.getInstance().callToUpdate(conn);
-            return true;
-        }
-        catch (SQLException e)
-        {
-            Logs.getInstance().log("Database update failed.", e);
-            return false;
-        }
+        return new ReloadDatabaseTask();
     }
     
     public boolean connectTransaction(Consumer<Session> action)
@@ -151,6 +95,206 @@ class HibernateManager
         {
             Logs.getInstance().log("Hibernate query failed.", e);
             return null;
+        }
+    }
+    
+    private class InitDatabaseTask extends Task<Void>
+    {
+        @Override
+        protected Void call() throws Exception
+        {
+            if (sessionFactory != null) return null;
+
+            sessionFactory = executeSubtask(new BuildSessionFactoryTask());
+            DatabaseEvents.onDatabaseInit.invoke();
+
+            AppLifeCicleEvents.OnAppClose.addListener((_) ->
+            {
+                DatabaseEvents.onDatabaseClose.invoke();
+                sessionFactory.close();
+            });
+            
+            return null;
+        }
+    }
+    
+    private class ReloadDatabaseTask extends Task<Void>
+    {
+        @Override
+        protected Void call() throws Exception
+        {
+            updateTitle("Reloading database");
+            
+            updateMessage("Closing database");
+            DatabaseEvents.onDatabaseClose.invoke();
+            sessionFactory.close();
+            updateProgress(0.5, 1);
+            
+            updateMessage("Starting database");
+            sessionFactory = executeSubtask(new BuildSessionFactoryTask());
+            DatabaseEvents.onDatabaseInit.invoke();
+            updateProgress(1, 1);
+            return null;
+        }
+    }
+    
+    private static class BuildSessionFactoryTask extends Task<SessionFactory>
+    {
+        @Override
+        protected SessionFactory call() throws Exception
+        {
+            updateTitle("Starting database connections");
+            
+            DatabaseConfigData databaseConfigData = new JSONFile<>(DatabaseConfigData.class).get();
+            executeSubtask(new PrepareDatabaseTask(databaseConfigData));
+            
+            updateMessage("Building database configuration");
+            updateProgress(50, 100);
+            var config = databaseConfigData.getHibernateConf();
+
+            config.addAnnotatedClass(Account.class)
+                    .addAnnotatedClass(DatabaseVersion.class);
+
+            // Loading all the plugin entities to the Hibernate configuration from the Plugins
+            updateMessage("Adding plugins to the database configuration");
+            PluginLoader.getPluginEntities().forEach(config::addAnnotatedClass);
+
+            // Adding the plugin ClassLoader to the Hibernate configuration
+            StandardServiceRegistry serviceRegistry =
+                    new StandardServiceRegistryBuilder(
+                            new BootstrapServiceRegistryBuilder().applyClassLoader(PluginLoader.getPluginsClassLoader())
+                                    .build())
+                            .applySettings(config.getProperties())
+                            .build();
+
+            updateProgress(0.75, 1);
+            updateMessage("Applying database configuration");
+            return config.buildSessionFactory(serviceRegistry);
+        }
+    }
+
+    @AllArgsConstructor
+    private static class PrepareDatabaseTask extends Task<Void>
+    {
+        private final DatabaseConfigData databaseConfigData;
+
+        @Override
+        protected Void call() throws Exception
+        {
+            updateTitle("Preparing database");
+            try (Connection conn = databaseConfigData.getConnection())
+            {
+                updateMessage("Updating database");
+                updateProgress(0, 1);
+                executeSubtask(new DatabaseUpdateTask(conn));
+                updateProgress(1, 1);
+                return null;
+            }
+        }
+    }
+
+    @AllArgsConstructor
+    private static class DatabaseUpdateTask extends Task<Void>
+    {
+        private final Connection conn;
+
+        @Override
+        protected Void call() throws Exception
+        {
+            updateTitle("Updating database structure");
+            updateMessage("Reading loaded plugins");
+            updateProgress(0, 1);
+            conn.setAutoCommit(false);
+            var plugins = PluginLoader.getLoadedPlugins();
+
+            // Create the database version table if it doesn't exist
+
+            if (!conn.getMetaData().getTables(
+                    null,
+                    null,
+                    "core_database_version",
+                    new String[]{"TABLE"}).next()
+            )
+            {
+                updateMessage("Creating version managment table");
+                String sql = """
+                        create table core_database_version
+                        (
+                            plugin_identifier varchar(255) not null primary key,
+                            version           integer
+                        );
+                        """;
+                conn.createStatement().execute(sql);
+            }
+
+            updateMessage("Ask each plugin to update");
+            // Update the database version for the core
+            updateDatabaseFor(conn, new DesktopAppDatabaseUpdater());
+            
+            // Update the database version for each plugin
+            int i = 0;
+            for (var plugin : plugins)
+            {
+                updateDatabaseFor(conn, plugin);
+                i++;
+                updateProgress(i, plugins.size());
+            }
+            
+            return null;
+        }
+
+        private void updateDatabaseFor(Connection conn, IDatabaseUpdater updater) throws Exception
+        {
+            var identifier = updater.getDatabaseIdentifier();
+            var newVersion = updater.getDatabaseVersion();
+
+            String sql = """
+                    select version from core_database_version where plugin_identifier = ?
+                    """;
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, identifier);
+
+
+            int oldVersion = 0;
+            boolean exists = false;
+
+            var result = statement.executeQuery();
+
+            if (result.next())
+            {
+                oldVersion = result.getInt(1);
+                exists = true;
+            }
+
+            statement.close();
+
+            // TODO: Downgrade database too
+            if (oldVersion < newVersion)
+            {
+                try
+                {
+                    conn.setAutoCommit(false);
+
+                    updater.updateDatabase(conn, oldVersion, newVersion);
+
+                    sql = String.format(
+                            exists
+                                    ? "update core_database_version set version = %d where plugin_identifier = '%s'"
+                                    :
+                                    "insert into core_database_version (version, plugin_identifier) values (%d, '%s')",
+                            newVersion, identifier);
+
+                    conn.createStatement().executeUpdate(sql);
+                    conn.commit();
+                }
+                catch (SQLException e)
+                {
+                    Logs.getInstance().log("Error updating database for " + identifier, e);
+                    conn.rollback();
+                    throw new Exception("Error updating the database");
+                }
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 class TaskStageController extends StageController<TaskStageController>
@@ -50,10 +51,25 @@ class TaskStageController extends StageController<TaskStageController>
             }
         });
         
-        // TODO: The task creator maybe needs control over this 3 events
-        task.setOnSucceeded(_ -> close());
-        task.setOnFailed(_ -> close());
-        task.setOnCancelled(_ -> close());
+        task.stateProperty().addListener((_, _, newValue) ->
+        {
+            switch (newValue)
+            {
+                case SUCCEEDED -> {
+                    Logs.getInstance().log(Logs.LogType.INFO, "Task " + task.getTitle() + " done");
+                    close();
+                }
+                case FAILED -> {
+                    task.getException().printStackTrace();
+                    Logs.getInstance().log("Task " + task.getTitle() + " failed", task.getException());
+                    close();
+                }
+                case CANCELLED -> {
+                    Logs.getInstance().log(Logs.LogType.INFO, "Task " + task.getTitle() + " cancelled");
+                    close();
+                }
+            }
+        });
 
         new Thread(task).start();
     }
