@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.lebastudios.theroundtable.ui.IconView?>
+
+<VBox xmlns="http://javafx.com/javafx" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml" fx:id="root"
+      prefWidth="350.0" spacing="5">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    
+    <IconView fx:id="iconView" iconSize="150" iconName="root.png" />
+    <TextField fx:id="accountNameField" maxWidth="250" promptText="%word.name" />
+    <PasswordField fx:id="accountPasswordField" maxWidth="250" promptText="%word.password" />
+    
+    <HBox alignment="CENTER_RIGHT" spacing="5" maxWidth="250">
+        <Button onAction="#cancel" prefWidth="75" text="%word.cancel" />
+        <Button onAction="#accept" prefWidth="75" text="%word.accept" defaultButton="true" />
+    </HBox>
+</VBox>

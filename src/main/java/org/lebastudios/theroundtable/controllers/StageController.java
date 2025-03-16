@@ -25,6 +25,7 @@ public abstract class StageController<T extends Controller<T>> extends Controlle
         {
             stage.show();
         }
+        
     }
     
     public final void instantiate(boolean shouldWait)

@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.database.entities;
 
 import jakarta.persistence.*;
+import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -84,6 +85,38 @@ public class Account
         ADMIN,
         MANAGER,
         CASHIER,
-        ACCOUNTANT
+        ACCOUNTANT;
+        
+        public int accessLevel()
+        {
+            return switch (this)
+            {
+                case ROOT -> 0;
+                case ADMIN -> 1;
+                case MANAGER -> 2;
+                default -> 99;
+            };
+        }
+        
+        public boolean hasEnoughAccessLevelAs(AccountType type)
+        {
+            if (type.accessLevel() == CASHIER.accessLevel()) 
+            {
+                return type == this;
+            }
+            
+            return accessLevel() <= type.accessLevel();
+        }
+        
+        public String getIconName()
+        {
+            return switch (this)
+            {
+                case ROOT -> "root-user.png";
+                case ADMIN -> "admin-user.png";
+                case MANAGER -> "manager-user.png";
+                default -> "account.png";
+            };
+        }
     }
 }
