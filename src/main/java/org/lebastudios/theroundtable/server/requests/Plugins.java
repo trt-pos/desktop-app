@@ -3,18 +3,18 @@ package org.lebastudios.theroundtable.server.requests;
 import com.google.gson.Gson;
 import javafx.concurrent.Worker;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.config.data.PluginsConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginData;
 import org.lebastudios.theroundtable.server.Server;
+import org.lebastudios.theroundtable.tasks.DownloadFileTask;
+import org.lebastudios.theroundtable.tasks.MoveFileTask;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
@@ -103,35 +103,22 @@ public class Plugins
 
     public static void install(PluginData pluginData, Runnable aferUpdate)
     {
-        try
+        new Task<Void>()
         {
-            URI fileURI = new URI(Server.BASE_URL + "/plugins/" + pluginData.pluginId + ".jar");
-
-            Task<File> task = new DownloadFileTask(fileURI);
-            task.stateProperty().addListener((_, _, newValue) ->
+            @Override
+            protected Void call() throws Exception
             {
-                if (newValue == Worker.State.SUCCEEDED)
-                {
-                    File saveFile = new File(new JSONFile<>(PluginsConfigData.class).get().pluginsFolder, pluginData.pluginId + ".jar");
-                    saveFile.getParentFile().mkdirs();
-                    try
-                    {
-                        Files.copy(task.getValue().toPath(), saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        Files.delete(task.getValue().toPath());
-                    }
-                    catch (IOException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                    
-                    aferUpdate.run();
-                }
-            });
-            task.executeInBackGround(true);
-        }
-        catch (Exception exception)
-        {
-            Logs.getInstance().log("Error installing plugin", exception);
-        }
+                URI fileURI = new URI(Server.BASE_URL + "/plugins/" + pluginData.pluginId + ".jar");
+                File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
+
+                File saveFile = new File(new JSONFile<>(PluginsConfigData.class).get().pluginsFolder,
+                        pluginData.pluginId + ".jar");
+                saveFile.getParentFile().mkdirs();
+
+                executeSubtask(new MoveFileTask(downloadedFile, saveFile));
+
+                return null;
+            }
+        }.executeInBackGround(true);
     }
 }

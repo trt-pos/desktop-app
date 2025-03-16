@@ -2,12 +2,11 @@ package org.lebastudios.theroundtable.database;
 
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.Zip;
+import org.lebastudios.theroundtable.tasks.CreateZipTask;
 import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.tasks.TaskManager;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -72,7 +71,6 @@ class BackupDB
 
     private static class BackupTask extends Task<Void>
     {
-
         @Override
         protected Void call() throws Exception
         {
@@ -118,14 +116,7 @@ class BackupDB
                     (LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS) + ".zip").replace(":", "-")
             );
 
-            try
-            {
-                Zip.createZip(databaseFolder, backupFile);
-            }
-            catch (Exception e)
-            {
-                updateMessage("Failed to create backup.");
-            }
+            executeSubtask(new CreateZipTask(databaseFolder, backupFile));
 
             updateProgress(100, 100);
 

@@ -65,11 +65,6 @@ public abstract class EventHandler<T>
         var list = new ArrayList<>(listeners);
         list.addAll(weakListeners.stream().map(WeakReference::get).toList());
 
-        if (Variables.isDev())
-        {
-            System.out.println("Active Listeners: " + list.size());
-        }
-
         return list;
     }
 }

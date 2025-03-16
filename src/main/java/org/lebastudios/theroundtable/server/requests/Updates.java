@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import javafx.concurrent.Worker;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
+import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.config.data.PluginsConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.server.Server;
+import org.lebastudios.theroundtable.tasks.MoveFileTask;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.File;
@@ -43,36 +46,22 @@ public class Updates
 
     public static void donwloadAppLastVersion(Runnable afterUpdate)
     {
-        // TODO: Make a task for saving a downloaded task
-        try
+        new Task<Void>()
         {
-            URI fileURI = new URI(Server.BASE_URL + "/update/desktop-app.jar");
-
-            Task<File> task = new DownloadFileTask(fileURI);
-            task.stateProperty().addListener((_, _, newValue) ->
+            @Override
+            protected Void call() throws Exception
             {
-                if (newValue == Worker.State.SUCCEEDED)
-                {
-                    File saveFile = new File(TheRoundTableApplication.getAppDirectory(), "/bin/desktop-app.jar");
-                    saveFile.getParentFile().mkdirs();
-                    try
-                    {
-                        Files.copy(task.getValue().toPath(), saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        Files.delete(task.getValue().toPath());
-                    }
-                    catch (IOException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                URI fileURI = new URI(Server.BASE_URL + "/update/desktop-app.jar");
+                File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
 
-                    afterUpdate.run();
-                }
-            });
-            task.executeInBackGround(true);
-        }
-        catch (Exception exception)
-        {
-            Logs.getInstance().log("Error installing core update", exception);
-        }
+                File saveFile = new File(TheRoundTableApplication.getAppDirectory(), "/bin/desktop-app.jar");
+                saveFile.getParentFile().mkdirs();
+                
+                executeSubtask(new MoveFileTask(downloadedFile, saveFile));
+
+                return null;
+            }
+        }.setOnTaskComplete(_ -> afterUpdate.run())
+                .executeInBackGround(true);
     }
 }
