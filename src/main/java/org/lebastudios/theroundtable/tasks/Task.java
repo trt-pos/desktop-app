@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.tasks;
 
-import javafx.concurrent.Worker;
 import lombok.Getter;
+import org.lebastudios.theroundtable.events.Event1;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.concurrent.ExecutionException;
@@ -12,6 +12,8 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     @Getter private final String iconName;
     private Task<?> rootTask;
     boolean cancelable;
+    
+    public final Event1<Task<?>> onSubtaskStarted = new Event1<>();
 
     public Task(String iconName)
     {
@@ -70,6 +72,8 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
 
         try
         {
+            Logs.getInstance().log(Logs.LogType.INFO, "Executing subtask: " + task.getClass().getCanonicalName());
+            rootTask.onSubtaskStarted.invoke(task);
             task.run();
             return task.get();
         }

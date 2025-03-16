@@ -5,36 +5,34 @@ import java.time.format.DateTimeFormatter;
 public class Logs
 {
     private static Logs instance;
-    public enum LogType { INFO, WARNING, ERROR }
-    
+
+    public enum LogType
+    {
+        INFO, WARNING, ERROR, EXCEPTION;
+    }
+
     public static Logs getInstance()
     {
         if (instance == null) instance = new Logs();
-        
+
         return instance;
     }
-    
+
     private Logs() {}
-    
+
     public void log(LogType type, String message)
     {
-        final var date = getDateString();
+        final String date = getDateString();
+        final String thread = Thread.currentThread().getName();
 
-        switch (type)
-        {
-            case INFO -> System.out.println(date + " [INFO] " + message);
-            case WARNING -> System.out.println(date + " [WARNING] " + message);
-            case ERROR -> System.err.println(date + " [ERROR] " + message);
-        }
+        System.out.printf("%s [%s] [%s] %s%n", date, thread, type, message);
     }
-    
+
     public void log(String message, Throwable e)
     {
-        final var date = getDateString();
-
         StackTraceElement element = e.getStackTrace()[0];
-        System.err.println(date + " [EXCEPTION] " + message + " (" + e.getMessage() + ") in "
-            + element.getClassName() + "." + element.getMethodName() + ": " + element.getLineNumber());
+        log(LogType.EXCEPTION, message + " (" + e.getMessage() + ") in "
+                + element.getClassName() + "." + element.getMethodName() + ": " + element.getLineNumber());
     }
 
     private static String getDateString()
