@@ -77,6 +77,11 @@ public class StageBuilder
 
         stage.getIcons().add(ImageLoader.getIcon(iconName));
 
+        if (modality == Modality.APPLICATION_MODAL)
+        {
+            stage.setAlwaysOnTop(true);
+        }
+        
         if (stageConsumer != null) stageConsumer.accept(stage);
         
         return stage;
