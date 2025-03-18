@@ -48,7 +48,7 @@ public class AccountSetupPaneController extends SetupPaneController
     }
 
     @Override
-    public boolean validateData()
+    public boolean validate()
     {
         if (usernameField.getText().isBlank() || usernameField.getText().length() < 3)
         {

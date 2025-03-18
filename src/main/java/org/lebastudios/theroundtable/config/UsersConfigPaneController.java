@@ -21,10 +21,9 @@ import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconView;
 
-import java.net.URL;
 import java.util.Objects;
 
-public class UsersConfigPaneController extends SettingsPaneController
+public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile>
 {
     @FXML private Label errorLabel;
     @FXML private IconButton deleteAccount;
@@ -38,8 +37,13 @@ public class UsersConfigPaneController extends SettingsPaneController
 
     private Account selectedAccount;
 
+    public UsersConfigPaneController()
+    {
+        super(new NoConfigFile());
+    }
+
     @Override
-    public void apply()
+    public void updateConfigData(NoConfigFile configData)
     {
         if (selectedAccount == null) return;
 
@@ -60,7 +64,7 @@ public class UsersConfigPaneController extends SettingsPaneController
     }
 
     @Override
-    @FXML protected void initialize()
+    public void updateUI(NoConfigFile configData)
     {
         userIcon.setIconSize(100);
 
@@ -72,13 +76,19 @@ public class UsersConfigPaneController extends SettingsPaneController
         }
 
         reloadUsersContainer();
-        
+
         passwordField.setEditable(false);
         passwordField.setOnMouseClicked(e ->
         {
             if (selectedAccount.getType() != Account.AccountType.ROOT)
                 new ChangePasswordStageController(selectedAccount).instantiate();
         });
+    }
+
+    @Override
+    public boolean validate()
+    {
+        return true;
     }
 
     private void reloadUsersContainer()
@@ -189,15 +199,4 @@ public class UsersConfigPaneController extends SettingsPaneController
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("usersConfigPane.fxml");
-    }
 }

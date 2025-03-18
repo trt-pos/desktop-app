@@ -3,8 +3,8 @@ package org.lebastudios.theroundtable.printers;
 import com.github.anastaciocintra.output.PrinterOutputStream;
 import lombok.Getter;
 import lombok.Setter;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PrintersConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.PrintersConfigData;
 
 import javax.print.PrintService;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class PrinterManager
 
     public PrintService getDefaultPrintService() throws IllegalArgumentException
     {
-        var defaultPrinterName = new JSONFile<>(PrintersConfigData.class).get().defaultPrinter;
+        var defaultPrinterName = new PrintersConfigData().load().defaultPrinter;
 
         final var key = "default:" + defaultPrinterName;
         if (printServices.containsKey(key)) 

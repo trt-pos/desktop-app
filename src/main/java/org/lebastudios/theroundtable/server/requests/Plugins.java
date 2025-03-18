@@ -1,10 +1,9 @@
 package org.lebastudios.theroundtable.server.requests;
 
 import com.google.gson.Gson;
-import javafx.concurrent.Worker;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PluginsConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginData;
 import org.lebastudios.theroundtable.server.Server;
@@ -13,12 +12,9 @@ import org.lebastudios.theroundtable.tasks.MoveFileTask;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 public class Plugins
@@ -111,7 +107,7 @@ public class Plugins
                 URI fileURI = new URI(Server.BASE_URL + "/plugins/" + pluginData.pluginId + ".jar");
                 File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
 
-                File saveFile = new File(new JSONFile<>(PluginsConfigData.class).get().pluginsFolder,
+                File saveFile = new File(new PluginsConfigData().load().pluginsFolder,
                         pluginData.pluginId + ".jar");
                 saveFile.getParentFile().mkdirs();
 

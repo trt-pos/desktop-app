@@ -6,14 +6,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -145,7 +144,7 @@ class HibernateManager
         {
             updateTitle("Starting database connections");
             
-            DatabaseConfigData databaseConfigData = new JSONFile<>(DatabaseConfigData.class).get();
+            DatabaseConfigData databaseConfigData = new DatabaseConfigData().load();
             executeSubtask(new PrepareDatabaseTask(databaseConfigData));
             
             updateMessage("Building database configuration");

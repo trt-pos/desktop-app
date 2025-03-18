@@ -3,8 +3,8 @@ package org.lebastudios.theroundtable.database;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.tasks.CreateZipTask;
-import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 
@@ -36,7 +36,7 @@ class BackupDB
     @SneakyThrows
     public void initialize()
     {
-        if (running || !new JSONFile<>(DatabaseConfigData.class).get().enableBackups) return;
+        if (running || !new DatabaseConfigData().load().enableBackups) return;
 
         running = true;
 
@@ -77,7 +77,7 @@ class BackupDB
             updateMessage("Creating backup...");
             updateProgress(0, 100);
 
-            var data = new JSONFile<>(DatabaseConfigData.class).get();
+            var data = new DatabaseConfigData().load();
 
             File backupFolder = new File(data.backupFolder);
             File databaseFolder = new File(data.databaseFolder);
@@ -98,7 +98,7 @@ class BackupDB
 
             final var backupsCreated = Objects.requireNonNull(backupFolder.listFiles());
 
-            int numMaxBackups = new JSONFile<>(DatabaseConfigData.class).get().numMaxBackups;
+            int numMaxBackups = new DatabaseConfigData().load().numMaxBackups;
 
             if (backupsCreated.length >= numMaxBackups)
             {

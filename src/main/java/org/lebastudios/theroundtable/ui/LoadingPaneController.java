@@ -34,9 +34,4 @@ public class LoadingPaneController extends PaneController<LoadingPaneController>
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
 }

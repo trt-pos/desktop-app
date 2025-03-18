@@ -1,10 +1,8 @@
-package org.lebastudios.theroundtable.config.data;
-
-import org.lebastudios.theroundtable.config.Settings;
+package org.lebastudios.theroundtable.config;
 
 import java.io.File;
 
-public class EstablishmentConfigData implements FileRepresentator
+public class EstablishmentConfigData extends ConfigData<EstablishmentConfigData>
 {
     public String name = "Establishment Name";
     public String id = "Something";
@@ -17,6 +15,6 @@ public class EstablishmentConfigData implements FileRepresentator
     @Override
     public File getFile()
     {
-        return new File(Settings.getGlobalDir() + "/establishment.json");
+        return new File(AppConfiguration.getGlobalDir() + "/establishment.json");
     }
 }

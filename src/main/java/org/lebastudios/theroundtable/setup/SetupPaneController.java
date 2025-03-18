@@ -8,7 +8,7 @@ public abstract class SetupPaneController extends PaneController<SetupPaneContro
 {
     public abstract void apply();
 
-    public abstract boolean validateData();
+    public abstract boolean validate();
     
     protected Node titleNode;
     

@@ -78,12 +78,6 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     }
 
     @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
     public String getTitle()
     {
         return "Create Account";

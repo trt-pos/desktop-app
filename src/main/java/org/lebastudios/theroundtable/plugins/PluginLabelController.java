@@ -10,8 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PluginsConfigData;
+import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.events.Event;
@@ -165,9 +164,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
     private void unistallPlugin()
     {
-        var pluginFile = new File(
-                new JSONFile<>(PluginsConfigData.class).get().pluginsFolder + pluginData.pluginId + ".jar"
-        );
+        var pluginFile = new File(new PluginsConfigData().load().pluginsFolder + pluginData.pluginId + ".jar");
 
         if (!pluginFile.exists() || !pluginFile.isFile())
         {
@@ -179,7 +176,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         {
             root.getChildren().remove(unistallButton);
             root.getChildren().add(loadingNode);
-            
+
             PluginLoader.uninstallPlugin(pluginData);
 
             Platform.runLater(() -> MainStageController.getInstance().requestRestart());

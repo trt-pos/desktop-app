@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.communications;
 
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.SettingsData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.GeneralConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class AppHttpClient
     {
         HttpClient.Builder client = HttpClient.newBuilder();
 
-        var proxy = new JSONFile<>(SettingsData.class).get().proxyData;
+        var proxy = new GeneralConfigData().load().proxyData;
 
         if (proxy == null || !proxy.usingProxy) {
             return client.build();

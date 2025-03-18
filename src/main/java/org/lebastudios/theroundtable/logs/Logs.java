@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.logs;
 
+import java.io.PrintStream;
 import java.time.format.DateTimeFormatter;
 
 public class Logs
@@ -9,6 +10,11 @@ public class Logs
     public enum LogType
     {
         INFO, WARNING, ERROR, EXCEPTION;
+        
+        public boolean isError()
+        {
+            return this == ERROR || this == EXCEPTION;
+        }
     }
 
     public static Logs getInstance()
@@ -22,10 +28,12 @@ public class Logs
 
     public void log(LogType type, String message)
     {
+        PrintStream out = type.isError() ? System.err : System.out;
+        
         final String date = getDateString();
         final String thread = Thread.currentThread().getName();
 
-        System.out.printf("%s [%s] [%s] %s%n", date, thread, type, message);
+        out.printf("%s [%s] [%s] %s%n", date, thread, type, message);
     }
 
     public void log(String message, Throwable e)

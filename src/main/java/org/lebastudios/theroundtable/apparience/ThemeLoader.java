@@ -1,11 +1,10 @@
 package org.lebastudios.theroundtable.apparience;
 
 import javafx.scene.Scene;
-import javafx.stage.Window;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PreferencesConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.PreferencesConfigData;
 import org.lebastudios.theroundtable.events.UserEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 
@@ -37,7 +36,7 @@ public class ThemeLoader
 
         scenesInstantiated.add(scene);
         
-        var actualTheme = new JSONFile<>(PreferencesConfigData.class).get().theme;
+        var actualTheme = new PreferencesConfigData().load().theme;
 
         String themeCss = new File(
                 TheRoundTableApplication.getAppDirectory() + "/styles/" + actualTheme + "/theme.css")

@@ -6,9 +6,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 
 public abstract class Controller<T extends Controller<T>>
 {
@@ -35,7 +37,9 @@ public abstract class Controller<T extends Controller<T>>
         if (root == null)
         {
             throw new IllegalStateException(
-                    "FXML root is null after loading. Check if the fx:id of the root node is correct.");
+                    "FXML root is null after loading. Check if the fx:id of the root node is correct and the " +
+                            "Controller and FXML file configurations are correct."
+            );
         }
 
         return this.root;
@@ -56,37 +60,47 @@ public abstract class Controller<T extends Controller<T>>
     public final void loadFXML()
     {
         if (root != null) return;
-
-        final var fxmlLoader = getFXMLLoader();
         
+        loadFXML(true);
+    }
+
+    private void loadFXML(boolean injectController)
+    {
         try
         {
+            FXMLLoader fxmlLoader = getFXMLLoader();
             LangBundleLoader.loadLang(fxmlLoader, getBundleClass());
-
-            if (!hasFXMLControllerDefined())
-            {
-                fxmlLoader.setController(this);
-            }
-
+            
+            fxmlLoader.setController(injectController ? this : null);
             this.root = fxmlLoader.load();
+            this.controller = fxmlLoader.getController();
         }
         catch (IOException e)
         {
-            e.printStackTrace();
-            throw new RuntimeException("Error loading resource " + getFXML());
+            if (e.getMessage().contains("Controller value already specified."))
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.INFO,
+                        "Controller is already specified in the FXML for " + this.getClass().getName() + ". "
+                                + "Loading the FXML again without injecting this instance as the controller"
+                );
+
+                loadFXML(false);
+            }
+            else
+            {
+                Logs.getInstance().log(
+                        "Unexpected error while trying to load the FXML for "
+                                + this.getClass().getName() + ": " + this.getFXML().getFile(),
+                        e
+                );
+            }
         }
-
-        this.controller = fxmlLoader.getController();
     }
-
+    
     public final T getController()
     {
         return controller == null ? (T) this : controller;
-    }
-
-    public boolean hasFXMLControllerDefined()
-    {
-        return false;
     }
 
     public final Parent getParent()
@@ -101,10 +115,13 @@ public abstract class Controller<T extends Controller<T>>
 
     public abstract Class<?> getBundleClass();
 
+    private static final HashMap<Class<Controller<?>>, FXMLLoader> loadersHashMap = new HashMap<>();
+    
     public URL getFXML()
     {
         Class<?> clazz = getClass();
-        String fxmlNameLowerCamelCase = clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1);
+        String fxmlNameLowerCamelCase =
+                clazz.getSimpleName().substring(0, 1).toLowerCase() + clazz.getSimpleName().substring(1);
         String fxmlNameWithoutController = fxmlNameLowerCamelCase.replace("Controller", "");
         return clazz.getResource(fxmlNameWithoutController + ".fxml");
     }
@@ -113,10 +130,10 @@ public abstract class Controller<T extends Controller<T>>
     {
         var fxmlLoader = new FXMLLoader(getFXML());
         fxmlLoader.setClassLoader(getClass().getClassLoader());
-        
+
         return fxmlLoader;
     }
-    
+
     // TODO: Pre-compile FXML files using a custom compiler that writes into every controller a private subclass
     //  called View that generated the node defined in the FXML file.
     //  Also is possible to use https://github.com/Paullo612/mlfx but everything marked as @FXML will be public.

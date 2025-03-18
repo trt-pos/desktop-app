@@ -5,7 +5,7 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 
 import java.io.File;
 
-public class Settings
+public class AppConfiguration
 {
     public static File getGlobalDir()
     {

@@ -125,12 +125,6 @@ public class AccountStageController extends StageController<AccountStageControll
     }
 
     @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
     public String getTitle()
     {
         return "Login";

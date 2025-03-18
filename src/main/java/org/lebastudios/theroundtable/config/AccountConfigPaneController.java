@@ -1,57 +1,40 @@
 package org.lebastudios.theroundtable.config;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.server.LicenseValidator;
-import org.lebastudios.theroundtable.config.data.AccountConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
+import org.lebastudios.theroundtable.server.LicenseValidatorTask;
 
-import java.net.URL;
-import java.util.function.Consumer;
-
-public class AccountConfigPaneController extends SettingsPaneController
+public class AccountConfigPaneController extends ConfigPaneController<AccountConfigData>
 {
     @FXML private TextField licenseId;
-    private String lastLicense = "";
 
-    @Override
-    @FXML protected void initialize()
+    public AccountConfigPaneController()
     {
-        var accountData = new JSONFile<>(AccountConfigData.class).get();
-
-        licenseId.setText(accountData.license);
-        lastLicense = accountData.license;
+        super(new AccountConfigData());
     }
 
     @Override
-    public void apply()
+    public void updateConfigData(AccountConfigData configData)
     {
-        var accountData = new JSONFile<>(AccountConfigData.class);
-        accountData.get().license = licenseId.getText();
-        accountData.save();
-
-        new LicenseValidator(onLicenseValidated).execute();
+        configData.license = licenseId.getText();
     }
 
-    private final Consumer<Boolean> onLicenseValidated = validation ->
+    @Override
+    public void updateUI(AccountConfigData configData)
     {
-        if (!validation)
-        {
-            Platform.runLater(() ->
-            {
-                var accountData = new JSONFile<>(AccountConfigData.class);
-                accountData.get().license = lastLicense;
-                accountData.save();
+        licenseId.setText(configData.license);
+    }
 
-                new InformationTextDialogController(
-                        "Your license could not be validated. Check your internet connection and try again."
-                ).instantiate();
-            });
-        }
-    };
+    @Override
+    public boolean validate()
+    {
+        boolean[] valid = {false};
+        
+        new LicenseValidatorTask(validation -> valid[0] = validation).execute(true);
+        
+        return valid[0];
+    }
 
     @Override
     public Class<?> getBundleClass()
@@ -59,15 +42,4 @@ public class AccountConfigPaneController extends SettingsPaneController
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("accountConfigPane.fxml");
-    }
 }

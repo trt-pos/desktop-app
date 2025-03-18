@@ -2,8 +2,8 @@ package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.config.data.AccountConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.config.AccountConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
@@ -12,7 +12,7 @@ import org.lebastudios.theroundtable.server.requests.Licenses;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class LicenseValidator extends Task<Void>
+public class LicenseValidatorTask extends Task<Void>
 {
     private static int tries = 0;
 
@@ -37,12 +37,12 @@ public class LicenseValidator extends Task<Void>
         }
     };
 
-    public LicenseValidator(Consumer<Boolean> computeResult)
+    public LicenseValidatorTask(Consumer<Boolean> computeResult)
     {
         this.computeResult = computeResult;
     }
 
-    public LicenseValidator() {}
+    public LicenseValidatorTask() {}
 
     @Override
     protected Void call() throws Exception
@@ -50,7 +50,7 @@ public class LicenseValidator extends Task<Void>
         tries++;
 
         updateMessage("Reading license...");
-        var license = new JSONFile<>(AccountConfigData.class).get().license;
+        var license = new AccountConfigData().load().license;
 
         updateMessage("Validating license...");
         var validation = Licenses.isLicenseValid(license);
@@ -90,9 +90,9 @@ public class LicenseValidator extends Task<Void>
             return;
         }
 
-        var accountData = new JSONFile<>(AccountConfigData.class);
+        var accountData = new AccountConfigData().load();
         license = license.replace("-", "");
-        accountData.get().license = license;
+        accountData.license = license;
         accountData.save();
 
         this.execute();

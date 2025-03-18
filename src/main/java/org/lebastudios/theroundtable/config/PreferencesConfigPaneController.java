@@ -4,19 +4,29 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ThemeLoader;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PreferencesConfigData;
 
-import java.net.URL;
 import java.util.Objects;
 
-public class PreferencesConfigPaneController extends SettingsPaneController
+public class PreferencesConfigPaneController extends ConfigPaneController<PreferencesConfigData>
 {
     @FXML private ChoiceBox<String> themeChoiceBox;
     @FXML private ChoiceBox<String> languageChoiceBox;
 
+    public PreferencesConfigPaneController()
+    {
+        super(new PreferencesConfigData());
+    }
+
     @Override
-    @FXML protected void initialize()
+    public void updateConfigData(PreferencesConfigData configData)
+    {
+        configData.language = transformLanguageToInternalText(languageChoiceBox.getValue());
+        configData.theme = transformThemeToInternalText(themeChoiceBox.getValue());
+        ThemeLoader.reloadThemes();
+    }
+
+    @Override
+    public void updateUI(PreferencesConfigData configData)
     {
         if (themeChoiceBox.getItems().isEmpty())
         {
@@ -33,55 +43,21 @@ public class PreferencesConfigPaneController extends SettingsPaneController
         if (languageChoiceBox.getItems().isEmpty())
         {
             languageChoiceBox.getItems().addAll(
-                    transformLanguageToDisplayableText("es"), 
+                    transformLanguageToDisplayableText("es"),
                     transformLanguageToDisplayableText("en")
             );
         }
 
-        setActualValues();
-    }
-
-    private void setActualValues()
-    {
-        var preferences = new JSONFile<>(PreferencesConfigData.class).get();
-
-        themeChoiceBox.setValue(transformThemeToDisplayableText(preferences.theme));
-        languageChoiceBox.setValue(transformLanguageToDisplayableText(preferences.language));
+        themeChoiceBox.setValue(transformThemeToDisplayableText(configData.theme));
+        languageChoiceBox.setValue(transformLanguageToDisplayableText(configData.language));
     }
 
     @Override
-    public void apply()
-    {
-        var preferences = new JSONFile<>(PreferencesConfigData.class);
-
-        preferences.get().language = transformLanguageToInternalText(languageChoiceBox.getValue());
-        preferences.get().theme = transformThemeToInternalText(themeChoiceBox.getValue());
-
-        preferences.save();
-
-        ThemeLoader.reloadThemes();
-    }
-
-    @Override
-    public Class<?> getBundleClass()
-    {
-        return Launcher.class;
-    }
-
-    @Override
-    public boolean hasFXMLControllerDefined()
+    public boolean validate()
     {
         return true;
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("preferencesConfigPane.fxml");
-    }
-    
-    // region: Methods for the customization of the displayed texts
-    
     private String transformThemeToDisplayableText(String theme)
     {
         int index = theme.indexOf("-");
@@ -94,12 +70,12 @@ public class PreferencesConfigPaneController extends SettingsPaneController
         return theme.substring(0, 1).toUpperCase() + theme.substring(1, index) + " " 
                 + theme.substring(index + 1, index + 2).toUpperCase() + theme.substring(index + 2);
     }
-    
+
     private String transformThemeToInternalText(String theme)
     {
         return theme.toLowerCase().replace(" ", "-");
     }
-    
+
     private String transformLanguageToDisplayableText(String language)
     {
         return switch (language)
@@ -109,7 +85,7 @@ public class PreferencesConfigPaneController extends SettingsPaneController
             default -> language;
         };
     }
-    
+
     private String transformLanguageToInternalText(String language)
     {
         return switch (language)
@@ -120,5 +96,10 @@ public class PreferencesConfigPaneController extends SettingsPaneController
         };
     }
     
-    // endregion
+    @Override
+    public Class<?> getBundleClass()
+    {
+        return Launcher.class;
+    }
+
 }

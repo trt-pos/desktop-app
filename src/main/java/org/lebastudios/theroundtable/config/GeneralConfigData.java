@@ -1,11 +1,8 @@
-package org.lebastudios.theroundtable.config.data;
-
-import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.config.Settings;
+package org.lebastudios.theroundtable.config;
 
 import java.io.File;
 
-public class SettingsData implements FileRepresentator
+public class GeneralConfigData extends ConfigData<GeneralConfigData>
 {
     public boolean setupComplete = false;
     public ProxyData proxyData = new ProxyData();
@@ -14,7 +11,7 @@ public class SettingsData implements FileRepresentator
     @Override
     public File getFile()
     {
-        return new File(Settings.getGlobalDir() + "/general-settings.json");
+        return new File(AppConfiguration.getGlobalDir() + "/general-settings.json");
     }
 
     public static class ProxyData

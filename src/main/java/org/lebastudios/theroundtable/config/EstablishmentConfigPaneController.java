@@ -1,22 +1,14 @@
 package org.lebastudios.theroundtable.config;
 
-import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.FileChooser;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
-import org.lebastudios.theroundtable.config.data.EstablishmentConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
 
-public class EstablishmentConfigPaneController extends SettingsPaneController
+public class EstablishmentConfigPaneController extends ConfigPaneController<EstablishmentConfigData>
 {
     public TextField establishmentName;
     public TextField establishmentId;
@@ -28,44 +20,43 @@ public class EstablishmentConfigPaneController extends SettingsPaneController
 
     private File imageFile;
 
-    @Override
-    public void apply()
+    public EstablishmentConfigPaneController()
     {
-        var establishmentData = new JSONFile<>(EstablishmentConfigData.class);
+        super(new EstablishmentConfigData());
+    }
 
-        establishmentData.get().name = establishmentName.getText();
-        establishmentData.get().id = establishmentId.getText();
+    @Override
+    public void updateConfigData(EstablishmentConfigData configData)
+    {
+        configData.name = establishmentName.getText();
+        configData.id = establishmentId.getText();
 
-        establishmentData.get().phone = establishmentPhone.getText();
-        establishmentData.get().address = establishmentAddress.getText();
+        configData.phone = establishmentPhone.getText();
+        configData.address = establishmentAddress.getText();
 
-        establishmentData.get().city = establishmentCity.getText();
-        establishmentData.get().zipCode = establishmentZipCode.getText();
+        configData.city = establishmentCity.getText();
+        configData.zipCode = establishmentZipCode.getText();
 
         if (imageFile != null)
         {
             imageFile = ImageLoader.saveImageInSpecialFolder(imageFile);
-            establishmentData.get().logoImgPath = imageFile.getAbsolutePath();
+            configData.logoImgPath = imageFile.getAbsolutePath();
         }
-
-        establishmentData.save();
     }
 
     @Override
-    @FXML protected void initialize()
+    public void updateUI(EstablishmentConfigData configData)
     {
-        var establishmentData = new JSONFile<>(EstablishmentConfigData.class);
+        establishmentName.setText(configData.name);
+        establishmentId.setText(configData.id);
 
-        establishmentName.setText(establishmentData.get().name);
-        establishmentId.setText(establishmentData.get().id);
+        establishmentPhone.setText(configData.phone);
 
-        establishmentPhone.setText(establishmentData.get().phone);
+        establishmentAddress.setText(configData.address);
+        establishmentCity.setText(configData.city);
+        establishmentZipCode.setText(configData.zipCode);
 
-        establishmentAddress.setText(establishmentData.get().address);
-        establishmentCity.setText(establishmentData.get().city);
-        establishmentZipCode.setText(establishmentData.get().zipCode);
-
-        var imageFile = new File(establishmentData.get().logoImgPath);
+        var imageFile = new File(configData.logoImgPath);
         establishmentLogo.setOnMouseClicked(_ -> selectImage());
         establishmentLogo.setOnTouchPressed(_ -> selectImage());
         if (!imageFile.exists() || !imageFile.isFile())
@@ -74,8 +65,14 @@ public class EstablishmentConfigPaneController extends SettingsPaneController
         }
         else
         {
-            establishmentLogo.setImage(ImageLoader.getSavedImage(establishmentData.get().logoImgPath));
+            establishmentLogo.setImage(ImageLoader.getSavedImage(configData.logoImgPath));
         }
+    }
+
+    @Override
+    public boolean validate()
+    {
+        return true;
     }
 
     @SneakyThrows
@@ -95,15 +92,4 @@ public class EstablishmentConfigPaneController extends SettingsPaneController
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("establishmentConfigPane.fxml");
-    }
 }

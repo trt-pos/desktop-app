@@ -6,11 +6,12 @@ import lombok.Getter;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.config.SettingsItem;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PluginsConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.AppLocale;
 import org.lebastudios.theroundtable.locale.LangLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class PluginLoader
 
     public static void loadPlugins()
     {
-        File[] jars = new File(new JSONFile<>(PluginsConfigData.class).get().pluginsFolder)
+        File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
                 .listFiles((_, name) -> name.endsWith(".jar"));
         if (jars == null) return;
 
@@ -44,15 +45,20 @@ public class PluginLoader
 
             ServiceLoader<IPlugin> serviceLoader = ServiceLoader.load(IPlugin.class, pluginsClassLoader);
 
-            for (var plugin : serviceLoader)
+            for (IPlugin plugin : serviceLoader)
             {
                 var pluginData = plugin.getPluginData();
                 pluginsInstalled.put(pluginData.pluginId, plugin);
             }
+            
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
-            System.err.println("Error loading plugins: " + e.getMessage());
+            // TODO: Implement this and refactor plugins package
+            Logs.getInstance().log(
+                    "Error loading some plugins, running safe load mode to find the problems and ignore them",
+                    e
+            );
         }
 
         // Load all plugins that can be loaded
@@ -86,11 +92,6 @@ public class PluginLoader
 
         // Initialize the plugin
         plugin.initialize();
-    }
-
-    public static void unloadPlugin(IPlugin plugin)
-    {
-
     }
 
     @Deprecated(forRemoval = true)

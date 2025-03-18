@@ -1,13 +1,12 @@
-package org.lebastudios.theroundtable.config.data;
+package org.lebastudios.theroundtable.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.lebastudios.theroundtable.config.Settings;
 
 import javax.print.PrintServiceLookup;
 import java.io.File;
 
-public class PrintersConfigData implements FileRepresentator
+public class PrintersConfigData extends ConfigData<PrintersConfigData>
 {
     public static final byte[] OPEN_CASH_DRAWER_DEFAULT_COMMAND = new byte[]{0x1B, 0x70, 0x00, 0x19, (byte) 0xFA};
     
@@ -26,6 +25,6 @@ public class PrintersConfigData implements FileRepresentator
     @Override
     public File getFile()
     {
-        return new File(Settings.getGlobalDir() + "/printers.json");
+        return new File(AppConfiguration.getGlobalDir() + "/printers.json");
     }
 }

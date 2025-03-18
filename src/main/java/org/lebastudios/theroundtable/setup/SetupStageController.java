@@ -7,11 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
-import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
-import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.SettingsData;
+import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
@@ -48,7 +44,7 @@ public class SetupStageController extends StageController<SetupStageController>
 
     public static boolean checkIfStart()
     {
-        return !new JSONFile<>(SettingsData.class).get().setupComplete;
+        return !new GeneralConfigData().load().setupComplete;
     }
 
     @FXML
@@ -88,12 +84,6 @@ public class SetupStageController extends StageController<SetupStageController>
     }
 
     @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
     public URL getFXML()
     {
         return SetupStageController.class.getResource("setupStage.fxml");
@@ -111,7 +101,7 @@ public class SetupStageController extends StageController<SetupStageController>
     private void nextButtonAction(ActionEvent actionEvent)
     {
         if (currentPane > setupPanes.length - 1) return;
-        if (currentPane >= 0 && !setupPanes[currentPane].getController().validateData()) return;
+        if (currentPane >= 0 && !setupPanes[currentPane].getController().validate()) return;
 
         currentPane++;
 
@@ -143,8 +133,8 @@ public class SetupStageController extends StageController<SetupStageController>
                     pane.apply();
                 }
 
-                final var settingsData = new JSONFile<>(SettingsData.class);
-                settingsData.get().setupComplete = true;
+                final var settingsData = new GeneralConfigData().load();
+                settingsData.setupComplete = true;
                 settingsData.save();
 
                 Platform.runLater(this::close);

@@ -2,15 +2,13 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
+import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
@@ -30,10 +28,12 @@ public class ConfigStageController extends StageController<ConfigStageController
     {
         UserEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
     }
-
+    
+    @FXML private Label versionLabel;
     @FXML private TreeView<SettingsItem> configSectionsTreeView;
     @FXML private ScrollPane mainPane;
-    private SettingsPaneController currentPaneController;
+    
+    private ConfigPaneController<?> currentPaneController;
 
     @Override
     public void instantiate(Consumer<ConfigStageController> acceptController, boolean shouldWait)
@@ -52,20 +52,22 @@ public class ConfigStageController extends StageController<ConfigStageController
     @SneakyThrows @FXML @Override
     protected void initialize()
     {
+        versionLabel.setText("Version: " + TheRoundTableApplication.getAppVersion());
+        
+        configSectionsTreeView.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) ->
+        {
+            if (newValue == null || newValue.getValue() == null) return;
+
+            ConfigPaneController<?> controller = newValue.getValue().settingPane();
+            final var root = controller.getRoot();
+
+            mainPane.setContent(root);
+            currentPaneController = controller.getController();
+            currentPaneController.updateUI();
+        });
+        
         configSectionsTreeView.setCellFactory(_ -> new TreeCell<>()
         {
-            {
-                this.setOnMouseClicked(_ ->
-                {
-                    if (this.getTreeItem() == null) return;
-
-                    if (this.getTreeItem() instanceof TreeItem<SettingsItem> item)
-                    {
-                        ConfigStageController.this.swapMainPane(item.getValue().settingPane());
-                    }
-                });
-            }
-
             @Override
             protected void updateItem(SettingsItem item, boolean empty)
             {
@@ -75,22 +77,21 @@ public class ConfigStageController extends StageController<ConfigStageController
                 {
                     setText(null);
                     setGraphic(null);
+                    return;
                 }
-                else
-                {
-                    setText(item.value());
 
-                    var imageView = new ImageView(ImageLoader.getIcon(item.iconName()));
-                    imageView.setFitHeight(20);
-                    imageView.setFitWidth(20);
-                    this.setGraphic(imageView);
-                }
+                setText(item.value());
+
+                var imageView = new ImageView(ImageLoader.getIcon(item.iconName()));
+                imageView.setFitHeight(20);
+                imageView.setFitWidth(20);
+                this.setGraphic(imageView);
             }
         });
+        
         configSectionsTreeView.getRoot().getChildren().add(createGeneralConfigSection());
-
         configSectionsTreeView.getRoot().getChildren().addAll(PluginLoader.getSettingsTreeViews());
-
+        
         mainPane.setContent(new FXMLLoader(Launcher.class.getResource("defaultCenterPane.fxml")).load());
     }
 
@@ -134,23 +135,7 @@ public class ConfigStageController extends StageController<ConfigStageController
             );
         }
 
-        generalConfigSection.getChildren().add(
-                new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.about"),
-                        "help.png", new AboutConfigPaneController()))
-        );
-
         return generalConfigSection;
-    }
-
-    public void swapMainPane(SettingsPaneController controller)
-    {
-        if (controller == null) return;
-        
-        final var root = controller.getRoot();
-        
-        mainPane.setContent(root);
-        controller.registerEvents();
-        currentPaneController = controller;
     }
 
     @FXML
@@ -161,7 +146,7 @@ public class ConfigStageController extends StageController<ConfigStageController
             return;
         }
 
-        currentPaneController.getController().apply();
+        currentPaneController.apply();
     }
 
     @FXML
@@ -185,13 +170,7 @@ public class ConfigStageController extends StageController<ConfigStageController
             return;
         }
 
-        currentPaneController.acept();
-    }
-
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
+        currentPaneController.accept();
     }
 
     @Override

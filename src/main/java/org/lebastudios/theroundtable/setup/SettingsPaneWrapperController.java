@@ -4,44 +4,36 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.config.SettingsPaneController;
-
-import java.net.URL;
+import org.lebastudios.theroundtable.config.ConfigPaneController;
 
 public class SettingsPaneWrapperController extends SetupPaneController
 {
-    private final SettingsPaneController settingsPaneController;
+    private final ConfigPaneController<?> configPaneController;
     
     @SneakyThrows
-    public SettingsPaneWrapperController(SettingsPaneController settingsPaneController, Node titleNode)
+    public SettingsPaneWrapperController(ConfigPaneController<?> configPaneController, Node titleNode)
     {
         super(titleNode);
-        this.settingsPaneController = settingsPaneController.getClass().getConstructor().newInstance();
+        this.configPaneController = configPaneController;
     }
 
     @Override
     @FXML
     protected void initialize()
     {
-        ((BorderPane) getRoot()).setCenter(settingsPaneController.getRoot());
+        ((BorderPane) getRoot()).setCenter(configPaneController.getRoot());
         ((BorderPane) getRoot()).setTop(titleNode);
     }
 
     @Override
     public void apply()
     {
-        settingsPaneController.getController().apply();
+        configPaneController.getController().apply();
     }
 
     @Override
-    public boolean validateData()
+    public boolean validate()
     {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return SettingsPaneWrapperController.class.getResource("settingsPaneWrapper.fxml");
+        return configPaneController.getController().validate();
     }
 }

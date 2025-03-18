@@ -63,12 +63,6 @@ public class PluginsStageController extends StageController<PluginsStageControll
     }
 
     @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
     public String getTitle()
     {
         return "Plugins";

@@ -10,18 +10,15 @@ import javafx.stage.DirectoryChooser;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
-import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
-import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
-import java.net.URL;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 
-public class DatabaseConfigPaneController extends SettingsPaneController
+public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseConfigData>
 {
     @FXML private CheckBox enableRemoteDb;
 
@@ -40,18 +37,20 @@ public class DatabaseConfigPaneController extends SettingsPaneController
     @FXML private TextField remoteDbPassword;
     @FXML private TextField remoteDbName;
 
-    @Override
-    @FXML
-    protected void initialize()
+    public DatabaseConfigPaneController()
     {
-        var data = new JSONFile<>(DatabaseConfigData.class).get();
+        super(new DatabaseConfigData());
+    }
 
-        databasesDirectory.setText(data.databaseFolder);
-        enableBackups.setSelected(data.enableBackups);
-        databasesBackupDirectory.setText(data.backupFolder);
-        numMaxBackups.setText(new JSONFile<>(DatabaseConfigData.class).get().numMaxBackups + "");
+    @Override
+    public void updateUI(DatabaseConfigData configData)
+    {
+        databasesDirectory.setText(configData.databaseFolder);
+        enableBackups.setSelected(configData.enableBackups);
+        databasesBackupDirectory.setText(configData.backupFolder);
+        numMaxBackups.setText(configData.numMaxBackups + "");
 
-        DatabaseConfigData.RemoteDbData remoteDbData = data.remoteDbData;
+        DatabaseConfigData.RemoteDbData remoteDbData = configData.remoteDbData;
 
         if (remoteDbData != null)
         {
@@ -66,19 +65,15 @@ public class DatabaseConfigPaneController extends SettingsPaneController
         remoteDbSection.disableProperty().bind(enableRemoteDb.selectedProperty().not());
         localDbSection.disableProperty().bind(enableRemoteDb.selectedProperty());
 
-        enableRemoteDb.setSelected(data.enableRemoteDb);
+        enableRemoteDb.setSelected(configData.enableRemoteDb);
     }
-
+    
     @Override
-    public void apply()
+    public void updateConfigData(DatabaseConfigData configData)
     {
-        if (!validateValues()) return;
-
-        var data = new JSONFile<>(DatabaseConfigData.class);
-
         // Saving remote db configuration 
         {
-            data.get().enableRemoteDb = enableRemoteDb.isSelected();
+            configData.enableRemoteDb = enableRemoteDb.isSelected();
 
             var remoteDbData = new DatabaseConfigData.RemoteDbData();
 
@@ -88,7 +83,7 @@ public class DatabaseConfigPaneController extends SettingsPaneController
             remoteDbData.password = remoteDbPassword.getText();
             remoteDbData.database = remoteDbName.getText();
 
-            data.get().remoteDbData = remoteDbData;
+            configData.remoteDbData = remoteDbData;
         }
 
         // Applying local db changes even if remote db is enabled to avois bugs
@@ -96,8 +91,8 @@ public class DatabaseConfigPaneController extends SettingsPaneController
             // When database directory changes
             try
             {
-                updateDatabaseDirectory(data.get()); // Side effect: Reloads and moves SQLite db file
-                updateBackupDirectory(data.get()); // Side effect: Moves backup files
+                updateDatabaseDirectory(configData); // Side effect: Reloads and moves SQLite db file
+                updateBackupDirectory(configData); // Side effect: Moves backup files
             }
             catch (Exception e)
             {
@@ -105,22 +100,31 @@ public class DatabaseConfigPaneController extends SettingsPaneController
                 return;
             }
 
-            data.get().enableBackups = enableBackups.isSelected();
-            data.get().numMaxBackups = Integer.parseInt(numMaxBackups.getText());
+            configData.enableBackups = enableBackups.isSelected();
+            configData.numMaxBackups = Integer.parseInt(numMaxBackups.getText());
         }
 
-        var oldConf = new JSONFile<>(DatabaseConfigData.class);
+        if (configData.enableBackups && !configData.enableRemoteDb)
+        {
+            Database.getInstance().initBackup();
+        }
+        else
+        {
+            Database.getInstance().stopBackup();
+        }
         
-        // Validating the db connection values and migrate the tables
-        try (Connection newDbConnection = data.get().getConnection();
-            Connection oldDbConnection = oldConf.get().getConnection())
+        DatabaseConfigData oldConf = configData.load();
+
+        // Making connections to the databases
+        try (Connection newDbConnection = configData.getConnection();
+             Connection oldDbConnection = oldConf.getConnection())
         {
             // Saving the new conf so the reloadDatabase knows what parametters to use
-            data.save();
-            
+            configData.save();
+
             // TODO: Start a task pane and convert this into an AppTask
             // Reload should happend first so the plugins can create the db structure in the new database
-            if (!data.get().getJdbcUrl().equals(oldConf.get().getJdbcUrl())) 
+            if (!configData.getJdbcUrl().equals(oldConf.getJdbcUrl()))
             {
                 Database.getInstance().reloadTask().execute(true);
 
@@ -133,29 +137,15 @@ public class DatabaseConfigPaneController extends SettingsPaneController
                     return;
                 }
             }
-            
-            if (data.get().enableBackups && !data.get().enableRemoteDb)
-            {
-                Database.getInstance().initBackup();
-            }
-            else
-            {
-                Database.getInstance().stopBackup();
-            }
         }
-        catch (Exception e)
+        catch (SQLException e)
         {
-            oldConf.save();
-            Database.getInstance().reloadTask().execute(true);
-            Logs.getInstance().log("Couldn't validate the new db conn string", e);
-
-            UIEffects.shakeNode(data.get().enableRemoteDb
-                    ? remoteDbSection
-                    : localDbSection);
+            throw new RuntimeException(e);
         }
     }
 
-    private boolean validateValues()
+    @Override
+    public boolean validate()
     {
         try
         {
@@ -178,8 +168,21 @@ public class DatabaseConfigPaneController extends SettingsPaneController
                 return false;
             }
         }
-
-        return true;
+        
+        DatabaseConfigData configData = new DatabaseConfigData();
+        updateConfigData(configData);
+        
+        try (Connection _ = configData.getConnection()) 
+        {
+            return true;
+        }
+        catch (Exception e)
+        {
+            UIEffects.shakeNode(configData.enableRemoteDb
+                    ? remoteDbSection
+                    : localDbSection);
+            return false;
+        }
     }
 
     private void updateDatabaseDirectory(DatabaseConfigData data)
@@ -272,15 +275,4 @@ public class DatabaseConfigPaneController extends SettingsPaneController
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("databaseConfigPane.fxml");
-    }
 }

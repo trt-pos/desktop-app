@@ -13,18 +13,17 @@
             <TreeItem />
         </TreeView>
 
-        <VBox>
-            <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true" VBox.vgrow="ALWAYS"
-                        prefWidth="650" prefHeight="400" fx:id="mainPane" />
-
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <padding>
-                    <Insets top="10" right="10" bottom="10" left="10"/>
-                </padding>
-                <Button text="%word.accept" onAction="#accept"/>
-                <Button defaultButton="true" text="%word.cancel" onAction="#cancel"/>
-                <Button text="%word.apply" onAction="#apply"/>
-            </HBox>
-        </VBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true" VBox.vgrow="ALWAYS"
+                    prefWidth="650" prefHeight="400" fx:id="mainPane" />
     </SplitPane>
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <Label text="Version ?" fx:id="versionLabel" maxWidth="Infinity" HBox.hgrow="ALWAYS" 
+               style="-fx-font-size: 8;"/>
+        <Button text="%word.accept" onAction="#accept"/>
+        <Button defaultButton="true" text="%word.cancel" onAction="#cancel"/>
+        <Button text="%word.apply" onAction="#apply"/>
+    </HBox>
 </VBox>

@@ -1,15 +1,14 @@
-package org.lebastudios.theroundtable.config.data;
+package org.lebastudios.theroundtable.config;
 
 import org.hibernate.cfg.Configuration;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.config.Settings;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConfigData implements FileRepresentator
+public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
 {
     public enum Dbms {
         MYSQL, MARIADB, POSTGRES;
@@ -152,6 +151,6 @@ public class DatabaseConfigData implements FileRepresentator
     @Override
     public File getFile()
     {
-        return new File(Settings.getGlobalDir() + "/database.json");
+        return new File(AppConfiguration.getGlobalDir() + "/database.json");
     }
 }

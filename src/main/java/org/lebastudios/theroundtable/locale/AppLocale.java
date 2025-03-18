@@ -1,8 +1,8 @@
 package org.lebastudios.theroundtable.locale;
 
 import org.lebastudios.theroundtable.accounts.AccountManager;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PreferencesConfigData;
+import org.lebastudios.theroundtable.files.JsonFile;
+import org.lebastudios.theroundtable.config.PreferencesConfigData;
 
 import java.util.Locale;
 
@@ -16,7 +16,7 @@ public class AppLocale
         }
         
         return Locale.of(
-                new JSONFile<>(PreferencesConfigData.class).get().language,
+                new PreferencesConfigData().load().language,
                 System.getProperty("user.country")
         );
     }

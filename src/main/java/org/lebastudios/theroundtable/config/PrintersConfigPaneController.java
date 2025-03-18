@@ -8,41 +8,48 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
-import org.lebastudios.theroundtable.config.data.JSONFile;
-import org.lebastudios.theroundtable.config.data.PrintersConfigData;
 import org.lebastudios.theroundtable.printers.PrinterManager;
 
-import java.net.URL;
 import java.util.Arrays;
 
-public class PrintersConfigPaneController extends SettingsPaneController
+public class PrintersConfigPaneController extends ConfigPaneController<PrintersConfigData>
 {
     @FXML private CheckBox useOpenCashDrawerDefaultCommand;
     @FXML private TextField openCashDrawerCommand;
     @FXML private ChoiceBox<String> defaultPrinter;
 
-    @Override
-    @FXML
-    protected void initialize()
+    public PrintersConfigPaneController()
     {
-        var printerData = new JSONFile<>(PrintersConfigData.class).get();
+        super(new PrintersConfigData());
+    }
 
+    @Override
+    public void updateConfigData(PrintersConfigData configData)
+    {
+        configData.defaultPrinter = defaultPrinter.getValue();
+        configData.setUseOpenCashDrawerDefaultCommand(useOpenCashDrawerDefaultCommand.isSelected());
+        configData.setOpenCashDrawerCommand(parseCommand(openCashDrawerCommand.getText().trim()));
+    }
+
+    @Override
+    public void updateUI(PrintersConfigData configData)
+    {
         defaultPrinter.getItems().clear();
 
         defaultPrinter.getItems().addAll(
                 PrinterManager.getInstance().getAvailablePrinters()
         );
 
-        if (!printerData.defaultPrinter.isEmpty())
+        if (!configData.defaultPrinter.isEmpty())
         {
-            defaultPrinter.setValue(printerData.defaultPrinter);
+            defaultPrinter.setValue(configData.defaultPrinter);
         }
         else
         {
             defaultPrinter.setValue("");
         }
 
-        openCashDrawerCommand.setText(parseCommand(printerData.getOpenCashDrawerCommand()));
+        openCashDrawerCommand.setText(parseCommand(configData.getOpenCashDrawerCommand()));
 
         useOpenCashDrawerDefaultCommand.selectedProperty().addListener((_, _, newValue) ->
         {
@@ -56,19 +63,19 @@ public class PrintersConfigPaneController extends SettingsPaneController
             }
         });
 
-        useOpenCashDrawerDefaultCommand.setSelected(printerData.isUseOpenCashDrawerDefaultCommand());
+        useOpenCashDrawerDefaultCommand.setSelected(configData.isUseOpenCashDrawerDefaultCommand());
     }
 
     @Override
-    public void apply()
+    public boolean validate()
     {
-        var printerData = new JSONFile<>(PrintersConfigData.class);
-
-        printerData.get().defaultPrinter = defaultPrinter.getValue();
-        printerData.get().setUseOpenCashDrawerDefaultCommand(useOpenCashDrawerDefaultCommand.isSelected());
-        printerData.get().setOpenCashDrawerCommand(parseCommand(openCashDrawerCommand.getText().trim()));
-
-        printerData.save();
+        if (parseCommand(openCashDrawerCommand.getText().trim()) == null) 
+        {
+            UIEffects.shakeNode(openCashDrawerCommand);
+            return false;
+        }
+        
+        return true;
     }
 
     private byte[] parseCommand(String command)
@@ -91,7 +98,6 @@ public class PrintersConfigPaneController extends SettingsPaneController
         }
         catch (Exception exception)
         {
-            UIEffects.shakeNode(openCashDrawerCommand);
             return null;
         }
     }
@@ -126,17 +132,5 @@ public class PrintersConfigPaneController extends SettingsPaneController
     public Class<?> getBundleClass()
     {
         return Launcher.class;
-    }
-
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AboutConfigPaneController.class.getResource("printersConfigPane.fxml");
     }
 }

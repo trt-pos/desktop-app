@@ -15,8 +15,7 @@ import org.controlsfx.control.action.Action;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.config.ConfigStageController;
-import org.lebastudios.theroundtable.config.data.DatabaseConfigData;
-import org.lebastudios.theroundtable.config.data.JSONFile;
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
@@ -46,7 +45,7 @@ public class MainStageController extends PaneController<MainStageController>
     @Override
     protected void initialize()
     {
-        if (new JSONFile<>(DatabaseConfigData.class).get().enableBackups) Database.getInstance().initBackup();
+        if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
 
         pluginsButton.setDisable(!AccountManager.getInstance().isAccountAdmin());
         
@@ -143,9 +142,4 @@ public class MainStageController extends PaneController<MainStageController>
         return Launcher.class;
     }
 
-    @Override
-    public boolean hasFXMLControllerDefined()
-    {
-        return true;
-    }
 }
