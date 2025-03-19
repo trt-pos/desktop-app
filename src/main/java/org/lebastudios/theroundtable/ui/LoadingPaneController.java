@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.ui;
 
-import javafx.animation.*;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.CacheHint;
 import javafx.util.Duration;

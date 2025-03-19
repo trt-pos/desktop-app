@@ -1,24 +1,39 @@
 package org.lebastudios.theroundtable.database;
 
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
+
 import java.sql.Connection;
 import java.util.Arrays;
 
 public interface IDatabaseUpdater
 {
-    default int getDatabaseVersion() { return 1; }
-    String getDatabaseIdentifier();
+    default int getDatabaseVersion() { return 0; }
     default void updateDatabase(Connection conn, int oldVersion, int newVersion) throws Exception 
     {
-        for (int i = oldVersion + 1; i <= newVersion; i++)
+        Dbms dbms = new DatabaseConfigData().load().getDbms();
+        
+        for (int i = oldVersion - 1; i >= newVersion; i--)
         {
-            var methodName = "version" + i;
+            var methodName = "downgradeTo" + i;
             var updateMethod = Arrays.stream(this.getClass().getMethods())
                     .filter(method -> method.getName().equals(methodName))
                     .findFirst();
 
             if (updateMethod.isEmpty()) continue;
 
-            updateMethod.get().invoke(this, conn);
+            updateMethod.get().invoke(this, conn, dbms);
+        }
+        
+        for (int i = oldVersion + 1; i <= newVersion; i++)
+        {
+            var methodName = "upgradeTo" + i;
+            var updateMethod = Arrays.stream(this.getClass().getMethods())
+                    .filter(method -> method.getName().equals(methodName))
+                    .findFirst();
+
+            if (updateMethod.isEmpty()) continue;
+
+            updateMethod.get().invoke(this, conn, dbms);
         }
     }
 }

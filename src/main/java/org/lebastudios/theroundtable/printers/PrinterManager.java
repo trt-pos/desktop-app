@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable.printers;
 import com.github.anastaciocintra.output.PrinterOutputStream;
 import lombok.Getter;
 import lombok.Setter;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.PrintersConfigData;
 
 import javax.print.PrintService;

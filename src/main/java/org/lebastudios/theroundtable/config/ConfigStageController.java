@@ -15,7 +15,7 @@ import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.UserEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.util.function.Consumer;
@@ -90,7 +90,7 @@ public class ConfigStageController extends StageController<ConfigStageController
         });
         
         configSectionsTreeView.getRoot().getChildren().add(createGeneralConfigSection());
-        configSectionsTreeView.getRoot().getChildren().addAll(PluginLoader.getSettingsTreeViews());
+        configSectionsTreeView.getRoot().getChildren().addAll(PluginsManager.getInstance().getSettingsTreeViews());
         
         mainPane.setContent(new FXMLLoader(Launcher.class.getResource("defaultCenterPane.fxml")).load());
     }

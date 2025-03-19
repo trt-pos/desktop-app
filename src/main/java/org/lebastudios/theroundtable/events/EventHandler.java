@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.events;
 
 import lombok.NonNull;
-import org.lebastudios.theroundtable.env.Variables;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

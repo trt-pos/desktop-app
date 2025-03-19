@@ -20,7 +20,7 @@ import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.ui.IconButton;
@@ -49,10 +49,10 @@ public class MainStageController extends PaneController<MainStageController>
 
         pluginsButton.setDisable(!AccountManager.getInstance().isAccountAdmin());
 
-        leftButtons.getChildren().addAll(PluginLoader.getLeftButtons());
-        rightButtons.getChildren().addAll(PluginLoader.getRightButtons());
+        leftButtons.getChildren().addAll(PluginsManager.getInstance().getLeftButtons());
+        rightButtons.getChildren().addAll(PluginsManager.getInstance().getRightButtons());
 
-        if (!PluginLoader.getHomeButtons().isEmpty())
+        if (!PluginsManager.getInstance().getHomeButtons().isEmpty())
         {
             Button homeButton = new IconButton("home.png");
             homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));

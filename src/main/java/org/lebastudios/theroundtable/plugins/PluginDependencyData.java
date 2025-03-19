@@ -1,6 +1,6 @@
 package org.lebastudios.theroundtable.plugins;
 
-public class PluginDependency
+public class PluginDependencyData
 {
     public String pluginId;
     public String pluginVersion;

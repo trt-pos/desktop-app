@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.printers;
 
 import com.github.anastaciocintra.escpos.EscPos;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.PrintersConfigData;
 
 import java.io.IOException;

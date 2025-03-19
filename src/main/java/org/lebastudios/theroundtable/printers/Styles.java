@@ -1,17 +1,7 @@
 package org.lebastudios.theroundtable.printers;
 
-import com.github.anastaciocintra.escpos.EscPos;
 import com.github.anastaciocintra.escpos.EscPosConst;
 import com.github.anastaciocintra.escpos.Style;
-import com.github.anastaciocintra.escpos.image.Bitonal;
-import com.github.anastaciocintra.escpos.image.BitonalThreshold;
-import com.github.anastaciocintra.escpos.image.RasterBitImageWrapper;
-import com.github.anastaciocintra.output.PrinterOutputStream;
-import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.TheRoundTableApplication;
-
-import javax.print.PrintService;
-import java.io.File;
 
 public class Styles
 {

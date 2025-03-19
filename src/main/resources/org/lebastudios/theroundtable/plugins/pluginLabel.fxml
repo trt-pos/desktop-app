@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
-<?import org.lebastudios.theroundtable.ui.IconView?>
 <?import org.lebastudios.theroundtable.ui.IconTextButton?>
+<?import org.lebastudios.theroundtable.ui.IconView?>
 <HBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
       xmlns="http://javafx.com/javafx" alignment="CENTER_LEFT"
       styleClass="border-round" spacing="15" prefWidth="600">

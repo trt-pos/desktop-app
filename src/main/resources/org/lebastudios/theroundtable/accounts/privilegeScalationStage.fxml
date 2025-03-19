@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.ui.IconView?>
-
 <VBox xmlns="http://javafx.com/javafx" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml" fx:id="root"
       prefWidth="350.0" spacing="5">

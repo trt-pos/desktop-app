@@ -6,12 +6,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 public class StageBuilder
 {

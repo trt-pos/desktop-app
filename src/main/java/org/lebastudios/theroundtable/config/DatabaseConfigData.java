@@ -2,6 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import org.hibernate.cfg.Configuration;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
+import org.lebastudios.theroundtable.database.Dbms;
 
 import java.io.File;
 import java.sql.Connection;
@@ -10,47 +11,6 @@ import java.sql.SQLException;
 
 public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
 {
-    public enum Dbms {
-        MYSQL, MARIADB, POSTGRES;
-
-        public String getJdbcIdentifier()
-        {
-            return switch (this) {
-                case MYSQL -> "mysql";
-                case MARIADB -> "mariadb";
-                case POSTGRES -> "postgresql";
-            };
-        }
-        
-        public String getJdbcDriver()
-        {
-            return switch (this) {
-                case MYSQL -> "com.mysql.cj.jdbc.Driver";
-                case MARIADB -> "org.mariadb.jdbc.Driver";
-                case POSTGRES -> "org.postgresql.Driver";
-            };
-        }
-        
-        public String getHibernateDialect()
-        {
-            return switch (this) {
-                case MYSQL -> "org.hibernate.dialect.MySQLDialect";
-                case MARIADB -> "org.hibernate.dialect.MariaDBDialect";
-                case POSTGRES -> "org.hibernate.dialect.PostgreSQLDialect";
-            };
-        }
-        
-        @Override
-        public String toString()
-        {
-            return switch (this) {
-                case MYSQL -> "MySQL";
-                case MARIADB -> "MariaDB";
-                case POSTGRES -> "PostgresSQL";
-            };
-        }
-    }
-    
     public String establishmentDatabaseName = "establishment";
     
     public String databaseFolder = TheRoundTableApplication.getUserDirectory() + File.separator + "databases";
@@ -60,16 +20,16 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
     
     public boolean enableRemoteDb = false;
     public RemoteDbData remoteDbData;
-    
+
     public static class RemoteDbData
     {
+
         public Dbms dbms = Dbms.MARIADB;
         public String host;
         public String port;
         public String user;
         public String password;
         public String database;
-
         public Connection getConnection() throws SQLException
         {
             return DriverManager.getConnection(
@@ -78,13 +38,13 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
                     password
             );
         }
-        
+
         public String getJdbcUrl()
         {
             return "jdbc:" + dbms.getJdbcIdentifier() + "://" + host + ":" + port + "/" + database;
         }
-    }
 
+    }
     public Configuration getHibernateConf()
     {
         Configuration config = new Configuration().configure();
@@ -111,7 +71,7 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
         
         return config;
     }
-    
+
     public Connection getConnection() throws SQLException
     {
         return enableRemoteDb 
@@ -120,18 +80,21 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
         );
     }
 
+    public Dbms getDbms()
+    {
+        return enableRemoteDb
+                ? remoteDbData.dbms
+                : Dbms.SQLITE;
+    }
+
     public String getJdbcDriver()
     {
-        return enableRemoteDb 
-                ? remoteDbData.dbms.getJdbcDriver()
-                : "org.sqlite.JDBC";
+        return getDbms().getJdbcDriver();
     }
 
     public String getHibernateDialect()
     {
-        return enableRemoteDb
-                ? remoteDbData.dbms.getHibernateDialect()
-                : "org.hibernate.community.dialect.SQLiteDialect";
+        return getDbms().getHibernateDialect();
     }
     
     public String getJdbcUrl()

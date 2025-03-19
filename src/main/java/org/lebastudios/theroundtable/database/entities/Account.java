@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.database.entities;
 
 import jakarta.persistence.*;
-import javafx.scene.image.Image;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -2,7 +2,6 @@ package org.lebastudios.theroundtable.server.requests;
 
 import com.google.gson.Gson;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginData;

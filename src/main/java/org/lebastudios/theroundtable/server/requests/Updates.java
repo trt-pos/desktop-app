@@ -3,8 +3,8 @@ package org.lebastudios.theroundtable.server.requests;
 import com.google.gson.Gson;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.server.Server;
+import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.tasks.MoveFileTask;
 import org.lebastudios.theroundtable.tasks.Task;
 

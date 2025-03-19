@@ -1,62 +1,48 @@
 package org.lebastudios.theroundtable.plugins;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.TreeItem;
 import lombok.Getter;
-import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.communications.Version;
-import org.lebastudios.theroundtable.config.SettingsItem;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.AppLocale;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 
 public class PluginLoader
 {
-    private static final Map<String, IPlugin> pluginsLoaded = new HashMap<>();
-    private static final Map<String, IPlugin> pluginsInstalled = new HashMap<>();
-    @Getter private static final Map<String, PluginData> pluginsRestartPending = new HashMap<>();
-    
     @Getter private static URLClassLoader pluginsClassLoader = new URLClassLoader(new URL[0]);
 
     public static void loadPlugins()
     {
-        File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
-                .listFiles((_, name) -> name.endsWith(".jar"));
-        if (jars == null) return;
+        pluginsClassLoader = new URLClassLoader(
+                getValidJars().toArray(new URL[0]),
+                PluginLoader.class.getClassLoader()
+        );
 
+        PluginsManager pluginsManager = PluginsManager.getInstance();
+        
         try
         {
-            pluginsClassLoader = new URLClassLoader(
-                    Arrays.stream(jars).map(File::toURI).map(uri ->
-                    {
-                        try {return uri.toURL();}
-                        catch (Exception e) {return null;}
-                    }).filter(Objects::nonNull).toArray(URL[]::new),
-                    PluginLoader.class.getClassLoader());
-
             ServiceLoader<IPlugin> serviceLoader = ServiceLoader.load(IPlugin.class, pluginsClassLoader);
 
             for (IPlugin plugin : serviceLoader)
             {
                 var pluginData = plugin.getPluginData();
-                pluginsInstalled.put(pluginData.pluginId, plugin);
+                pluginsManager.getPluginsInstalled().put(pluginData.pluginId, plugin);
             }
-            
+
         }
         catch (Throwable e)
         {
-            // TODO: Implement this and refactor plugins package
             Logs.getInstance().log(
-                    "Error loading some plugins, running safe load mode to find the problems and ignore them",
+                    "Error loading some plugins after checking that them can be loaded, something is wrong",
                     e
             );
         }
@@ -67,177 +53,70 @@ public class PluginLoader
         while (keepTryingToLoad)
         {
             keepTryingToLoad = false;
-            for (IPlugin plugin : pluginsInstalled.values())
+            for (IPlugin plugin : pluginsManager.getPluginsInstalled().values())
             {
                 var pluginData = plugin.getPluginData();
 
-                if (pluginsLoaded.containsKey(pluginData.pluginId)) continue;
-                if (!PluginUpdater.hasDependenciesInstalled(plugin.getPluginData())) continue;
+                if (pluginsManager.getPluginsLoaded().containsKey(pluginData.pluginId)) continue;
+                if (!plugin.getPluginData().areDependenciesInstalled()) continue;
 
                 keepTryingToLoad = true;
-                loadPlugin(plugin);
+
+                // All the chewcks passed, the plugin can be considered load and the user will be able to use it
+                // Load plugin translations
+                LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale());
+
+                // Initialize the plugin
+                plugin.initialize();
+                
+                // Add plugin to the loaded plugins collection
+                pluginsManager.getPluginsLoaded().put(plugin.getPluginData().pluginId, plugin);
             }
         }
 
         Database.getInstance().reloadTask().execute(true);
     }
 
-    public static void loadPlugin(IPlugin plugin)
+    private static List<URL> getValidJars()
     {
-        // Add plugin to loaded plugins collection
-        pluginsLoaded.put(plugin.getPluginData().pluginId, plugin);
+        File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
+                .listFiles((_, name) -> name.endsWith(".jar"));
 
-        // Load plugin translations
-        LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale());
+        if (jars == null) return new ArrayList<>();
 
-        // Initialize the plugin
-        plugin.initialize();
-    }
+        List<URL> validJars = new ArrayList<>();
 
-    @Deprecated(forRemoval = true)
-    public static boolean canBePluginLoaded(IPlugin plugin)
-    {
-        Version requiredCoreVersion = new Version(plugin.getPluginData().pluginRequiredCoreVersion);
-        Version actualCoreVersion = new Version(TheRoundTableApplication.getAppVersion());
-
-        if (actualCoreVersion.isLessThan(requiredCoreVersion)) {return false;}
-
-        if (plugin.getPluginData().pluginDependencies == null) return true;
-
-        for (var dependency : plugin.getPluginData().pluginDependencies)
+        for (File jar : jars)
         {
-            if (!pluginsLoaded.containsKey(dependency.pluginId)) return false;
+            URL jarURL;
 
-            Version requiredPluginVersion = new Version(dependency.pluginVersion);
-            Version actualPluginVersion =
-                    new Version(pluginsLoaded.get(dependency.pluginId).getPluginData().pluginVersion);
-
-            if (actualPluginVersion.isLessThan(requiredPluginVersion)) {return false;}
-        }
-
-        return true;
-    }
-
-    public static boolean isDependencyOfOther(PluginData pluginData)
-    {
-        for (IPlugin other : pluginsInstalled.values())
-        {
-            PluginData otherPluginData = other.getPluginData();
-
-            if (Arrays.stream(otherPluginData.pluginDependencies)
-                    .anyMatch(data -> data.pluginId.equals(pluginData.pluginId)))
+            try
             {
-                return true;
+                jarURL = jar.toURI().toURL();
+            }
+            catch (MalformedURLException e)
+            {
+                Logs.getInstance().log(
+                        "Error loading plugin " + jar.getName() + " (Malformed URL)",
+                        e
+                );
+                continue;
+            }
+
+            try (URLClassLoader tempClassLoader = new URLClassLoader(
+                    new URL[]{jarURL},
+                    PluginLoader.class.getClassLoader()
+            ))
+            {
+                ServiceLoader.load(IPlugin.class, tempClassLoader).iterator().next();
+                validJars.add(jarURL);
+            }
+            catch (Throwable e)
+            {
+                Logs.getInstance().log("Error loading plugin " + jar.getName(), e);
             }
         }
 
-        for (PluginData otherPluginData : pluginsRestartPending.values())
-        {
-            if (Arrays.stream(otherPluginData.pluginDependencies)
-                    .anyMatch(data -> data.pluginId.equals(pluginData.pluginId)))
-            {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-
-    public static List<Button> getLeftButtons()
-    {
-        List<Button> buttons = new ArrayList<>();
-        for (IPlugin plugin : pluginsLoaded.values())
-        {
-            buttons.addAll(plugin.getLeftButtons());
-        }
-        return buttons;
-    }
-
-    public static List<Button> getRightButtons()
-    {
-        List<Button> buttons = new ArrayList<>();
-        for (IPlugin plugin : pluginsLoaded.values())
-        {
-            buttons.addAll(plugin.getRightButtons());
-        }
-        return buttons;
-    }
-
-    public static List<LabeledIconButton> getHomeButtons()
-    {
-        List<LabeledIconButton> buttons = new ArrayList<>();
-        for (IPlugin plugin : pluginsLoaded.values())
-        {
-            buttons.addAll(plugin.getHomeButtons());
-        }
-        return buttons;
-    }
-
-    public static List<TreeItem<SettingsItem>> getSettingsTreeViews()
-    {
-        List<TreeItem<SettingsItem>> items = new ArrayList<>();
-
-        for (IPlugin plugin : pluginsLoaded.values())
-        {
-            var rootTreeItem = plugin.getSettingsRootTreeItem();
-            if (rootTreeItem == null) continue;
-
-            items.add(rootTreeItem);
-        }
-
-        return items;
-    }
-
-    public static List<Object> getRessourcesObjects()
-    {
-        List<Object> classes = new ArrayList<>();
-
-        classes.add(new TheRoundTableApplication());
-        classes.addAll(getLoadedPlugins());
-
-        return classes;
-    }
-
-    public static List<Class<?>> getPluginEntities()
-    {
-        List<Class<?>> pluginEntities = new ArrayList<>();
-        for (IPlugin plugin : pluginsLoaded.values())
-        {
-            pluginEntities.addAll(plugin.getPluginEntities());
-        }
-        return pluginEntities;
-    }
-
-    ///  Installed, loaded in memory and in execution plugins
-    public static Collection<IPlugin> getLoadedPlugins()
-    {
-        return pluginsLoaded.values();
-    }
-
-    ///  Installed, loaded in memory but not in execution plugins
-    public static Collection<IPlugin> getInstalledPlugins()
-    {
-        return pluginsInstalled.values();
-    }
-    
-    ///  Installed but not yet loaded in memory plugins
-    public static Collection<PluginData> restartPendingPlugins()
-    {
-        return pluginsRestartPending.values();
-    }
-    
-    public static void uninstallPlugin(PluginData pluginData)
-    {
-        pluginsInstalled.remove(pluginData.pluginId);
-    }
-
-    public static boolean isPluginInstalled(PluginData pluginData)
-    {
-        return pluginsInstalled.containsKey(pluginData.pluginId);
-    }
-
-    public static boolean isPluginLoaded(PluginData pluginData)
-    {
-        return pluginsLoaded.containsKey(pluginData.pluginId);
+        return validJars;
     }
 }

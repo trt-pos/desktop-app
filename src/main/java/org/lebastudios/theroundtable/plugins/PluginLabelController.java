@@ -74,13 +74,13 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         root.getChildren().remove(notInstallableButton);
         root.getChildren().remove(loadingNode);
 
-        if (PluginLoader.getPluginsRestartPending().containsKey(pluginData.pluginId))
+        if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.pluginId))
         {
             root.getChildren().add(restartAppButton);
             return;
         }
 
-        if (PluginLoader.isPluginInstalled(pluginData))
+        if (PluginsManager.getInstance().isPluginInstalled(pluginData))
         {
             root.getChildren().add(unistallButton);
             root.getChildren().add(loadingNode);
@@ -91,13 +91,22 @@ public class PluginLabelController extends PaneController<PluginLabelController>
                 {
                     PluginData newVersionData = Plugins.getAvailablePluginData(pluginData.pluginId);
 
-                    Platform.runLater(() ->
+                    if (newVersionData == null)
                     {
-                        root.getChildren().add(PluginUpdater.hasDependenciesInstalled(newVersionData)
+                        Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                "Could not get pluginData for plugin " + pluginData.pluginId
+                        );
+                        // TODO: Show error image
+                        return;
+                    }
+                    else
+                    {
+                        Platform.runLater(() -> root.getChildren().add(newVersionData.areDependenciesInstalled()
                                 ? updatePlugin
                                 : notInstallableButton
-                        );
-                    });
+                        ));
+                    }
                 }
 
                 Platform.runLater(() -> root.getChildren().remove(loadingNode));
@@ -106,7 +115,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         }
 
         root.getChildren().add(
-                PluginUpdater.hasDependenciesInstalled(this.pluginData)
+                this.pluginData.areDependenciesInstalled()
                         ? installButton
                         : notInstallableButton
         );
@@ -134,7 +143,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     {
         new Thread(() -> Plugins.install(pluginData, () ->
         {
-            PluginLoader.getPluginsRestartPending().put(pluginData.pluginId, pluginData);
+            PluginsManager.getInstance().getPluginsRestartPending().put(pluginData.pluginId, pluginData);
             onReloadLabelsRequest.invoke();
         })).start();
     }
@@ -143,7 +152,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML
     private void tryUninstallPlugin()
     {
-        if (!PluginLoader.isDependencyOfOther(pluginData))
+        if (!pluginData.isDependencyOfOther())
         {
             new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.pluginsuninstall"), result ->
             {
@@ -177,7 +186,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
             root.getChildren().remove(unistallButton);
             root.getChildren().add(loadingNode);
 
-            PluginLoader.uninstallPlugin(pluginData);
+            PluginsManager.getInstance().uninstallPlugin(pluginData);
 
             Platform.runLater(() -> MainStageController.getInstance().requestRestart());
             onReloadLabelsRequest.invoke();

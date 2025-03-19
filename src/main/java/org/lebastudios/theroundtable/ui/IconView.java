@@ -4,8 +4,6 @@ import javafx.scene.image.ImageView;
 import lombok.Getter;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 
-import java.awt.*;
-
 @Getter
 public class IconView extends ImageView
 {

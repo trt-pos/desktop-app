@@ -1,13 +1,12 @@
 package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
-import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.config.AccountConfigData;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.server.requests.Licenses;
+import org.lebastudios.theroundtable.tasks.Task;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -69,10 +69,4 @@ public interface IPlugin extends IDatabaseUpdater
             return null;
         }
     }
-
-    @Override
-    default String getDatabaseIdentifier()
-    {
-        return getPluginData().pluginId;
-    }
 }

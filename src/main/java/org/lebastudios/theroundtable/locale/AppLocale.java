@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.locale;
 
 import org.lebastudios.theroundtable.accounts.AccountManager;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.PreferencesConfigData;
 
 import java.util.Locale;

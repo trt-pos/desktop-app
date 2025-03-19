@@ -6,7 +6,7 @@ import javafx.stage.Window;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -100,7 +100,7 @@ public class ImageLoader
     @SneakyThrows
     private synchronized static Image loadImage(String iconName, ImageType imageType)
     {
-        for (var individualClass : PluginLoader.getRessourcesObjects())
+        for (var individualClass : PluginsManager.getInstance().getRessourcesObjects())
         {
             var folder = imageType == ImageType.ICON ? "icons/" : "textures/";
 

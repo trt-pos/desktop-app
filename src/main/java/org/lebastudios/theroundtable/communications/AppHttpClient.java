@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.communications;
 
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.config.GeneralConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 

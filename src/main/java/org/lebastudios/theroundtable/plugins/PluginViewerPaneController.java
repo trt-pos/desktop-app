@@ -56,7 +56,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         }
     }
 
-    private Node createDependencyNode(PluginDependency dependency)
+    private Node createDependencyNode(PluginDependencyData dependency)
     {
         final var dependencyLabel = new Label(dependency.pluginId + " " + dependency.pluginVersion);
         dependencyLabel.getStyleClass().add("dependency-label");

@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.ui.StageBuilder;

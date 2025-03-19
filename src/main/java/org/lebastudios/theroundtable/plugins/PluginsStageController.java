@@ -34,7 +34,11 @@ public class PluginsStageController extends StageController<PluginsStageControll
     private void instantiateInstalledPlugins()
     {
         Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab("Installed",
-                PluginLoader.getInstalledPlugins().stream().map(IPlugin::getPluginData).toArray(PluginData[]::new));
+                PluginsManager.getInstance().getInstalledPlugins()
+                        .stream()
+                        .map(IPlugin::getPluginData)
+                        .toArray(PluginData[]::new)
+        );
 
         tabPane.getTabs().addFirst(pluginTab);
     }

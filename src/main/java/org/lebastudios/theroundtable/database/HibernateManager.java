@@ -7,13 +7,13 @@ import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
-import org.lebastudios.theroundtable.files.JsonFile;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.sql.Connection;
@@ -156,7 +156,7 @@ class HibernateManager
 
             // Loading all the plugin entities to the Hibernate configuration from the Plugins
             updateMessage("Adding plugins to the database configuration");
-            PluginLoader.getPluginEntities().forEach(config::addAnnotatedClass);
+            PluginsManager.getInstance().getPluginDatabaseEntities().forEach(config::addAnnotatedClass);
 
             // Adding the plugin ClassLoader to the Hibernate configuration
             StandardServiceRegistry serviceRegistry =
@@ -204,7 +204,6 @@ class HibernateManager
             updateMessage("Reading loaded plugins");
             updateProgress(0, 1);
             conn.setAutoCommit(false);
-            var plugins = PluginLoader.getLoadedPlugins();
 
             // Create the database version table if it doesn't exist
 
@@ -228,13 +227,14 @@ class HibernateManager
 
             updateMessage("Ask each plugin to update");
             // Update the database version for the core
-            updateDatabaseFor(conn, new DesktopAppDatabaseUpdater());
+            updateDatabaseFor(conn, "desktop-app", new DesktopAppDatabaseUpdater());
             
             // Update the database version for each plugin
+            var plugins = PluginsManager.getInstance().getLoadedPlugins();
             int i = 0;
             for (var plugin : plugins)
             {
-                updateDatabaseFor(conn, plugin);
+                updateDatabaseFor(conn, plugin.getPluginData().pluginId, plugin);
                 i++;
                 updateProgress(i, plugins.size());
             }
@@ -242,9 +242,8 @@ class HibernateManager
             return null;
         }
 
-        private void updateDatabaseFor(Connection conn, IDatabaseUpdater updater) throws Exception
+        private void updateDatabaseFor(Connection conn, String identifier, IDatabaseUpdater updater) throws Exception
         {
-            var identifier = updater.getDatabaseIdentifier();
             var newVersion = updater.getDatabaseVersion();
 
             String sql = """
@@ -268,8 +267,7 @@ class HibernateManager
 
             statement.close();
 
-            // TODO: Downgrade database too
-            if (oldVersion < newVersion)
+            if (oldVersion != newVersion)
             {
                 try
                 {
