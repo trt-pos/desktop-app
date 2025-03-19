@@ -9,4 +9,15 @@ public final class NoConfigFile extends ConfigData<NoConfigFile>
     {
         return null;
     }
+
+    @Override
+    public NoConfigFile load()
+    {
+        return this;
+    }
+
+    @Override
+    public void save()
+    {
+    }
 }

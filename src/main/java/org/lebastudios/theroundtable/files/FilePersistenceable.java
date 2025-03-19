@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.files;
 
 import java.io.File;
 
-public interface FilePersistanceable<T>
+public interface FilePersistenceable<T>
 {
     File getFile();
 

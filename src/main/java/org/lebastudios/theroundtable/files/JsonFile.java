@@ -3,18 +3,13 @@ package org.lebastudios.theroundtable.files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.config.NoConfigFile;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistanceable<T>
+public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistenceable<T>
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     
@@ -25,8 +20,6 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistance
 
         if (file == null)
         {
-            if (this.getClass() == NoConfigFile.class) return (T) this;
-
             Logs.getInstance().log(
                     Logs.LogType.WARNING,
                     this.getClass().getSimpleName() + " file is null, is this intended?"
@@ -40,6 +33,14 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistance
         {
             return (T) GSON.fromJson(reader, this.getClass());
         }
+        catch (Exception e)
+        {
+            Logs.getInstance().log(
+                    "Error loading " + this.getClass().getSimpleName() + " json file",
+                    e
+            );
+            return (T) this;
+        }
     }
 
     @SneakyThrows
@@ -49,8 +50,6 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistance
 
         if (file == null) 
         {
-            if (this.getClass() == NoConfigFile.class) return;
-            
             Logs.getInstance().log(
                     Logs.LogType.WARNING, 
                     this.getClass().getSimpleName() + " file is null, is this intended?"
