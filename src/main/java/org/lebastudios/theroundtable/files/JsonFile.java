@@ -3,6 +3,7 @@ package org.lebastudios.theroundtable.files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.SneakyThrows;
+import org.lebastudios.theroundtable.config.NoConfigFile;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
@@ -21,14 +22,16 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistance
     public T load()
     {
         File file = this.getFile();
-        
-        if (file == null) 
+
+        if (file == null)
         {
+            if (this.getClass() == NoConfigFile.class) return (T) this;
+
             Logs.getInstance().log(
-                    Logs.LogType.WARNING, 
-                    this.getClass().getSimpleName() + " file not found, is this intended?"
+                    Logs.LogType.WARNING,
+                    this.getClass().getSimpleName() + " file is null, is this intended?"
             );
-            return null;
+            return (T) this;
         }
         
         if (!file.exists()) return (T) this;
@@ -46,9 +49,11 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistance
 
         if (file == null) 
         {
+            if (this.getClass() == NoConfigFile.class) return;
+            
             Logs.getInstance().log(
                     Logs.LogType.WARNING, 
-                    this.getClass().getSimpleName() + " file not found, is this intended?"
+                    this.getClass().getSimpleName() + " file is null, is this intended?"
             );
             return;
         }

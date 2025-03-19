@@ -71,7 +71,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL).setResizeable(true);
+        stageBuilder.setModality(Modality.WINDOW_MODAL).setResizeable(true);
     }
 
     private class PluginTabGenerator

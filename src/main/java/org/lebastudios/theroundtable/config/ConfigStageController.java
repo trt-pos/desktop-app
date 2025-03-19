@@ -8,6 +8,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
+import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
@@ -17,7 +18,6 @@ import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-import java.net.URL;
 import java.util.function.Consumer;
 
 public class ConfigStageController extends StageController<ConfigStageController>
@@ -188,13 +188,8 @@ public class ConfigStageController extends StageController<ConfigStageController
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL)
-                .setResizeable(true);
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return ConfigStageController.class.getResource("configStage.fxml");
+        stageBuilder.setModality(Modality.WINDOW_MODAL)
+                .setResizeable(true)
+                .setOwner(MainStageController.getInstance().getStage());
     }
 }

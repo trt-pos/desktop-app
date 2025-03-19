@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.controllers;
 
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
@@ -8,6 +9,8 @@ import java.util.function.Consumer;
 
 public abstract class StageController<T extends Controller<T>> extends Controller<T>
 {
+    private Window owner;
+    
     public void instantiate(Consumer<T> acceptController, boolean shouldWait)
     {
         StageBuilder stageBuilder = getDefaultStageBuilder();
@@ -38,10 +41,17 @@ public abstract class StageController<T extends Controller<T>> extends Controlle
         instantiate(_ -> {}, false);
     }
     
+    public T setOwner(Window owner)
+    {
+        this.owner = owner;
+        return (T) this;
+    }
+    
     private StageBuilder getDefaultStageBuilder()
     {
         return new StageBuilder(getDefaultSceneBuilder().build())
-                .setTitle(getTitle());
+                .setTitle(getTitle())
+                .setOwner(owner);
     }
     
     private SceneBuilder getDefaultSceneBuilder()

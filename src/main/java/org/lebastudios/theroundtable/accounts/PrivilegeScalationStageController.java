@@ -88,7 +88,7 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL)
+        stageBuilder.setModality(Modality.WINDOW_MODAL)
                 .setResizeable(false)
                 .setStageConsumer(stage ->
                 {

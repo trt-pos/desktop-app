@@ -20,7 +20,6 @@ import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-import java.net.URL;
 import java.util.List;
 
 public class AccountStageController extends StageController<AccountStageController>
@@ -51,11 +50,11 @@ public class AccountStageController extends StageController<AccountStageControll
 
                     accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
                 });
-                
+
                 return null;
             }
         }.execute(true);
-        
+
         Platform.runLater(() -> root.setCenter(accountsBox));
     }
 
@@ -89,10 +88,11 @@ public class AccountStageController extends StageController<AccountStageControll
         if (accountSelected.isChangePasswordOnNextLogin())
         {
             new ChangePasswordStageController(accountSelected).setOnAccept(() ->
-            {
-                AccountManager.getInstance().setCurrentLogged(accountSelected);
-                ((Stage) root.getScene().getWindow()).close();
-            }).instantiate();
+                    {
+                        AccountManager.getInstance().setCurrentLogged(accountSelected);
+                        ((Stage) root.getScene().getWindow()).close();
+                    }).setOwner(this.getStage())
+                    .instantiate();
         }
         else
         {
@@ -134,11 +134,5 @@ public class AccountStageController extends StageController<AccountStageControll
     public Class<?> getBundleClass()
     {
         return Launcher.class;
-    }
-
-    @Override
-    public URL getFXML()
-    {
-        return AccountStageController.class.getResource("accountStage.fxml");
     }
 }

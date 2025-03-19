@@ -48,10 +48,10 @@ public class MainStageController extends PaneController<MainStageController>
         if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
 
         pluginsButton.setDisable(!AccountManager.getInstance().isAccountAdmin());
-        
+
         leftButtons.getChildren().addAll(PluginLoader.getLeftButtons());
         rightButtons.getChildren().addAll(PluginLoader.getRightButtons());
-        
+
         if (!PluginLoader.getHomeButtons().isEmpty())
         {
             Button homeButton = new IconButton("home.png");
@@ -65,38 +65,42 @@ public class MainStageController extends PaneController<MainStageController>
     @FXML
     private void openSettingsStage()
     {
-        new ConfigStageController().instantiate();
+        new ConfigStageController()
+                .setOwner(this.getStage())
+                .instantiate();
     }
 
     @FXML
     private void openPluginsStage()
     {
-        new PluginsStageController().instantiate();
+        new PluginsStageController()
+                .setOwner(this.getStage())
+                .instantiate();
     }
 
     public void setCentralNode(Controller<?> controller)
     {
         final BorderPane root = (BorderPane) getRoot();
         root.setCenter(new LoadingPaneController().getRoot());
-        
+
         new Thread(() ->
         {
             final Node content = controller.getRoot();
             Platform.runLater(() -> root.setCenter(content));
         }).start();
     }
-    
+
     public void setCentralNode(Node node)
     {
         BorderPane root = (BorderPane) getRoot();
         root.setCenter(node);
     }
-    
+
     public Node getCentralNode()
     {
         return ((BorderPane) getRoot()).getCenter();
     }
-    
+
     public void requestRestart()
     {
         showNotification(LangFileLoader.getTranslation("textblock.infrestartneeded"),
@@ -118,7 +122,7 @@ public class MainStageController extends PaneController<MainStageController>
     {
         TaskManager.getInstance().getTasksPopOver().show(openTasksPopupButton);
     }
-    
+
     @SneakyThrows
     @FXML
     private void closeSession(ActionEvent actionEvent)

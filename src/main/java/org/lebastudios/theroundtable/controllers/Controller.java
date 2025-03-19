@@ -79,12 +79,6 @@ public abstract class Controller<T extends Controller<T>>
         {
             if (e.getMessage().contains("Controller value already specified."))
             {
-                Logs.getInstance().log(
-                        Logs.LogType.INFO,
-                        "Controller is already specified in the FXML for " + this.getClass().getName() + ". "
-                                + "Loading the FXML again without injecting this instance as the controller"
-                );
-
                 loadFXML(false);
             }
             else

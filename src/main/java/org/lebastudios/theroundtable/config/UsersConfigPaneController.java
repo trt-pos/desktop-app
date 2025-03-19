@@ -81,7 +81,11 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         passwordField.setOnMouseClicked(e ->
         {
             if (selectedAccount.getType() != Account.AccountType.ROOT)
-                new ChangePasswordStageController(selectedAccount).instantiate();
+            {
+                new ChangePasswordStageController(selectedAccount)
+                        .setOwner(this.getStage())
+                        .instantiate();
+            }
         });
     }
 
@@ -112,13 +116,15 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
     public void addUser(ActionEvent actionEvent)
     {
-        new AccountCreatorController().instantiate(controller -> controller.setAccountConsumer(account ->
-        {
-            if (account != null)
-            {
-                usersContainer.getChildren().add(createUserNode(account));
-            }
-        }), false);
+        new AccountCreatorController()
+                .setOwner(this.getStage())
+                .instantiate(controller -> controller.setAccountConsumer(account ->
+                {
+                    if (account != null)
+                    {
+                        usersContainer.getChildren().add(createUserNode(account));
+                    }
+                }), false);
     }
 
     @FXML

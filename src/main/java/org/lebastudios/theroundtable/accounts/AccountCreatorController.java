@@ -74,7 +74,7 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL);
+        stageBuilder.setModality(Modality.WINDOW_MODAL);
     }
 
     @Override

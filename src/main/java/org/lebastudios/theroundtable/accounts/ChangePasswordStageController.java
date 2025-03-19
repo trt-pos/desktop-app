@@ -35,7 +35,7 @@ public class ChangePasswordStageController extends StageController<ChangePasswor
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL);
+        stageBuilder.setModality(Modality.WINDOW_MODAL);
     }
 
     @Override

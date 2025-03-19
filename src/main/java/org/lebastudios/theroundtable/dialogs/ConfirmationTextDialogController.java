@@ -59,7 +59,7 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.APPLICATION_MODAL);
+        stageBuilder.setModality(Modality.WINDOW_MODAL);
     }
 
     @Override
