@@ -13,7 +13,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.events.UserEvents;
+import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
@@ -26,7 +26,7 @@ public class ConfigStageController extends StageController<ConfigStageController
 
     static
     {
-        UserEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
+        AccountEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
     }
     
     @FXML private Label versionLabel;
@@ -59,6 +59,9 @@ public class ConfigStageController extends StageController<ConfigStageController
             if (newValue == null || newValue.getValue() == null) return;
 
             ConfigPaneController<?> controller = newValue.getValue().settingPane();
+            
+            if (controller == null) return;
+            
             final var root = controller.getRoot();
 
             mainPane.setContent(root);

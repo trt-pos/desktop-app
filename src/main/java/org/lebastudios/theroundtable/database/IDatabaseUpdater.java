@@ -19,7 +19,7 @@ public interface IDatabaseUpdater
                     .filter(method -> method.getName().equals(methodName))
                     .findFirst();
 
-            if (updateMethod.isEmpty()) continue;
+            if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
 
             updateMethod.get().invoke(this, conn, dbms);
         }
@@ -31,7 +31,7 @@ public interface IDatabaseUpdater
                     .filter(method -> method.getName().equals(methodName))
                     .findFirst();
 
-            if (updateMethod.isEmpty()) continue;
+            if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
 
             updateMethod.get().invoke(this, conn, dbms);
         }

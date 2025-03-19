@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.locale;
 
 import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.events.UserEvents;
+import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 import java.util.Locale;
@@ -9,8 +9,8 @@ import java.util.Locale;
 public class LangLoader
 {
     static {
-        UserEvents.OnAccountLogIn.addListener(_ -> reloadLangs());
-        UserEvents.OnAccountLogOutAfter.addListener(LangLoader::reloadLangs);
+        AccountEvents.OnAccountLogIn.addListener(_ -> reloadLangs());
+        AccountEvents.OnAccountLogOutAfter.addListener(LangLoader::reloadLangs);
     }
     
     private static void reloadLangs()

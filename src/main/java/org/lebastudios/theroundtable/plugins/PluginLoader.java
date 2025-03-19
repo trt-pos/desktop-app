@@ -113,7 +113,7 @@ public class PluginLoader
             }
             catch (Throwable e)
             {
-                Logs.getInstance().log("Error loading plugin " + jar.getName(), e);
+                Logs.getInstance().log("Error loading plugin " + jar.getName() + " while validating it", e);
             }
         }
 

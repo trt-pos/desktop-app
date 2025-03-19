@@ -19,6 +19,7 @@ import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
+import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
@@ -32,12 +33,20 @@ public class MainStageController extends PaneController<MainStageController>
     @Getter private static MainStageController instance;
     @FXML private IconButton openTasksPopupButton;
     @FXML private IconButton pluginsButton;
-    @FXML private VBox leftButtons;
-    @FXML private VBox rightButtons;
+    @FXML private VBox leftTopButtons;
+    @FXML private VBox leftBottomButtons;
+    @FXML private VBox rightBottomButtons;
+    
+    private final Button homeButton;
 
     public MainStageController()
     {
         instance = this;
+        
+        homeButton = new IconButton("home.png");
+        homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));
+        
+        AccountEvents.OnAccountLogIn.addListener(_ -> getController().initialize());
     }
 
     @SneakyThrows
@@ -47,17 +56,22 @@ public class MainStageController extends PaneController<MainStageController>
     {
         if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
 
-        pluginsButton.setDisable(!AccountManager.getInstance().isAccountAdmin());
+        leftTopButtons.getChildren().remove(pluginsButton);
+        
+        if (AccountManager.getInstance().isAccountAdmin()) 
+        {
+            leftTopButtons.getChildren().add(pluginsButton);
+        }
 
-        leftButtons.getChildren().addAll(PluginsManager.getInstance().getLeftButtons());
-        rightButtons.getChildren().addAll(PluginsManager.getInstance().getRightButtons());
-
+        leftBottomButtons.getChildren().remove(2, leftBottomButtons.getChildren().size());
+        leftBottomButtons.getChildren().addAll(PluginsManager.getInstance().getLeftButtons());
+        
+        rightBottomButtons.getChildren().clear();
+        rightBottomButtons.getChildren().addAll(PluginsManager.getInstance().getRightButtons());
+        
         if (!PluginsManager.getInstance().getHomeButtons().isEmpty())
         {
-            Button homeButton = new IconButton("home.png");
-            homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));
-
-            rightButtons.getChildren().add(homeButton);
+            rightBottomButtons.getChildren().add(homeButton);
         }
     }
 

@@ -9,7 +9,7 @@
             fx:controller="org.lebastudios.theroundtable.MainStageController">
     <left>
         <VBox>
-            <VBox spacing="10" alignment="TOP_CENTER">
+            <VBox spacing="10" fx:id="leftTopButtons" alignment="TOP_CENTER">
                 <padding>
                     <Insets top="5" right="5" bottom="5" left="5"/>
                 </padding>
@@ -18,7 +18,7 @@
                 <IconButton fx:id="pluginsButton" onAction="#openPluginsStage" mnemonicParsing="false" iconName="plugins.png"/>
             </VBox>
 
-            <VBox VBox.vgrow="ALWAYS" spacing="10" fx:id="leftButtons" alignment="BOTTOM_CENTER">
+            <VBox VBox.vgrow="ALWAYS" spacing="10" fx:id="leftBottomButtons" alignment="BOTTOM_CENTER">
                 <padding>
                     <Insets top="5" right="5" bottom="5" left="5"/>
                 </padding>
@@ -33,7 +33,7 @@
     </center>
 
     <right>
-        <VBox spacing="10" fx:id="rightButtons" alignment="BOTTOM_CENTER">
+        <VBox spacing="10" fx:id="rightBottomButtons" alignment="BOTTOM_CENTER">
             <padding>
                 <Insets top="5" right="5" bottom="5" left="5"/>
             </padding>

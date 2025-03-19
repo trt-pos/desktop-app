@@ -4,7 +4,7 @@ import javafx.scene.Scene;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.PreferencesConfigData;
-import org.lebastudios.theroundtable.events.UserEvents;
+import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
@@ -16,7 +16,7 @@ public class ThemeLoader
     private static final Set<Scene> scenesInstantiated = new HashSet<>();
 
     static {
-        UserEvents.OnAccountLogIn.addListener(a -> reloadThemes());
+        AccountEvents.OnAccountLogIn.addListener(a -> reloadThemes());
     }
     
     public synchronized static void reloadThemes()
