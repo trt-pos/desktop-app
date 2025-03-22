@@ -2,7 +2,7 @@
 set -u
 
 PLATFORM=$1
-OUTPUT_DIR="src/main/resources/org/lebastudios/theroundtable/camelot"
+OUTPUT_DIR="src/main/resources/org/lebastudios/theroundtable/bin"
 
 mkdir "$OUTPUT_DIR"
   
@@ -20,10 +20,10 @@ fi
   cd "trt-camelot" || exit
   if [ "$PLATFORM" == "linux" ]; then
       cross build --target x86_64-unknown-linux-gnu --release -p server
-      mv "target/x86_64-unknown-linux-gnu/release/server" "../$OUTPUT_DIR/camelot"
+      mv "target/x86_64-unknown-linux-gnu/release/server" "../$OUTPUT_DIR/camelot-linux"
   elif [ "$PLATFORM" == "windows" ]; then
       cross build --target x86_64-pc-windows-gnu --release -p server
-      mv "target/x86_64-pc-windows-gnu/release/server.exe" "../$OUTPUT_DIR/camelot.exe"
+      mv "target/x86_64-pc-windows-gnu/release/server.exe" "../$OUTPUT_DIR/camelot-win.exe"
   fi
 )
   

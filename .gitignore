@@ -128,3 +128,6 @@ fabric.properties
 /output/
 .env
 *.iml
+
+# Igoring binaries included inside the jar
+src/main/resources/org/lebastudios/theroundtable/bin/*g
