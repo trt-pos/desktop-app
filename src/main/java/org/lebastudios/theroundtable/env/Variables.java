@@ -3,6 +3,7 @@ package org.lebastudios.theroundtable.env;
 public class Variables
 {
     private static EnvironmentType envType = detectEnvironmentType();
+    private static Boolean showExceptionsBacktrace = null;
     
     public enum EnvironmentType
     {
@@ -34,6 +35,25 @@ public class Variables
         }
         
         return envType;
+    }
+    
+    public static boolean showExceptionsBacktrace()
+    {
+        if (showExceptionsBacktrace == null) 
+        {
+            String value = System.getenv("TRT_BACKTRACE");
+            
+            if (value == null) 
+            {
+                showExceptionsBacktrace = false;
+            }
+            else
+            {
+                showExceptionsBacktrace = value.equals("1");
+            }
+        }
+        
+        return showExceptionsBacktrace;
     }
     
     public static String getTestServerUrl()

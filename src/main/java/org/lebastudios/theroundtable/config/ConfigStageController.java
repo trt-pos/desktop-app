@@ -136,6 +136,10 @@ public class ConfigStageController extends StageController<ConfigStageController
                     new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.database"),
                             "database.png", new DatabaseConfigPaneController()))
             );
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem("Camelot",
+                            "server.png", new CamelotServerConfigPaneController()))
+            );
         }
 
         return generalConfigSection;

@@ -1,5 +1,7 @@
 package org.lebastudios.theroundtable.logs;
 
+import org.lebastudios.theroundtable.env.Variables;
+
 import java.io.PrintStream;
 import java.time.format.DateTimeFormatter;
 
@@ -41,6 +43,11 @@ public class Logs
         StackTraceElement element = e.getStackTrace()[0];
         log(LogType.EXCEPTION, message + " (" + e.getMessage() + ") in "
                 + element.getClassName() + "." + element.getMethodName() + ": " + element.getLineNumber());
+        
+        if (Variables.showExceptionsBacktrace()) 
+        {
+            e.printStackTrace();
+        }
     }
 
     private static String getDateString()

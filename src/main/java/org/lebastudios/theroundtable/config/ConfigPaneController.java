@@ -21,6 +21,7 @@ public abstract class ConfigPaneController<T extends ConfigData<T>> extends Pane
     public abstract void updateConfigData(T configData);
     public abstract void updateUI(T configData);
     public abstract boolean validate();
+    public void onSave(T configData) {}
     
     public final void updateConfigData()
     {
@@ -49,6 +50,7 @@ public abstract class ConfigPaneController<T extends ConfigData<T>> extends Pane
 
         updateConfigData(configData);
         configData.save();
+        onSave(configData);
         return true;
     }
 

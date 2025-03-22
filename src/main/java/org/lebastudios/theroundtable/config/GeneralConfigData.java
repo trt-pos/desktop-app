@@ -11,7 +11,7 @@ public class GeneralConfigData extends ConfigData<GeneralConfigData>
     @Override
     public File getFile()
     {
-        return new File(AppConfiguration.getGlobalDir() + "/general-settings.json");
+        return new File(AppConfiguration.getGlobalDir(), "general-settings.json");
     }
 
     public static class ProxyData
