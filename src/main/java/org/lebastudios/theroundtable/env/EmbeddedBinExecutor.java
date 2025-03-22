@@ -37,31 +37,21 @@ public class EmbeddedBinExecutor
         
         if (binURL == null) 
         {
-            Logs.getInstance().log(
-                    Logs.LogType.ERROR,
-                    "The bin file does not exist: " + finalBinName
-            );
-            return null;
+            throw new RuntimeException("The bin file does not exist: " + finalBinName);
         }
         
         File binFile = new File(binURL.getPath());
         if (!binFile.exists() || !binFile.isFile()) 
         {
-            Logs.getInstance().log(
-                    Logs.LogType.ERROR,
-                    "The bin file does not exist or is not a file: " + binURL
-            );
-            return null;
+            throw new RuntimeException("The bin file does not exist: " + binURL.getPath());
         }
         
         if (!binFile.isAbsolute()) 
         {
-            Logs.getInstance().log(
-                    Logs.LogType.ERROR,
-                    "The bin file path is not absolute: " + binURL
-            );
-            return null;
+            throw new RuntimeException("The bin file does not refer to an absolute path: " + binURL.getPath());
         }
+        
+        binFile.setExecutable(true);
         
         String[] command = new String[args.length + 1];
         

@@ -40,6 +40,8 @@ class CamelotClient
             @Override
             protected Void call() throws Exception
             {
+                updateTitle("Connecting to Camelot");
+                
                 int retries = 0;
                 boolean success = false;
                 int milisToWait = 1000;

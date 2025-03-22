@@ -39,7 +39,7 @@ class HibernateManager
     
     public Task<Void> initTask()
     {
-        return new InitDatabaseTask();
+        return new  InitDatabaseTask();
     }
     
     public Task<Void> reloadTask()
