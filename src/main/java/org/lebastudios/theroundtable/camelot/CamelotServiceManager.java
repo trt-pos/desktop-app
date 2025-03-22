@@ -1,10 +1,14 @@
 package org.lebastudios.theroundtable.camelot;
 
+import org.lebastudios.theroundtable.camelot.trtcp.Request;
+import org.lebastudios.theroundtable.camelot.trtcp.Response;
 import org.lebastudios.theroundtable.config.CamelotServerConfigData;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 
 public class CamelotServiceManager
 {
@@ -19,6 +23,7 @@ public class CamelotServiceManager
         return instance;
     }
 
+    private CamelotClient client;
     private Process serverProcess;
 
     private CamelotServiceManager()
@@ -31,7 +36,7 @@ public class CamelotServiceManager
         init(new CamelotServerConfigData().load());
     }
 
-    private void init(CamelotServerConfigData configData)  throws IOException
+    private void init(CamelotServerConfigData configData) throws IOException
     {
         if (serverProcess != null) throw new IllegalStateException("Server already started");
 
@@ -43,6 +48,10 @@ public class CamelotServiceManager
             serverProcess = pb.start();
         }
         
+        client = new CamelotClient(configData.clientName, configData.host, configData.port);
+        client.connect();
+        
+        client.write(Request.ConnectRequest(client.getName()));
     }
     
     public void stop()

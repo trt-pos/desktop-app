@@ -7,6 +7,8 @@ import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 
+import java.net.Socket;
+
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {
     @FXML private TextField clientName;
@@ -40,19 +42,31 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         clientName.setText(clientName.getText().trim());
         serverAddress.setText(serverAddress.getText().trim());
         serverPort.setText(serverPort.getText().trim());
-        
-        if (!clientName.getText().matches("[a-zA-Z0-9_-]+")) 
+
+        if (!clientName.getText().matches("[a-zA-Z0-9_-]+"))
         {
             UIEffects.shakeNode(clientName);
             return false;
         }
-        
-        if (!serverPort.getText().matches("[0-9]+")) 
+
+        if (!serverPort.getText().matches("[0-9]+"))
         {
             UIEffects.shakeNode(serverPort);
             return false;
         }
-        
+
+        try (Socket socket = new Socket(serverAddress.getText(), Integer.parseInt(serverPort.getText()))) {}
+        catch (IllegalArgumentException e)
+        {
+            UIEffects.shakeNode(serverPort);
+            return false;
+        }
+        catch (Exception ignore)
+        {
+            // Maybe the server isn't up yet.
+            // Whe handle this when we call reload and the CamelotServiceManager tries to connect
+        }
+
         return true;
     }
 

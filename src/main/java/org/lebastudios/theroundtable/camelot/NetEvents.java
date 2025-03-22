@@ -1,5 +1,5 @@
 package org.lebastudios.theroundtable.camelot;
 
-class Client
+public class NetEvents
 {
 }
