@@ -42,8 +42,13 @@ public class Response implements FromBytes<Response>, IntoBytes
     {
         List<Byte> bytes = new ArrayList<>();
         
+        bytes.add((byte) 1);
+        
         bytes.addAll(head.toBytes());
+        bytes.add((byte) 0x1F);
+        
         bytes.addAll(statusCode.toBytes());
+        bytes.add((byte) 0x1F);
         
         for (byte b : body) bytes.add(b);
         

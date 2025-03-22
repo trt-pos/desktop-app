@@ -7,6 +7,7 @@ import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.text.ParseException;
 
@@ -50,7 +51,6 @@ public class CamelotServiceManager
         
         client = new CamelotClient(configData.clientName, configData.host, configData.port);
         client.connect();
-        
         client.write(Request.ConnectRequest(client.getName()));
     }
     

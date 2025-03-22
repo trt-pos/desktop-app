@@ -69,11 +69,12 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
 
         return true;
     }
-
+    
     @SneakyThrows
     @Override
     public void onSave(CamelotServerConfigData configData)
     {
+        // TODO: Convert this to a Task
         CamelotServiceManager.getInstance().reload(configData);
     }
 

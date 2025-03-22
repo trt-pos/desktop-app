@@ -5,8 +5,10 @@ import org.lebastudios.theroundtable.camelot.trtcp.FromBytes;
 import org.lebastudios.theroundtable.camelot.trtcp.IntoBytes;
 import org.lebastudios.theroundtable.camelot.trtcp.Request;
 import org.lebastudios.theroundtable.camelot.trtcp.Response;
+import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
 import java.util.List;
@@ -32,7 +34,39 @@ class CamelotClient
     
     public void connect() throws IOException
     {
-        socket = new Socket(host, port);
+        int retries = 0;
+        boolean success = false;
+        int milisToWait = 1000;
+        while (retries < 3 && !success)
+        {
+            int actualTimeToWait = milisToWait * retries  +25;
+            try
+            {
+                Thread.sleep(actualTimeToWait);
+                socket = new Socket(host, port);
+                success = true;
+            }
+            catch (ConnectException exception)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING, 
+                        "Failed to connect to Camelot, retrying in " + actualTimeToWait / 1000 + " seconds"
+                );
+                retries++;
+            }
+            catch (InterruptedException e)
+            {
+                Logs.getInstance().log("Thread interrupted while trying to reconnect to Camelot", e);
+                return;
+            }
+        }
+        
+        if (!success) 
+        {
+            Logs.getInstance().log(Logs.LogType.ERROR, "Failed to connect to server");
+            return;
+        }
+        
         in = new BufferedInputStream(socket.getInputStream());
         out = new BufferedOutputStream(socket.getOutputStream());
     }

@@ -43,8 +43,13 @@ public class Request implements FromBytes<Request>, IntoBytes
     {
         List<Byte> bytes = new ArrayList<>();
         
+        bytes.add((byte) 0);
+        
         bytes.addAll(head.toBytes());
+        bytes.add((byte) 0x1F);
+        
         bytes.addAll(action.toBytes());
+        bytes.add((byte) 0x1F);
         
         for (byte b : body) bytes.add(b);
         
