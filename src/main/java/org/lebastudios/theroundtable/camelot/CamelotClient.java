@@ -1,10 +1,10 @@
 package org.lebastudios.theroundtable.camelot;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.lebastudios.theroundtable.camelot.trtcp.FromBytes;
-import org.lebastudios.theroundtable.camelot.trtcp.IntoBytes;
-import org.lebastudios.theroundtable.camelot.trtcp.Request;
-import org.lebastudios.theroundtable.camelot.trtcp.Response;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.lebastudios.theroundtable.camelot.trtcp.*;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -12,28 +12,33 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 class CamelotClient
 {
     @Getter private final String name;
     private final String host;
     private final int port;
-    
+
     private Socket socket;
-    private BufferedInputStream in;
-    private BufferedOutputStream out;
-    
-    private Response lastResponse;
-    
+    private InputStream in;
+    private OutputStream out;
+
+    private final Container<Response> lastResponseContainer = new Container<>();
+    @Setter private Consumer<Request> callbacksHandler = _ ->
+    {};
+
     public CamelotClient(String name, String host, int port)
     {
         this.name = name;
         this.host = host;
         this.port = port;
     }
-    
-    public Task<Void> getConnectTask()
+
+    public Task<Void> connectTask()
     {
         return new Task<>()
         {
@@ -41,7 +46,7 @@ class CamelotClient
             protected Void call() throws Exception
             {
                 updateTitle("Connecting to Camelot");
-                
+
                 int retries = 0;
                 boolean success = false;
                 int milisToWait = 1000;
@@ -69,43 +74,316 @@ class CamelotClient
                     throw new ConnectException("Failed to connect to Camelot");
                 }
 
-                in = new BufferedInputStream(socket.getInputStream());
-                out = new BufferedOutputStream(socket.getOutputStream());
+                in = socket.getInputStream();
+                out = socket.getOutputStream();
+
+                new Thread(readCoroutine, "Camelot client " + name + " Thread").start();
+
+                CamelotClient.this.write(Request.creteConnectRequest(name));
+
                 return null;
             }
         };
     }
-    
+
     public void disconnect() throws IOException
     {
         if (socket == null) return;
-        
+
         socket.close();
         socket = null;
     }
-    
-    public void write(IntoBytes data) throws IOException
+
+    private Response write(IntoBytes data) throws IOException, InterruptedException
     {
         List<Byte> byteList = data.toBytes();
         byte[] bytes = new byte[byteList.size()];
-        
+
         for (int i = 0; i < byteList.size(); i++) bytes[i] = byteList.get(i);
-        
-        out.write(bytes);
-        out.flush();
-        // TODO: return response use of wait notify
-    }
-    
-    // TODO: have a thread reading everything and firing events or saving responses
-    public <T extends FromBytes<T>> T read() throws IOException, ParseException
-    {
-        byte[] bytes = in.readAllBytes();
-        
-        return switch (bytes[0])
+
+        synchronized (this)
         {
-            case 0 -> (T) new Request().fromBytes(bytes);
-            case 1 -> (T) new Response().fromBytes(bytes);
-            default -> throw new IOException("Invalid byte");
-        };
+            out.write(bytes);
+            out.flush();
+        }
+
+        synchronized (lastResponseContainer)
+        {
+            if (lastResponseContainer.isEmpty())
+            {
+                lastResponseContainer.wait(5000);
+            }
+
+            Response response = lastResponseContainer.getValue();
+            lastResponseContainer.clear();
+            return response;
+        }
     }
+
+    public void createEvent(String event)
+    {
+        String[] parts = event.split(":");
+
+        if (parts.length != 2)
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.ERROR,
+                    "Invalid event name: " + event
+            );
+            return;
+        }
+
+        // Create the event in the server
+        Request request = new Request(
+                new Head(Version.actualProtocolVersion(), name),
+                new Action(ActionType.CREATE, parts[0], parts[1]),
+                new byte[0]
+        );
+
+        try
+        {
+            Response response = write(request);
+
+            if (response.getStatusCode() != StatusCode.OK)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "Failed to create event " + event + ": " + response.getStatusCode()
+                );
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            Logs.getInstance().log(
+                    "Failed to create event: " + event,
+                    e
+            );
+            return;
+        }
+
+        // Add this client as a listener for the event
+        request = new Request(
+                new Head(Version.actualProtocolVersion(), name),
+                new Action(ActionType.LISTEN, parts[0], parts[1]),
+                new byte[0]
+        );
+
+        try
+        {
+            Response response = write(request);
+
+            if (response.getStatusCode() != StatusCode.OK)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "Failed to listen to event " + event + ": " + response.getStatusCode()
+                );
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            Logs.getInstance().log(
+                    "Failed to listen to event: " + event,
+                    e
+            );
+        }
+    }
+
+    public void invokeEvent(String event, IntoBytes data)
+    {
+        String[] parts = event.split(":");
+
+        if (parts.length != 2)
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.ERROR,
+                    "Invalid event name: " + event
+            );
+            return;
+        }
+
+        var bytesList = data.toBytes();
+        byte[] bytes = new byte[bytesList.size()];
+
+        for (int i = 0; i < bytesList.size(); i++) bytes[i] = bytesList.get(i);
+
+        Request request = new Request(
+                new Head(Version.actualProtocolVersion(), name),
+                new Action(ActionType.CALLBACK, parts[0], parts[1]),
+                bytes
+        );
+
+        try
+        {
+            Response response = write(request);
+
+            if (response.getStatusCode() != StatusCode.OK)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "Failed to invoke event " + event + ": " + response.getStatusCode()
+                );
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            Logs.getInstance().log(
+                    "Failed to invoke event: " + event,
+                    e
+            );
+        }
+    }
+
+    public void removeListener(String event)
+    {
+        String[] parts = event.split(":");
+
+        if (parts.length != 2)
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.ERROR,
+                    "Invalid event name: " + event
+            );
+            return;
+        }
+
+        Request request = new Request(
+                new Head(Version.actualProtocolVersion(), name),
+                new Action(ActionType.LEAVE, parts[0], parts[1]),
+                new byte[0]
+        );
+
+        try
+        {
+            Response response = write(request);
+
+            if (response.getStatusCode() != StatusCode.OK)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "Failed to remove listener from event " + event + ": " + response.getStatusCode()
+                );
+            }
+        }
+        catch (IOException | InterruptedException e)
+        {
+            Logs.getInstance().log(
+                    "Failed to remove listener from event: " + event,
+                    e
+            );
+        }
+    }
+
+    private final Runnable readCoroutine = () ->
+    {
+        Socket tmpSocket = socket;
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        
+        try (tmpSocket)
+        {
+            while (!socket.isClosed())
+            {
+                buffer.reset();
+                
+                byte[] data = new byte[1024]; 
+                int bytesRead;
+
+                while ((bytesRead = in.read(data)) != -1) {
+                    buffer.write(data, 0, bytesRead);
+                    if (in.available() == 0) {
+                        break;
+                    }
+                }
+                
+                byte[] packet = buffer.toByteArray();
+
+                if (packet.length == 0) 
+                {
+                    Logs.getInstance().log(
+                            Logs.LogType.WARNING,
+                            "Received an empty packet from Camelot"
+                    );
+                    continue;
+                }
+                else
+                {
+                    Logs.getInstance().log(
+                            Logs.LogType.INFO,
+                            "Received packet from Camelot: " + packet.length + " bytes"
+                    );
+                }
+                
+                try
+                {
+                    switch (packet[0])
+                    {
+                        case 0 ->
+                        {
+                            Request request = new Request().fromBytes(packet);
+
+                            if (request.getAction().getType() != ActionType.CALLBACK)
+                            {
+                                Logs.getInstance().log(
+                                        Logs.LogType.WARNING,
+                                        "Received a request with an invalid action type: " +
+                                                request.getAction().getType()
+                                );
+                                continue;
+                            }
+
+                            callbacksHandler.accept(request);
+                        }
+                        case 1 ->
+                        {
+                            synchronized (lastResponseContainer)
+                            {
+                                Response response = new Response().fromBytes(packet);
+                                lastResponseContainer.setValue(response);
+                                lastResponseContainer.notify();
+                            }
+                        }
+                        default -> Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                "Received a packet with an invalid header: " + packet[0]
+                        );
+                    }
+                }
+                catch (ParseException exception)
+                {
+                    Logs.getInstance().log(
+                            "Failed to parse packet from Camelot (" + Arrays.toString(packet) + ")",
+                            exception
+                    );
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            Logs.getInstance().log(
+                    "Failed to read from socket Camelot Socket ",
+                    e
+            );
+        }
+    };
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class Container<T>
+    {
+        private T value;
+
+        public boolean isEmpty()
+        {
+            return value == null;
+        }
+
+        public void clear()
+        {
+            value = null;
+        }
+    }
+
 }

@@ -8,6 +8,8 @@ import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
+import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
@@ -82,9 +84,11 @@ public class TheRoundTableApplication extends Application
     public void start(Stage stage)
     {
         LangLoader.loadLang(Launcher.class, AppLocale.getActualLocale());
-
+        Database.getInstance().initTask().execute(true);
+        CamelotServiceManager.getInstance().initTask().execute(true);
+        
         if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
-
+        
         new AccountStageController().instantiate(true);
 
         PluginLoader.loadPlugins();

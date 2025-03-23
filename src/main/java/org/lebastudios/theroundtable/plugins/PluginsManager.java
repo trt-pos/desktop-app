@@ -60,7 +60,7 @@ public class PluginsManager
     public List<TreeItem<SettingsItem>> getSettingsTreeViews()
     {
         List<TreeItem<SettingsItem>> items = new ArrayList<>();
-
+        
         for (IPlugin plugin : pluginsLoaded.values())
         {
             var rootTreeItem = plugin.getSettingsRootTreeItem();

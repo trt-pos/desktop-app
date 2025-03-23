@@ -36,25 +36,13 @@ public class AccountStageController extends StageController<AccountStageControll
     @Override
     protected void initialize()
     {
-        new Task<Void>()
+        Database.getInstance().connectQuery(session ->
         {
-            @Override
-            protected Void call() throws Exception
-            {
-                updateTitle("Loading users");
-                executeSubtask(Database.getInstance().initTask());
+            List<Account> accounts = session.createQuery("from Account", Account.class).list();
 
-                Database.getInstance().connectQuery(session ->
-                {
-                    List<Account> accounts = session.createQuery("from Account", Account.class).list();
-
-                    accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
-                });
-
-                return null;
-            }
-        }.execute(true);
-
+            accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
+        });
+        
         Platform.runLater(() -> root.setCenter(accountsBox));
     }
 

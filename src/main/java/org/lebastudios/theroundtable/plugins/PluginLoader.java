@@ -19,6 +19,7 @@ public class PluginLoader
 {
     @Getter private static URLClassLoader pluginsClassLoader = new URLClassLoader(new URL[0]);
 
+    // TODO: Convert into a task
     public static void loadPlugins()
     {
         pluginsClassLoader = new URLClassLoader(

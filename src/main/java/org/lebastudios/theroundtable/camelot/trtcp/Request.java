@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lebastudios.theroundtable.camelot.FromBytes;
+import org.lebastudios.theroundtable.camelot.IntoBytes;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -66,7 +68,7 @@ public class Request implements FromBytes<Request>, IntoBytes
                 '}';
     }
     
-    public static Request ConnectRequest(String clientName)
+    public static Request creteConnectRequest(String clientName)
     {
         return new Request(
                 new Head(Version.actualProtocolVersion(), clientName), 

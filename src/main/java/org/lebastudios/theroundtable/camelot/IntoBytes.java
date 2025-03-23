@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.camelot.trtcp;
+package org.lebastudios.theroundtable.camelot;
 
 import java.util.List;
 

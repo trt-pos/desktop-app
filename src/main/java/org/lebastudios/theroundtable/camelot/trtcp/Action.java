@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lebastudios.theroundtable.camelot.FromBytes;
+import org.lebastudios.theroundtable.camelot.IntoBytes;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -19,6 +21,11 @@ public class Action implements FromBytes<Action>, IntoBytes
     private ActionType type;
     private String module;
     private String id;
+    
+    public String getEvent()
+    {
+        return module + ":" + id;
+    }
     
     @Override
     public Action fromBytes(byte[] bytes) throws ParseException

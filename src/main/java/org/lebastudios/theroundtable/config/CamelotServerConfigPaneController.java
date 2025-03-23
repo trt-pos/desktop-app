@@ -43,7 +43,17 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         serverAddress.setText(serverAddress.getText().trim());
         serverPort.setText(serverPort.getText().trim());
 
-        if (!clientName.getText().matches("[a-zA-Z0-9_-]+"))
+        if (serverAddress.getText().isBlank()) 
+        {
+            serverAddress.setText("localhost");
+        }
+        
+        if (serverPort.getText().isBlank()) 
+        {
+            serverPort.setText("1237");
+        }
+        
+        if (!clientName.getText().matches("[a-zA-Z0-9_.]*"))
         {
             UIEffects.shakeNode(clientName);
             return false;
@@ -74,7 +84,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @Override
     public void onSave(CamelotServerConfigData configData)
     {
-        CamelotServiceManager.getInstance().getReloadTask(configData)
+        CamelotServiceManager.getInstance().reloadTask(configData)
                 .setCancelable(true)
                 .execute(true);
     }

@@ -55,7 +55,6 @@ public class SetupStageController extends StageController<SetupStageController>
     protected void initialize()
     {
         backButton.setDisable(true);
-        Database.getInstance().initTask().execute(true);
     }
 
     @Override

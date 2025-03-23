@@ -1,5 +1,6 @@
-package org.lebastudios.theroundtable.camelot.trtcp;
+package org.lebastudios.theroundtable.camelot;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,23 +12,21 @@ public interface FromBytes<T>
     static List<byte[]> splitBytes(byte[] bytes, byte separator)
     {
         List<byte[]> bytesArraysList = new ArrayList<>();
-        List<Byte> buffer = new ArrayList<>();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         
         for (var actualByte : bytes)
         {
             if (actualByte == separator) 
             {
-                byte[] bufferArray = new byte[buffer.size()];
-                
-                for (int i = 0; i < buffer.size(); i++) bufferArray[i] = buffer.get(i);
-                
-                bytesArraysList.add(bufferArray);
-                buffer.clear();
+                bytesArraysList.add(buffer.toByteArray());
+                buffer.reset();
                 continue;
             }
             
-            buffer.add(actualByte);
+            buffer.write(actualByte);
         }
+        
+        bytesArraysList.add(buffer.toByteArray());
         
         return bytesArraysList;
     }

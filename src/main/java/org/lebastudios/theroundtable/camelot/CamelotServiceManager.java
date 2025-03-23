@@ -1,20 +1,17 @@
 package org.lebastudios.theroundtable.camelot;
 
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
-import org.lebastudios.theroundtable.camelot.trtcp.Request;
 import org.lebastudios.theroundtable.config.CamelotServerConfigData;
+import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.env.EmbeddedBinExecutor;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class CamelotServiceManager
 {
-    private static final URL SERVER_EXECUTABLE = Launcher.class.getResource("bin/camelot-linux");
-
     private static CamelotServiceManager instance;
 
     public static CamelotServiceManager getInstance()
@@ -32,12 +29,12 @@ public class CamelotServiceManager
         AppLifeCicleEvents.OnAppClose.addListener(_ -> stop());
     }
 
-    public Task<Void> getInitTask()
+    public Task<Void> initTask()
     {
-        return getInitTask(new CamelotServerConfigData().load());
+        return initTask(new CamelotServerConfigData().load());
     }
 
-    private Task<Void> getInitTask(CamelotServerConfigData configData)
+    private Task<Void> initTask(CamelotServerConfigData configData)
     {
         if (serverProcess != null) throw new IllegalStateException("Server already started");
 
@@ -57,9 +54,15 @@ public class CamelotServiceManager
                     );
                 }
 
-                client = new CamelotClient(configData.clientName, configData.host, configData.port);
-                executeSubtask(client.getConnectTask());
-                client.write(Request.ConnectRequest(client.getName()));
+                // Create the client object to be connected to the server
+                CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);
+                // Asigning the callback handler to the client to handle the events callbacks
+                tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
+                // Execute the connection task to finally connect to the server
+                executeSubtask(tmpClient.connectTask());
+                
+                // Assign the client object to the class variable if the connection was successful
+                client = tmpClient;
                 
                 return null;
             }
@@ -74,14 +77,25 @@ public class CamelotServiceManager
         serverProcess = null;
     }
 
-    public Task<Void> getReloadTask(CamelotServerConfigData configData)
+    public Task<Void> reloadTask(CamelotServerConfigData configData)
     {
         stop();
-        return getInitTask(configData);
+        return initTask(configData);
     }
 
-    public Task<Void> getReloadTask() throws IOException
+    public Task<Void> reloadTask() throws IOException
     {
-        return getReloadTask(new CamelotServerConfigData().load());
+        return reloadTask(new CamelotServerConfigData().load());
+    }
+    
+    CamelotClient getPersistentClient()
+    {
+        while (client == null)
+        {
+            new RequestConfigStageController(new CamelotServerConfigPaneController())
+                    .instantiate(true);
+        }
+        
+        return client;
     }
 }

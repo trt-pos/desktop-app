@@ -1,5 +1,8 @@
 package org.lebastudios.theroundtable.camelot.trtcp;
 
+import org.lebastudios.theroundtable.camelot.FromBytes;
+import org.lebastudios.theroundtable.camelot.IntoBytes;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;

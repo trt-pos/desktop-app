@@ -6,7 +6,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
@@ -15,6 +17,7 @@ import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
@@ -23,6 +26,7 @@ import java.util.function.Consumer;
 public class ConfigStageController extends StageController<ConfigStageController>
 {
     public static Stage configStage;
+    @Getter private static ConfigStageController instance;
 
     static
     {
@@ -40,13 +44,23 @@ public class ConfigStageController extends StageController<ConfigStageController
     {
         if (configStage != null)
         {
+            if (configStage.isShowing())
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.WARNING,
+                        "Config stage is already showing"
+                );
+                return;
+            }
+            
             configStage.show();
             return;
         }
-
+        
         super.instantiate(acceptController, shouldWait);
-
+        
         configStage = getStage();
+        instance = this;
     }
 
     @SneakyThrows @FXML @Override
@@ -92,59 +106,12 @@ public class ConfigStageController extends StageController<ConfigStageController
             }
         });
         
-        configSectionsTreeView.getRoot().getChildren().add(createGeneralConfigSection());
+        configSectionsTreeView.getRoot().getChildren().add(CorePlugin.getInstance().getSettingsRootTreeItem());
         configSectionsTreeView.getRoot().getChildren().addAll(PluginsManager.getInstance().getSettingsTreeViews());
         
         mainPane.setContent(new FXMLLoader(Launcher.class.getResource("defaultCenterPane.fxml")).load());
     }
-
-    private TreeItem<SettingsItem> createGeneralConfigSection()
-    {
-        var generalConfigSection = new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.general"),
-                "settings.png", null));
-        generalConfigSection.setExpanded(true);
-
-        if (AccountManager.getInstance().isAccountAdmin())
-        {
-            // generalConfigSection.getChildren().add(
-            //         new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.account"),
-            //                 "user.png", new AccountConfigPaneController()))
-            // );
-
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.users"),
-                            "users.png", new UsersConfigPaneController()))
-            );
-        }
-
-        generalConfigSection.getChildren().add(
-                new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.preferences"),
-                        "preferences.png", new PreferencesConfigPaneController()))
-        );
-
-        if (AccountManager.getInstance().isAccountAdmin())
-        {
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.establishment"),
-                            "establishment.png", new EstablishmentConfigPaneController()))
-            );
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.printers"),
-                            "printer.png", new PrintersConfigPaneController()))
-            );
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.database"),
-                            "database.png", new DatabaseConfigPaneController()))
-            );
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem("Camelot",
-                            "server.png", new CamelotServerConfigPaneController()))
-            );
-        }
-
-        return generalConfigSection;
-    }
-
+    
     @FXML
     private void apply()
     {

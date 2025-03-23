@@ -93,7 +93,7 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
         }
         catch (InterruptedException | ExecutionException e)
         {
-            Logs.getInstance().log("Error executing subtask " + task.getTitle(), e);
+            Logs.getInstance().log("Error executing subtask " + task.getClass().getCanonicalName(), e);
             return null;
         }
     }
