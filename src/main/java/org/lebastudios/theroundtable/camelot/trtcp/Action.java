@@ -32,7 +32,7 @@ public class Action implements FromBytes<Action>, IntoBytes
     {
         if (bytes.length < 1) throw new ParseException("Invalid byte array", 0);
         
-        type = ActionType.values()[0].fromBytes(new byte[bytes[0]]);
+        type = ActionType.values()[0].fromBytes(new byte[] { bytes[0] });
         
         if (bytes.length == 1) 
         {

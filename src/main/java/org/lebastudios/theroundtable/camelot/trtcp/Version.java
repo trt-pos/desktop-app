@@ -36,7 +36,15 @@ public class Version implements FromBytes<Version>, IntoBytes
     @Override
     public List<Byte> toBytes()
     {
-        return new ArrayList<>();
+        List<Byte> bytes = new ArrayList<>();
+        
+        bytes.add((byte) (major >> 8));
+        bytes.add((byte) major);
+        
+        bytes.add((byte) (patch >> 8));
+        bytes.add((byte) patch);
+        
+        return bytes;
     }
 
     @Override

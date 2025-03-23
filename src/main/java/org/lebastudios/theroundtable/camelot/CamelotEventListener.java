@@ -4,11 +4,11 @@ import org.lebastudios.theroundtable.logs.Logs;
 
 import java.text.ParseException;
 
-public abstract class CamelotEventListener<T extends FromBytes<T>>
+public abstract class CamelotEventListener<T>
 {
-    private final T auxObj;
+    private final FromBytes<T> auxObj;
     
-    private CamelotEventListener(T auxObj) 
+    public CamelotEventListener(FromBytes<T> auxObj) 
     {
         this.auxObj = auxObj;
     }

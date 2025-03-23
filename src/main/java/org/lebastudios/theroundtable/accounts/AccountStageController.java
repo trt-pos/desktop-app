@@ -13,11 +13,14 @@ import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
+import org.lebastudios.theroundtable.camelot.CamelotEventListener;
+import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
+import org.lebastudios.theroundtable.camelot.FromBytesToString;
+import org.lebastudios.theroundtable.camelot.FromStringToBytes;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.util.List;
@@ -42,8 +45,21 @@ public class AccountStageController extends StageController<AccountStageControll
 
             accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
         });
-        
+
         Platform.runLater(() -> root.setCenter(accountsBox));
+
+        // Test de Camelot
+        CamelotEventsManager.getInstance()
+                .addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
+                {
+                    @Override
+                    public void accept(String object)
+                    {
+                        System.out.println(object);
+                    }
+                });
+
+        CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World!"));
     }
 
     @SneakyThrows

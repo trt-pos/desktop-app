@@ -209,7 +209,7 @@ class CamelotClient
 
         Request request = new Request(
                 new Head(Version.actualProtocolVersion(), name),
-                new Action(ActionType.CALLBACK, parts[0], parts[1]),
+                new Action(ActionType.INVOKE, parts[0], parts[1]),
                 bytes
         );
 

@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 
-public abstract class FromJson<T extends FromJson<T>> implements FromBytes<T>
+public abstract class FromJsonToObject<T extends FromJsonToObject<T>> implements FromBytes<T>
 {
     private static final Gson GSON = new GsonBuilder().create();
     

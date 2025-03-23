@@ -1,6 +1,8 @@
 package org.lebastudios.theroundtable.camelot;
 
+import org.lebastudios.theroundtable.camelot.trtcp.Head;
 import org.lebastudios.theroundtable.camelot.trtcp.Request;
+import org.lebastudios.theroundtable.camelot.trtcp.Version;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ public class CamelotEventsManager
     public void invokeEvent(String event, IntoBytes intoBytes)
     {
         CamelotClient client = CamelotServiceManager.getInstance().getPersistentClient();
+        
         client.invokeEvent(event, intoBytes);
     }
 }
