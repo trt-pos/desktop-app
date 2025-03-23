@@ -12,7 +12,6 @@ import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
 import org.lebastudios.theroundtable.config.GeneralConfigData;
 import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
@@ -28,13 +27,13 @@ public class SetupStageController extends StageController<SetupStageController>
             new AccountSetupPaneController(
                     new TitleBuilder(LangFileLoader.getTranslation("setup.title.adminconfig"),
                             "admin-user.png").build()),
-            new SettingsPaneWrapperController(new EstablishmentConfigPaneController(),
+            new ConfigPaneWrapperController(new EstablishmentConfigPaneController(),
                     new TitleBuilder(LangFileLoader.getTranslation("setup.title.establishmentconfig"),
                             "establishment.png").build()),
-            new SettingsPaneWrapperController(new PrintersConfigPaneController(),
+            new ConfigPaneWrapperController(new PrintersConfigPaneController(),
                     new TitleBuilder(LangFileLoader.getTranslation("setup.title.printersconfig"),
                             "printer.png").build()),
-            new SettingsPaneWrapperController(new DatabaseConfigPaneController(),
+            new ConfigPaneWrapperController(new DatabaseConfigPaneController(),
                     new TitleBuilder(LangFileLoader.getTranslation("setup.title.databaseconfig"),
                             "database.png").build()),
     };

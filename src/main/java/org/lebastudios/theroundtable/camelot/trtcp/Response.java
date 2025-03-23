@@ -30,7 +30,7 @@ public class Response implements FromBytes<Response>, IntoBytes
 
         List<byte[]> parts = FromBytes.splitBytes(Arrays.copyOfRange(bytes, 1, bytes.length), (byte) 0x1F);
 
-        if (parts.size() != 3) throw new ParseException("Failed to parse bytes into Response", 0);
+        if (parts.size() != 3) throw new ParseException("Failed to parse bytes into Response. Found more than 3 parts", 0);
 
         head = new Head().fromBytes(parts.get(0));
         statusCode = StatusCode.values()[0].fromBytes(parts.get(1));

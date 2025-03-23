@@ -8,11 +8,13 @@ import org.lebastudios.theroundtable.camelot.trtcp.*;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -111,7 +113,7 @@ class CamelotClient
         {
             if (lastResponseContainer.isEmpty())
             {
-                lastResponseContainer.wait(5000);
+                lastResponseContainer.wait();
             }
 
             Response response = lastResponseContainer.getValue();
@@ -282,16 +284,16 @@ class CamelotClient
         
         try (tmpSocket)
         {
-            while (!socket.isClosed())
+            while (!socket.isClosed() && socket.isConnected() && !socket.isInputShutdown())
             {
                 buffer.reset();
                 
                 byte[] data = new byte[1024]; 
                 int bytesRead;
-
+                
                 while ((bytesRead = in.read(data)) != -1) {
                     buffer.write(data, 0, bytesRead);
-                    if (in.available() == 0) {
+                    if (bytesRead < 1024) {
                         break;
                     }
                 }
@@ -313,47 +315,61 @@ class CamelotClient
                             "Received packet from Camelot: " + packet.length + " bytes"
                     );
                 }
-                
-                try
+
+                switch (packet[0])
                 {
-                    switch (packet[0])
+                    case 0 ->
                     {
-                        case 0 ->
+                        Request request;
+                        try
                         {
-                            Request request = new Request().fromBytes(packet);
-
-                            if (request.getAction().getType() != ActionType.CALLBACK)
-                            {
-                                Logs.getInstance().log(
-                                        Logs.LogType.WARNING,
-                                        "Received a request with an invalid action type: " +
-                                                request.getAction().getType()
-                                );
-                                continue;
-                            }
-
-                            callbacksHandler.accept(request);
+                            request = new Request().fromBytes(packet);
                         }
-                        case 1 ->
+                        catch (ParseException exception)
                         {
-                            synchronized (lastResponseContainer)
+                            Logs.getInstance().log(
+                                    "Failed to parse packet from Camelot (" + Arrays.toString(packet) + ")",
+                                    exception
+                            );
+                            continue;
+                        }
+
+                        if (request.getAction().getType() != ActionType.CALLBACK)
+                        {
+                            Logs.getInstance().log(
+                                    Logs.LogType.WARNING,
+                                    "Received a request with an invalid action type: " +
+                                            request.getAction().getType()
+                            );
+                            continue;
+                        }
+
+                        callbacksHandler.accept(request);
+                    }
+                    case 1 ->
+                    {
+                        synchronized (lastResponseContainer)
+                        {
+                            try
                             {
                                 Response response = new Response().fromBytes(packet);
                                 lastResponseContainer.setValue(response);
-                                lastResponseContainer.notify();
                             }
+                            catch (ParseException exception)
+                            {
+                                Logs.getInstance().log(
+                                        "Failed to parse packet from Camelot (" + Arrays.toString(packet) + ")",
+                                        exception
+                                );
+                            }
+                            
+                            // Notify the waiting thread even if the response could be parsed or not to avoid a deadlock
+                            lastResponseContainer.notify();
                         }
-                        default -> Logs.getInstance().log(
-                                Logs.LogType.WARNING,
-                                "Received a packet with an invalid header: " + packet[0]
-                        );
                     }
-                }
-                catch (ParseException exception)
-                {
-                    Logs.getInstance().log(
-                            "Failed to parse packet from Camelot (" + Arrays.toString(packet) + ")",
-                            exception
+                    default -> Logs.getInstance().log(
+                            Logs.LogType.WARNING,
+                            "Received a packet with an invalid header: " + packet[0]
                     );
                 }
             }

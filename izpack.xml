@@ -50,7 +50,7 @@
     
     <packs>
         <!-- UNIX -->
-        <pack name="Launcher bin" required="yes" os="unix">
+        <pack name="Linux launcher" required="yes" os="unix">
             <description>The launcher Rust bin</description>
             <file src="output/theroundtable-linux-x64/start" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>
@@ -64,7 +64,7 @@
         </pack>
 
         <!-- Windows -->
-        <pack name="Launcher bin" required="yes" os="windows">
+        <pack name="Windows launcher" required="yes" os="windows">
             <description>The launcher Rust bin</description>
             <file src="output/theroundtable-windows-x64/start.exe" targetdir="${INSTALL_PATH}" override="true"/>
         </pack>

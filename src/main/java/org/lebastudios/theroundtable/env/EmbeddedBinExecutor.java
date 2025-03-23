@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.env;
 
 import org.controlsfx.tools.Platform;
-import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.File;

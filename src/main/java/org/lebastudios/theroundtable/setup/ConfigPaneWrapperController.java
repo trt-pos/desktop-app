@@ -6,12 +6,12 @@ import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.ConfigPaneController;
 
-public class SettingsPaneWrapperController extends SetupPaneController
+class ConfigPaneWrapperController extends SetupPaneController
 {
     private final ConfigPaneController<?> configPaneController;
     
     @SneakyThrows
-    public SettingsPaneWrapperController(ConfigPaneController<?> configPaneController, Node titleNode)
+    public ConfigPaneWrapperController(ConfigPaneController<?> configPaneController, Node titleNode)
     {
         super(titleNode);
         this.configPaneController = configPaneController;

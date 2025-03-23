@@ -14,6 +14,8 @@ import org.controlsfx.control.Notifications;
 import org.controlsfx.control.action.Action;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
+import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
+import org.lebastudios.theroundtable.camelot.FromStringToBytes;
 import org.lebastudios.theroundtable.config.ConfigStageController;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.controllers.Controller;
@@ -73,6 +75,8 @@ public class MainStageController extends PaneController<MainStageController>
         {
             rightBottomButtons.getChildren().add(homeButton);
         }
+
+        CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World from Main stage!"));
     }
 
     @SneakyThrows

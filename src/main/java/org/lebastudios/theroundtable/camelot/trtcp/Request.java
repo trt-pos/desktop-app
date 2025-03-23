@@ -31,7 +31,7 @@ public class Request implements FromBytes<Request>, IntoBytes
 
         List<byte[]> parts = FromBytes.splitBytes(Arrays.copyOfRange(bytes, 1, bytes.length), (byte) 0x1F);
 
-        if (parts.size() != 3) throw new ParseException("Failed to parse bytes into Request", 0);
+        if (parts.size() != 3) throw new ParseException("Failed to parse bytes into Request. Found more than 3 parts", 0);
         
         head = new Head().fromBytes(parts.get(0));
         action = new Action().fromBytes(parts.get(1));

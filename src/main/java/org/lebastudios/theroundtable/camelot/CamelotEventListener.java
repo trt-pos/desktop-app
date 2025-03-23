@@ -6,18 +6,18 @@ import java.text.ParseException;
 
 public abstract class CamelotEventListener<T>
 {
-    private final FromBytes<T> auxObj;
+    private final FromBytes<T> bytesParser;
     
-    public CamelotEventListener(FromBytes<T> auxObj) 
+    public CamelotEventListener(FromBytes<T> bytesParser) 
     {
-        this.auxObj = auxObj;
+        this.bytesParser = bytesParser;
     }
     
     final void accept(byte[] bytes)
     {
         try
         {
-            accept(auxObj.fromBytes(bytes));
+            accept(bytesParser.fromBytes(bytes));
         }
         catch (ParseException e)
         {

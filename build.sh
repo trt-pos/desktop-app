@@ -43,7 +43,9 @@ if [ "$1" != "linux" ] && [ "$1" != "windows" ] && [ "$1" != "all" ]; then
       exit 1
 fi
 
-mvn package -P desktop
+mvn package -P desktop &
+bash build-camelot.sh &
+wait
 
 # Asignar variables
 PLATFORM=$1
