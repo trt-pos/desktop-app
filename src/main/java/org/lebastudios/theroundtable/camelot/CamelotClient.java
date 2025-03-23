@@ -1,14 +1,21 @@
 package org.lebastudios.theroundtable.camelot;
 
+import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lebastudios.theroundtable.camelot.trtcp.*;
+import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
+import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
@@ -27,8 +34,18 @@ class CamelotClient
     private DataOutputStream out;
 
     private final Container<Response> lastResponseContainer = new Container<>();
-    @Setter private Consumer<Request> callbacksHandler = _ ->
-    {};
+    @Setter private Consumer<Request> callbacksHandler = r ->
+    {
+        Logs.getInstance().log(Logs.LogType.WARNING,
+                "No callbacks handler for Camelot client " + r.getHead().getCaller());
+    };
+    @Setter private Consumer<Exception> onErrorHandler = e ->
+    {
+        Logs.getInstance().log(
+                "Default error handler for Camelot client",
+                e
+        );
+    };
 
     public CamelotClient(String name, String host, int port)
     {
@@ -93,29 +110,37 @@ class CamelotClient
         socket = null;
     }
 
-    private Response write(IntoBytes data) throws IOException, InterruptedException
+    private Response write(IntoBytes data)
     {
-        List<Byte> byteList = data.toBytes();
-        byte[] bytes = new byte[byteList.size()];
-
-        for (int i = 0; i < byteList.size(); i++) bytes[i] = byteList.get(i);
-
-        synchronized (this)
+        try
         {
-            out.write(bytes);
-            out.flush();
-        }
+            List<Byte> byteList = data.toBytes();
+            byte[] bytes = new byte[byteList.size()];
 
-        synchronized (lastResponseContainer)
-        {
-            if (lastResponseContainer.isEmpty())
+            for (int i = 0; i < byteList.size(); i++) bytes[i] = byteList.get(i);
+
+            synchronized (this)
             {
-                lastResponseContainer.wait();
+                out.write(bytes);
+                out.flush();
             }
 
-            Response response = lastResponseContainer.getValue();
-            lastResponseContainer.clear();
-            return response;
+            synchronized (lastResponseContainer)
+            {
+                if (lastResponseContainer.isEmpty())
+                {
+                    lastResponseContainer.wait();
+                }
+
+                Response response = lastResponseContainer.getValue();
+                lastResponseContainer.clear();
+                return response;
+            }
+        }
+        catch (Exception exception)
+        {
+            onErrorHandler.accept(exception);
+            return null;
         }
     }
 
@@ -139,25 +164,14 @@ class CamelotClient
                 new byte[0]
         );
 
-        try
-        {
-            Response response = write(request);
+        Response response = write(request);
 
-            if (response.getStatusCode() != StatusCode.OK)
-            {
-                Logs.getInstance().log(
-                        Logs.LogType.WARNING,
-                        "Failed to create event " + event + ": " + response.getStatusCode()
-                );
-            }
-        }
-        catch (IOException | InterruptedException e)
+        if (response.getStatusCode() != StatusCode.OK)
         {
             Logs.getInstance().log(
-                    "Failed to create event: " + event,
-                    e
+                    Logs.LogType.WARNING,
+                    "Failed to create event " + event + ": " + response.getStatusCode()
             );
-            return;
         }
 
         // Add this client as a listener for the event
@@ -167,23 +181,13 @@ class CamelotClient
                 new byte[0]
         );
 
-        try
-        {
-            Response response = write(request);
+        response = write(request);
 
-            if (response.getStatusCode() != StatusCode.OK)
-            {
-                Logs.getInstance().log(
-                        Logs.LogType.WARNING,
-                        "Failed to listen to event " + event + ": " + response.getStatusCode()
-                );
-            }
-        }
-        catch (IOException | InterruptedException e)
+        if (response.getStatusCode() != StatusCode.OK)
         {
             Logs.getInstance().log(
-                    "Failed to listen to event: " + event,
-                    e
+                    Logs.LogType.WARNING,
+                    "Failed to listen to event " + event + ": " + response.getStatusCode()
             );
         }
     }
@@ -212,23 +216,13 @@ class CamelotClient
                 bytes
         );
 
-        try
-        {
-            Response response = write(request);
+        Response response = write(request);
 
-            if (response.getStatusCode() != StatusCode.OK)
-            {
-                Logs.getInstance().log(
-                        Logs.LogType.WARNING,
-                        "Failed to invoke event " + event + ": " + response.getStatusCode()
-                );
-            }
-        }
-        catch (IOException | InterruptedException e)
+        if (response.getStatusCode() != StatusCode.OK)
         {
             Logs.getInstance().log(
-                    "Failed to invoke event: " + event,
-                    e
+                    Logs.LogType.WARNING,
+                    "Failed to invoke event " + event + ": " + response.getStatusCode()
             );
         }
     }
@@ -252,23 +246,13 @@ class CamelotClient
                 new byte[0]
         );
 
-        try
-        {
-            Response response = write(request);
+        Response response = write(request);
 
-            if (response.getStatusCode() != StatusCode.OK)
-            {
-                Logs.getInstance().log(
-                        Logs.LogType.WARNING,
-                        "Failed to remove listener from event " + event + ": " + response.getStatusCode()
-                );
-            }
-        }
-        catch (IOException | InterruptedException e)
+        if (response.getStatusCode() != StatusCode.OK)
         {
             Logs.getInstance().log(
-                    "Failed to remove listener from event: " + event,
-                    e
+                    Logs.LogType.WARNING,
+                    "Failed to remove listener from event " + event + ": " + response.getStatusCode()
             );
         }
     }
@@ -278,33 +262,33 @@ class CamelotClient
         Socket tmpSocket = socket;
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        
+
         try (tmpSocket)
         {
             while (!socket.isClosed() && socket.isConnected() && !socket.isInputShutdown())
             {
                 buffer.reset();
-                
+
                 byte msgType = in.readByte(); // msgType byte
                 buffer.write(msgType);
-                
+
                 int length = in.readInt(); // length int
                 buffer.write((byte) (length >> 24));
                 buffer.write((byte) (length >> 16));
                 buffer.write((byte) (length >> 8));
                 buffer.write((byte) length);
-                
+
                 buffer.write(in.readNBytes(length)); // head, middle and body bytes
-                
+
                 byte[] packet = buffer.toByteArray();
 
-                if (packet.length == 0) 
+                if (packet.length == 0)
                 {
                     Logs.getInstance().log(
                             Logs.LogType.WARNING,
                             "Received an empty packet from Camelot"
                     );
-                    break;
+                    continue;
                 }
                 else
                 {
@@ -360,7 +344,7 @@ class CamelotClient
                                         exception
                                 );
                             }
-                            
+
                             // Notify the waiting thread even if the response could be parsed or not to avoid a deadlock
                             lastResponseContainer.notify();
                         }
@@ -372,12 +356,9 @@ class CamelotClient
                 }
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            Logs.getInstance().log(
-                    "Failed to read from socket Camelot Socket ",
-                    e
-            );
+            onErrorHandler.accept(e);
         }
     };
 

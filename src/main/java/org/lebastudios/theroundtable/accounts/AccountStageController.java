@@ -48,16 +48,6 @@ public class AccountStageController extends StageController<AccountStageControll
 
         Platform.runLater(() -> root.setCenter(accountsBox));
 
-        // Test de Camelot
-        CamelotEventsManager.getInstance().addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
-                {
-                    @Override
-                    public void accept(String object)
-                    {
-                        System.out.println(object);
-                    }
-                });
-
         CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World!"));
     }
 

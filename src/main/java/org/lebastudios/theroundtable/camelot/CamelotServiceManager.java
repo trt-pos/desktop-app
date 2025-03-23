@@ -1,9 +1,11 @@
 package org.lebastudios.theroundtable.camelot;
 
+import javafx.application.Platform;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.CamelotServerConfigData;
 import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
+import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.env.EmbeddedBinExecutor;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
@@ -58,8 +60,12 @@ public class CamelotServiceManager
                 CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);
                 // Asigning the callback handler to the client to handle the events callbacks
                 tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
+                // Assigning the error handler to the client to handle the errors
+                tmpClient.setOnErrorHandler(CamelotServiceManager.this::onClientError);
                 // Execute the connection task to finally connect to the server
                 executeSubtask(tmpClient.connectTask());
+
+                CamelotEventsManager.getInstance().updateServerEvents(tmpClient);
                 
                 // Assign the client object to the class variable if the connection was successful
                 client = tmpClient;
@@ -97,5 +103,16 @@ public class CamelotServiceManager
         }
         
         return client;
+    }
+    
+    private void onClientError(Exception e)
+    {
+        Platform.runLater(() ->
+        {
+            new InformationTextDialogController("Connection to Camelot lost: " + e.getMessage())
+                    .instantiate(true);
+            new RequestConfigStageController(new CamelotServerConfigPaneController())
+                    .instantiate(true);
+        });
     }
 }

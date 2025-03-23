@@ -76,4 +76,9 @@ public class CamelotEventsManager
         
         client.invokeEvent(event, intoBytes);
     }
+    
+    void updateServerEvents(CamelotClient client)
+    {
+        events.keySet().forEach(client::createEvent);
+    }
 }

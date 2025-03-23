@@ -11,7 +11,10 @@ import org.lebastudios.theroundtable.ui.StageBuilder;
 
 public class RequestConfigStageController extends StageController<RequestConfigStageController>
 {
-    private final ConfigPaneController<?> configPaneController;
+    // TODO: Improve this stage. ConfigPane also has 
+    //  to provide a pane name and icon that will be used 
+    //  in the title bar and in the settings tre view.
+    private ConfigPaneController<?> configPaneController;
 
     public RequestConfigStageController(@NonNull ConfigPaneController<?> configPaneController)
     {
@@ -23,6 +26,7 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     protected void initialize()
     {
         ((VBox) getRoot()).getChildren().addFirst(configPaneController.getRoot());
+        configPaneController = configPaneController.getController();
     }
 
     @FXML
