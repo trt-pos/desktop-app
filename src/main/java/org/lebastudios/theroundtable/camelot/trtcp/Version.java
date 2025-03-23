@@ -9,8 +9,6 @@ import org.lebastudios.theroundtable.camelot.IntoBytes;
 
 import java.nio.ByteBuffer;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Getter
@@ -20,31 +18,28 @@ public class Version implements FromBytes<Version>, IntoBytes
 {
     private short major;
     private short patch;
-    
+
     @Override
     public Version fromBytes(byte[] bytes) throws ParseException
     {
         if (bytes.length != 4) throw new ParseException("Invalid byte array length", 0);
-        
+
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         major = buffer.getShort();
         patch = buffer.getShort();
-        
+
         return this;
     }
 
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        List<Byte> bytes = new ArrayList<>();
-        
-        bytes.add((byte) (major >> 8));
-        bytes.add((byte) major);
-        
-        bytes.add((byte) (patch >> 8));
-        bytes.add((byte) patch);
-        
-        return bytes;
+        return new byte[]{
+                (byte) (major >> 8),
+                (byte) major,
+                (byte) (patch >> 8),
+                (byte) patch
+        };
     }
 
     @Override
@@ -55,7 +50,7 @@ public class Version implements FromBytes<Version>, IntoBytes
                 ", patch=" + patch +
                 '}';
     }
-    
+
     public static Version actualProtocolVersion()
     {
         return new Version((short) 1, (short) 0);

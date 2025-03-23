@@ -1,6 +1,6 @@
 package org.lebastudios.theroundtable.camelot;
 
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 public final class FromStringToBytes implements IntoBytes
 {
@@ -9,11 +9,8 @@ public final class FromStringToBytes implements IntoBytes
     public FromStringToBytes(String value) {this.value = value;}
 
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        byte[] bytes = value.getBytes();
-        List<Byte> byteList = new java.util.ArrayList<>(bytes.length);
-        for (byte b : bytes) byteList.add(b);
-        return byteList;
+        return value.getBytes(StandardCharsets.UTF_8);
     }
 }

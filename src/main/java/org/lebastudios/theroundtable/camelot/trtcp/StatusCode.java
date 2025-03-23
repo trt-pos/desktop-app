@@ -4,8 +4,6 @@ import org.lebastudios.theroundtable.camelot.FromBytes;
 import org.lebastudios.theroundtable.camelot.IntoBytes;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public enum StatusCode implements FromBytes<StatusCode>, IntoBytes
 {
@@ -16,7 +14,7 @@ public enum StatusCode implements FromBytes<StatusCode>, IntoBytes
     public StatusCode fromBytes(byte[] bytes) throws ParseException
     {
         if (bytes.length != 1) throw new ParseException("Expected exactly one byte", 0);
-        
+
         return switch (bytes[0])
         {
             case 0 -> OK;
@@ -34,23 +32,22 @@ public enum StatusCode implements FromBytes<StatusCode>, IntoBytes
     }
 
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        List<Byte> bytes = new ArrayList<>();
-        
-        bytes.add((byte) switch (this) {
-            case OK -> 0;
-            case GENERIC_ERROR -> -1;
-            case NEED_CONNECTION -> -2;
-            case INTERNAL_SERVER_ERROR -> -3;
-            case ALREADY_CONNECTED -> 1;
-            case INVALID_REQUEST -> 2;
-            case EVENT_NOT_FOUND -> 3;
-            case LISTENER_NOT_FOUND -> 4;
-            case EVENT_ALREADY_EXISTS -> 5;
-            case ALREADY_SUBSCRIBED -> 6;
-        });
-        
-        return bytes;
+        return new byte[]{
+                (byte) switch (this)
+                {
+                    case OK -> 0;
+                    case GENERIC_ERROR -> -1;
+                    case NEED_CONNECTION -> -2;
+                    case INTERNAL_SERVER_ERROR -> -3;
+                    case ALREADY_CONNECTED -> 1;
+                    case INVALID_REQUEST -> 2;
+                    case EVENT_NOT_FOUND -> 3;
+                    case LISTENER_NOT_FOUND -> 4;
+                    case EVENT_ALREADY_EXISTS -> 5;
+                    case ALREADY_SUBSCRIBED -> 6;
+                }
+        };
     }
 }

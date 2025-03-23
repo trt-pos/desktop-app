@@ -3,8 +3,6 @@ package org.lebastudios.theroundtable.camelot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.List;
-
 public final class FromObjectToJsonBytes implements IntoBytes
 {
     private static final Gson GSON = new GsonBuilder().create();
@@ -17,8 +15,8 @@ public final class FromObjectToJsonBytes implements IntoBytes
     }
     
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        return new FromStringToBytes(GSON.toJson(value)).toBytes();
+        return new FromStringToBytes(GSON.toJson(value)).intoBytes();
     }
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.lebastudios.theroundtable.camelot.FromBytes;
 import org.lebastudios.theroundtable.camelot.IntoBytes;
 
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,34 +41,23 @@ public class Response implements FromBytes<Response>, IntoBytes
     }
 
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        List<Byte> bytes = new ArrayList<>(head.toBytes());
-        
-        bytes.add((byte) 0x1F);
-        
-        bytes.addAll(statusCode.toBytes());
-        bytes.add((byte) 0x1F);
-        
-        for (byte b : body) bytes.add(b);
+        byte[] headBytes = head.intoBytes();
+        byte[] statusCodeBytes = statusCode.intoBytes();
+        byte[] bodyBytes = body;
 
-        byte msgType = (byte) 1;
-        int length = bytes.size();
+        int len = headBytes.length + statusCodeBytes.length + bodyBytes.length + 2; // 2 for the 2 0x1F separator
 
-        byte[] lengthBytes = new byte[4];
-
-        lengthBytes[0] = (byte) (length >> 24);
-        lengthBytes[1] = (byte) (length >> 16);
-        lengthBytes[2] = (byte) (length >> 8);
-        lengthBytes[3] = (byte) (length);
-
-        bytes.addFirst(lengthBytes[3]);
-        bytes.addFirst(lengthBytes[2]);
-        bytes.addFirst(lengthBytes[1]);
-        bytes.addFirst(lengthBytes[0]);
-        bytes.addFirst(msgType);
-        
-        return bytes;
+        return ByteBuffer.allocate(len + 5)
+                .put((byte) 0)
+                .putInt(len)
+                .put(headBytes)
+                .put((byte) 0x1F)
+                .put(statusCodeBytes)
+                .put((byte) 0x1F)
+                .put(bodyBytes)
+                .array();
     }
 
     @Override

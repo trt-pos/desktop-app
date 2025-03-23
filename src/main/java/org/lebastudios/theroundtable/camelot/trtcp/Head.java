@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lebastudios.theroundtable.camelot.FromBytes;
+import org.lebastudios.theroundtable.camelot.FromStringToBytes;
 import org.lebastudios.theroundtable.camelot.IntoBytes;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -41,13 +43,15 @@ public class Head implements FromBytes<Head>, IntoBytes
     }
 
     @Override
-    public List<Byte> toBytes()
+    public byte[] intoBytes()
     {
-        List<Byte> bytes = new ArrayList<>(version.toBytes());
+        byte[] versionBytes = version.intoBytes();
+        byte[] callerBytes = new FromStringToBytes(caller).intoBytes();
         
-        for (byte b : caller.getBytes(StandardCharsets.UTF_8)) bytes.add(b);
-        
-        return bytes;
+        return ByteBuffer.allocate(versionBytes.length + callerBytes.length)
+                .put(versionBytes)
+                .put(callerBytes)
+                .array();
     }
 
     @Override

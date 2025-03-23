@@ -1,14 +1,10 @@
 package org.lebastudios.theroundtable.camelot;
 
-import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.lebastudios.theroundtable.camelot.trtcp.*;
-import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
-import org.lebastudios.theroundtable.config.RequestConfigStageController;
-import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -18,9 +14,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 class CamelotClient
@@ -114,10 +110,7 @@ class CamelotClient
     {
         try
         {
-            List<Byte> byteList = data.toBytes();
-            byte[] bytes = new byte[byteList.size()];
-
-            for (int i = 0; i < byteList.size(); i++) bytes[i] = byteList.get(i);
+            byte[] bytes = data.intoBytes();
 
             synchronized (this)
             {
@@ -205,10 +198,7 @@ class CamelotClient
             return;
         }
 
-        var bytesList = data.toBytes();
-        byte[] bytes = new byte[bytesList.size()];
-
-        for (int i = 0; i < bytesList.size(); i++) bytes[i] = bytesList.get(i);
+        byte[] bytes = data.intoBytes();
 
         Request request = new Request(
                 new Head(Version.actualProtocolVersion(), name),
@@ -282,21 +272,10 @@ class CamelotClient
 
                 byte[] packet = buffer.toByteArray();
 
-                if (packet.length == 0)
-                {
-                    Logs.getInstance().log(
-                            Logs.LogType.WARNING,
-                            "Received an empty packet from Camelot"
-                    );
-                    continue;
-                }
-                else
-                {
-                    Logs.getInstance().log(
-                            Logs.LogType.INFO,
-                            "Received packet from Camelot: " + packet.length + " bytes"
-                    );
-                }
+                Logs.getInstance().log(
+                        Logs.LogType.INFO,
+                        "Received packet from Camelot: " + packet.length + " bytes"
+                );
 
                 switch (msgType)
                 {
