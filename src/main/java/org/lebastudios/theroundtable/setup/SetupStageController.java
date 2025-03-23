@@ -17,7 +17,6 @@ import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
 import org.lebastudios.theroundtable.ui.StageBuilder;
-import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 import java.net.URL;
 

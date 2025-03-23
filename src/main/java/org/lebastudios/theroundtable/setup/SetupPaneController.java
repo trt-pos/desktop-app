@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.setup;
 
-import javafx.scene.Node;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.PaneController;
 

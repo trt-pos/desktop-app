@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.setup;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.ConfigPaneController;
