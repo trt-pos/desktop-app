@@ -24,18 +24,10 @@ import java.net.URL;
 public class SetupStageController extends StageController<SetupStageController>
 {
     private static final SetupPaneController[] setupPanes = {
-            new AccountSetupPaneController(
-                    new TitleBuilder(LangFileLoader.getTranslation("setup.title.adminconfig"),
-                            "admin-user.png").build()),
-            new ConfigPaneWrapperController(new EstablishmentConfigPaneController(),
-                    new TitleBuilder(LangFileLoader.getTranslation("setup.title.establishmentconfig"),
-                            "establishment.png").build()),
-            new ConfigPaneWrapperController(new PrintersConfigPaneController(),
-                    new TitleBuilder(LangFileLoader.getTranslation("setup.title.printersconfig"),
-                            "printer.png").build()),
-            new ConfigPaneWrapperController(new DatabaseConfigPaneController(),
-                    new TitleBuilder(LangFileLoader.getTranslation("setup.title.databaseconfig"),
-                            "database.png").build()),
+            new AccountSetupPaneController(),
+            new ConfigPaneWrapperController(new EstablishmentConfigPaneController()),
+            new ConfigPaneWrapperController(new PrintersConfigPaneController()),
+            new ConfigPaneWrapperController(new DatabaseConfigPaneController()),
     };
 
     private int currentPane = -1;

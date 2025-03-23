@@ -8,6 +8,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.printers.PrinterManager;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
 
     public PrintersConfigPaneController()
     {
-        super(new PrintersConfigData());
+        super(new PrintersConfigData(), LangFileLoader.getTranslation("word.printers"), "printer.png");
     }
 
     @Override

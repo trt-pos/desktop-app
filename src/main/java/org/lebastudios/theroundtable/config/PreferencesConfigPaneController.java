@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ThemeLoader;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
 
     public PreferencesConfigPaneController()
     {
-        super(new PreferencesConfigData());
+        super(new PreferencesConfigData(), LangFileLoader.getTranslation("word.preferences"), "preferences.png");
     }
 
     @Override

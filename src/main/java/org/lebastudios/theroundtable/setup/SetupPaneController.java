@@ -10,13 +10,6 @@ public abstract class SetupPaneController extends PaneController<SetupPaneContro
 
     public abstract boolean validate();
     
-    protected Node titleNode;
-    
-    public SetupPaneController(Node titleNode)
-    {
-        this.titleNode = titleNode;
-    }
-    
     @Override
     public final Class<?> getBundleClass()
     {

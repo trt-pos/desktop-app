@@ -1,15 +1,20 @@
 package org.lebastudios.theroundtable.config;
 
+import lombok.Getter;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.logs.Logs;
 
 public abstract class ConfigPaneController<T extends ConfigData<T>> extends PaneController<ConfigPaneController<T>>
 {
     private final T configData;
-    
-    public ConfigPaneController(T configData)
+    @Getter private final String iconName;
+    @Getter private final String title;
+
+    public ConfigPaneController(T configData, String title, String iconName)
     {
         this.configData = configData.load();
+        this.title = title;
+        this.iconName = iconName;
     }
 
     @Override

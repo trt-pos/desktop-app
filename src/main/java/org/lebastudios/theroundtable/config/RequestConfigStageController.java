@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
@@ -8,12 +9,12 @@ import lombok.NonNull;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 public class RequestConfigStageController extends StageController<RequestConfigStageController>
 {
-    // TODO: Improve this stage. ConfigPane also has 
-    //  to provide a pane name and icon that will be used 
-    //  in the title bar and in the settings tre view.
+    @FXML private ScrollPane paneContainer;
+    
     private ConfigPaneController<?> configPaneController;
 
     public RequestConfigStageController(@NonNull ConfigPaneController<?> configPaneController)
@@ -25,7 +26,14 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     @FXML
     protected void initialize()
     {
-        ((VBox) getRoot()).getChildren().addFirst(configPaneController.getRoot());
+        ((VBox) getRoot()).getChildren().addFirst(
+                new TitleBuilder()
+                        .setText(configPaneController.getTitle())
+                        .setIconName(configPaneController.getIconName())
+                        .build()
+        );
+        
+        paneContainer.setContent(configPaneController.getRoot());
         configPaneController = configPaneController.getController();
     }
 

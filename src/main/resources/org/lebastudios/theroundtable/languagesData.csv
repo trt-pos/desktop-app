@@ -41,9 +41,6 @@ enum.accounttype.manager,Manager,Manager
 enum.accounttype.cashier,Cashier,Cajero
 enum.accounttype.accountant,Accountant,Contable
 setup.title.adminconfig,Main administrator,Administrador principal
-setup.title.establishmentconfig,Establishment,Establecimiento
-setup.title.printersconfig,Printers,Impresoras
-setup.title.databaseconfig,Database,Base de datos
 setup.error.invalidpassword,Password must be at least 8 characters long,La contraseña debe tener 8 caracteres o más
 setup.error.invalidname,Username must be at least 3 characters long,El nombre debe tener 3 caracteres o más
 setup.error.passwordmatch,Passwords do not match,Las contraseñas no coinciden

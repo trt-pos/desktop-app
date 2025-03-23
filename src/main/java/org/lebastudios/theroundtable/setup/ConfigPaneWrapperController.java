@@ -5,15 +5,15 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.ConfigPaneController;
+import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 class ConfigPaneWrapperController extends SetupPaneController
 {
     private final ConfigPaneController<?> configPaneController;
     
     @SneakyThrows
-    public ConfigPaneWrapperController(ConfigPaneController<?> configPaneController, Node titleNode)
+    public ConfigPaneWrapperController(ConfigPaneController<?> configPaneController)
     {
-        super(titleNode);
         this.configPaneController = configPaneController;
     }
 
@@ -22,7 +22,12 @@ class ConfigPaneWrapperController extends SetupPaneController
     protected void initialize()
     {
         ((BorderPane) getRoot()).setCenter(configPaneController.getRoot());
-        ((BorderPane) getRoot()).setTop(titleNode);
+        ((BorderPane) getRoot()).setTop(
+                new TitleBuilder(
+                        configPaneController.getController().getTitle(),
+                        configPaneController.getController().getIconName()
+                ).build()
+        );
     }
 
     @Override

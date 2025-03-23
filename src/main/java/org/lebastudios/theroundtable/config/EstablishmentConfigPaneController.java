@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
 
     public EstablishmentConfigPaneController()
     {
-        super(new EstablishmentConfigData());
+        super(new EstablishmentConfigData(), LangFileLoader.getTranslation("word.establishment"), "establishment.png");
     }
 
     @Override

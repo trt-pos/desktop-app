@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.setup;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -10,6 +9,7 @@ import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 import java.net.URL;
 
@@ -20,14 +20,16 @@ public class AccountSetupPaneController extends SetupPaneController
     @FXML private TextField passwordField;
     @FXML private TextField confirmPasswordField;
 
-    public AccountSetupPaneController(Node titleNode)
+    @FXML
+    @Override
+    protected void initialize()
     {
-        super(titleNode);
-    }
-
-    @FXML @Override protected void initialize()
-    {
-        ((BorderPane) getRoot()).setTop(titleNode);
+        ((BorderPane) getRoot()).setTop(
+                new TitleBuilder(
+                        LangFileLoader.getTranslation("setup.title.adminconfig"),
+                        "admin-user.png"
+                ).build()
+        );
         errorLabel.setText("");
     }
 
@@ -40,10 +42,10 @@ public class AccountSetupPaneController extends SetupPaneController
     @Override
     public void apply()
     {
-        Account account = new Account(usernameField.getText(), 
-                LocalPasswordValidator.hashPassword(passwordField.getText()), 
+        Account account = new Account(usernameField.getText(),
+                LocalPasswordValidator.hashPassword(passwordField.getText()),
                 Account.AccountType.ROOT);
-        
+
         Database.getInstance().connectTransaction(session -> session.persist(account));
     }
 

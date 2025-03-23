@@ -12,6 +12,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
+import org.lebastudios.theroundtable.locale.LangFileLoader;
 
 import java.io.File;
 import java.sql.Connection;
@@ -39,7 +40,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 
     public DatabaseConfigPaneController()
     {
-        super(new DatabaseConfigData());
+        super(new DatabaseConfigData(), LangFileLoader.getTranslation("word.database"), "database.png");
     }
 
     @Override
