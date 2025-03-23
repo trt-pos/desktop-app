@@ -8,10 +8,7 @@ import org.lebastudios.theroundtable.camelot.trtcp.*;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
@@ -26,8 +23,8 @@ class CamelotClient
     private final int port;
 
     private Socket socket;
-    private InputStream in;
-    private OutputStream out;
+    private DataInputStream in;
+    private DataOutputStream out;
 
     private final Container<Response> lastResponseContainer = new Container<>();
     @Setter private Consumer<Request> callbacksHandler = _ ->
@@ -76,8 +73,8 @@ class CamelotClient
                     throw new ConnectException("Failed to connect to Camelot");
                 }
 
-                in = socket.getInputStream();
-                out = socket.getOutputStream();
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
 
                 new Thread(readCoroutine, "Camelot client " + name + " Thread").start();
 
@@ -288,15 +285,16 @@ class CamelotClient
             {
                 buffer.reset();
                 
-                byte[] data = new byte[1024]; 
-                int bytesRead;
+                byte msgType = in.readByte(); // msgType byte
+                buffer.write(msgType);
                 
-                while ((bytesRead = in.read(data)) != -1) {
-                    buffer.write(data, 0, bytesRead);
-                    if (bytesRead < 1024) {
-                        break;
-                    }
-                }
+                int length = in.readInt(); // length int
+                buffer.write((byte) (length >> 24));
+                buffer.write((byte) (length >> 16));
+                buffer.write((byte) (length >> 8));
+                buffer.write((byte) length);
+                
+                buffer.write(in.readNBytes(length)); // head, middle and body bytes
                 
                 byte[] packet = buffer.toByteArray();
 
@@ -306,7 +304,7 @@ class CamelotClient
                             Logs.LogType.WARNING,
                             "Received an empty packet from Camelot"
                     );
-                    continue;
+                    break;
                 }
                 else
                 {
@@ -316,7 +314,7 @@ class CamelotClient
                     );
                 }
 
-                switch (packet[0])
+                switch (msgType)
                 {
                     case 0 ->
                     {
