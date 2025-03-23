@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.camelot;
 
 import java.nio.charset.StandardCharsets;
 
-public class FromBytesToString implements FromBytes<String>
+public final class FromBytesToString implements FromBytes<String>
 {
     @Override
     public String fromBytes(byte[] bytes)

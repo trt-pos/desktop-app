@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.camelot;
 
 import java.util.List;
 
-public class FromStringToBytes implements IntoBytes
+public final class FromStringToBytes implements IntoBytes
 {
     private final String value;
 
