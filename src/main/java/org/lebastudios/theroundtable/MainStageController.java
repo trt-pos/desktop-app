@@ -33,6 +33,7 @@ import org.lebastudios.theroundtable.ui.SceneBuilder;
 public class MainStageController extends PaneController<MainStageController>
 {
     @Getter private static MainStageController instance;
+    
     @FXML private IconButton openTasksPopupButton;
     @FXML private IconButton pluginsButton;
     @FXML private VBox leftTopButtons;
@@ -47,8 +48,6 @@ public class MainStageController extends PaneController<MainStageController>
         
         homeButton = new IconButton("home.png");
         homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));
-        
-        AccountEvents.OnAccountLogIn.addListener(_ -> getController().initialize());
     }
 
     @SneakyThrows
@@ -56,6 +55,7 @@ public class MainStageController extends PaneController<MainStageController>
     @Override
     protected void initialize()
     {
+        System.out.println(123);
         if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
 
         leftTopButtons.getChildren().remove(pluginsButton);
@@ -152,8 +152,8 @@ public class MainStageController extends PaneController<MainStageController>
 
         new AccountStageController().instantiate(true);
 
-        // Loads and set the new instance and then shows it. The instance it calls is not this controller's one.
-        stage.setScene(new SceneBuilder(new MainStageController().getParent()).build());
+        // Loads and set the new instance and then shows it.
+        instance.initialize();
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
         stage.show();
     }
