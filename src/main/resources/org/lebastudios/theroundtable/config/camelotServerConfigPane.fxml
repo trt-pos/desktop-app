@@ -21,4 +21,5 @@
         <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%word.port"/>
         <TextField fx:id="serverPort"/>
     </HBox>
+    <CheckBox text="%phrase.defaultconfig" fx:id="defaultConfigCheckbox"/>
 </VBox>

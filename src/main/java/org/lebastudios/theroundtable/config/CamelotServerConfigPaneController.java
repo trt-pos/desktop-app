@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
@@ -14,6 +15,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @FXML private TextField clientName;
     @FXML private TextField serverAddress;
     @FXML private TextField serverPort;
+    @FXML private CheckBox defaultConfigCheckbox;
 
     public CamelotServerConfigPaneController()
     {
@@ -21,8 +23,25 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     }
 
     @Override
+    @FXML
+    protected void initialize()
+    {
+        defaultConfigCheckbox.selectedProperty().addListener((_, _, newValue) ->
+        {
+            clientName.setDisable(newValue);
+            serverAddress.setDisable(newValue);
+            serverPort.setDisable(newValue);
+
+            if (newValue) updateUI(new CamelotServerConfigData());
+        });
+        
+        super.initialize();
+    }
+
+    @Override
     public void updateConfigData(CamelotServerConfigData configData)
     {
+        configData.defaultConfig = defaultConfigCheckbox.isSelected();
         configData.clientName = clientName.getText();
         configData.host = serverAddress.getText();
         configData.port = Integer.parseInt(serverPort.getText());
@@ -31,6 +50,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @Override
     public void updateUI(CamelotServerConfigData configData)
     {
+        defaultConfigCheckbox.setSelected(configData.defaultConfig);
         clientName.setText(configData.clientName);
         serverAddress.setText(configData.host);
         serverPort.setText(Integer.toString(configData.port));
@@ -65,7 +85,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
             return false;
         }
 
-        try (Socket socket = new Socket(serverAddress.getText(), Integer.parseInt(serverPort.getText()))) {}
+        try (Socket _ = new Socket(serverAddress.getText(), Integer.parseInt(serverPort.getText()))) {}
         catch (IllegalArgumentException e)
         {
             UIEffects.shakeNode(serverPort);
