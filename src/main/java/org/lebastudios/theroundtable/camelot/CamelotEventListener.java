@@ -28,5 +28,5 @@ public abstract class CamelotEventListener<T>
         }
     }
     
-    public abstract void accept(T object);
+    public abstract void accept(T body);
 }

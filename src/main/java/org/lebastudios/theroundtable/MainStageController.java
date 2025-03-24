@@ -55,7 +55,6 @@ public class MainStageController extends PaneController<MainStageController>
     @Override
     protected void initialize()
     {
-        System.out.println(123);
         if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
 
         leftTopButtons.getChildren().remove(pluginsButton);

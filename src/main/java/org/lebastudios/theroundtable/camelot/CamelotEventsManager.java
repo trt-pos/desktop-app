@@ -3,8 +3,10 @@ package org.lebastudios.theroundtable.camelot;
 import org.lebastudios.theroundtable.camelot.trtcp.Request;
 import org.lebastudios.theroundtable.logs.Logs;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,55 +21,95 @@ public class CamelotEventsManager
         return instance;
     }
 
-    private final HashMap<String, List<CamelotEventListener<?>>> events = new HashMap<>();
+    private final HashMap<String, List<CamelotEventListener<?>>> eventListeners = new HashMap<>();
+    private final HashMap<String, List<WeakReference<CamelotEventListener<?>>>> weakEventListeners = new HashMap<>();
 
     final Consumer<Request> callbacksHandler = request ->
     {
         String event = request.getAction().getEvent();
 
-        if (!events.containsKey(event))
+        if (eventListeners.containsKey(event))
+        {
+            eventListeners.get(event).forEach(listener -> listener.accept(request.getBody()));
+        }
+        
+        if (weakEventListeners.containsKey(event))
+        {
+            // Remove listeners that have been garbage collected and notify the rest
+            Iterator<WeakReference<CamelotEventListener<?>>> iterator = weakEventListeners.get(event).iterator();
+            while (iterator.hasNext())
+            {
+                WeakReference<CamelotEventListener<?>> wr = iterator.next();
+                CamelotEventListener<?> listener = wr.get();
+
+                if (listener == null)
+                {
+                    iterator.remove();
+                    continue;
+                }
+
+                listener.accept(request.getBody());
+            }
+        }
+
+        if (!eventListeners.containsKey(event) && !weakEventListeners.containsKey(event))
         {
             Logs.getInstance().log(
                     Logs.LogType.WARNING,
-                    "Received callback for event " + event + " but no listeners are registered"
+                    "The event " + event + " has received a callback but this manager doesn't have record of it."
             );
-            return;
+            CamelotServiceManager.getInstance().getPersistentClient().removeListener(event);
         }
-        events.get(event).forEach(listener -> listener.accept(request.getBody()));
     };
 
     private CamelotEventsManager() {}
 
     public void removeListener(String event, CamelotEventListener<?> listener)
     {
-        if (!events.containsKey(event)) return;
+        if (!eventListeners.containsKey(event)) return;
 
-        events.get(event).remove(listener);
-        
-        if (events.get(event).isEmpty())
-        {
-            CamelotServiceManager.getInstance().getPersistentClient().removeListener(event);
-            events.remove(event);
-        }
+        eventListeners.get(event).remove(listener);
     }
 
+    public void removeWeakListener(String event, CamelotEventListener<?> listener)
+    {
+        if (!weakEventListeners.containsKey(event)) return;
+
+        weakEventListeners.get(event).removeIf(wr ->
+        {
+            CamelotEventListener<?> l = wr.get();
+            return l == null || l == listener;
+        });
+    }
+    
     public void addListener(String event, CamelotEventListener<?> listener)
     {
-        if (!events.containsKey(event))
+        if (!eventListeners.containsKey(event))
         {
             createEvent(event);
         }
 
-        events.get(event).add(listener);
+        eventListeners.get(event).add(listener);
     }
+    
+    public void addWeakListener(String event, CamelotEventListener<?> listener)
+    {
+        if (!weakEventListeners.containsKey(event))
+        {
+            createEvent(event);
+        }
 
+        weakEventListeners.get(event).add(new WeakReference<>(listener));
+    }
+    
     private void createEvent(String event)
     {
         CamelotClient client = CamelotServiceManager.getInstance().getPersistentClient();
         
-        client.createEvent(event);
+        client.createAndListenEvent(event);
 
-        events.put(event, new ArrayList<>());
+        eventListeners.put(event, new ArrayList<>());
+        weakEventListeners.put(event, new ArrayList<>());
     }
 
     public void invokeEvent(String event, IntoBytes intoBytes)
@@ -79,6 +121,6 @@ public class CamelotEventsManager
     
     void updateServerEvents(CamelotClient client)
     {
-        events.keySet().forEach(client::createEvent);
+        eventListeners.keySet().forEach(client::createAndListenEvent);
     }
 }

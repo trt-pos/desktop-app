@@ -136,7 +136,7 @@ class CamelotClient
         }
     }
 
-    public void createEvent(String event)
+    public void createAndListenEvent(String event)
     {
         String[] parts = event.split(":");
 
@@ -271,11 +271,6 @@ class CamelotClient
 
                 byte[] packet = buffer.toByteArray();
 
-                Logs.getInstance().log(
-                        Logs.LogType.INFO,
-                        "Received packet from Camelot: " + packet.length + " bytes"
-                );
-
                 switch (msgType)
                 {
                     case 0 ->
@@ -284,6 +279,12 @@ class CamelotClient
                         try
                         {
                             request = new Request().fromBytes(packet);
+
+                            Logs.getInstance().log(
+                                    Logs.LogType.INFO,
+                                    "Received request from Camelot (" + packet.length + " bytes) with of type: " +
+                                            request.getAction().getType()
+                            );
                         }
                         catch (ParseException exception)
                         {
@@ -313,6 +314,13 @@ class CamelotClient
                             try
                             {
                                 Response response = new Response().fromBytes(packet);
+                                
+                                Logs.getInstance().log(
+                                        Logs.LogType.INFO,
+                                        "Received response from Camelot (" + packet.length + " bytes) with status: " +
+                                                response.getStatusCode()
+                                );
+                                
                                 lastResponseContainer.setValue(response);
                             }
                             catch (ParseException exception)

@@ -93,9 +93,9 @@ public class TheRoundTableApplication extends Application
         CamelotEventsManager.getInstance().addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
         {
             @Override
-            public void accept(String object)
+            public void accept(String body)
             {
-                System.out.println(object);
+                System.out.println(body);
             }
         });
         
