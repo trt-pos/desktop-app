@@ -11,14 +11,13 @@ import org.lebastudios.theroundtable.tasks.Task;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-class CamelotClient
+public class CamelotClient implements AutoCloseable
 {
     @Getter private final String name;
     private final String host;
@@ -49,18 +48,18 @@ class CamelotClient
         this.port = port;
     }
 
-    public Task<Void> connectTask()
+    public Task<Void> validateTask()
     {
         return new Task<>()
         {
             @Override
             protected Void call() throws Exception
             {
-                updateTitle("Connecting to Camelot");
+                updateTitle("Validating Camelot connection");
 
                 int retries = 0;
                 boolean success = false;
-                int milisToWait = 1000;
+                int milisToWait = 5000;
                 while (retries < 3 && !success)
                 {
                     int actualTimeToWait = milisToWait * retries + 25;
@@ -72,11 +71,12 @@ class CamelotClient
                     }
                     catch (ConnectException exception)
                     {
+                        retries++;
                         Logs.getInstance().log(
                                 Logs.LogType.WARNING,
-                                "Failed to connect to Camelot, retrying in " + actualTimeToWait / 1000 + " seconds"
+                                "Failed to connect to Camelot, retrying in " 
+                                        + (milisToWait * retries + 25) / 1000 + " seconds"
                         );
-                        retries++;
                     }
                 }
 
@@ -84,6 +84,22 @@ class CamelotClient
                 {
                     throw new ConnectException("Failed to connect to Camelot");
                 }
+
+                return null;
+            }
+        };
+    }
+    
+    public Task<Void> connectTask()
+    {
+        return new Task<>()
+        {
+            @Override
+            protected Void call() throws Exception
+            {
+                updateTitle("Connecting to Camelot");
+
+                executeSubtask(validateTask());
 
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
@@ -97,7 +113,8 @@ class CamelotClient
         };
     }
 
-    public void disconnect() throws IOException
+    @Override
+    public void close() throws Exception
     {
         if (socket == null) return;
 

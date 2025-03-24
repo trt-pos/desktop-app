@@ -46,15 +46,14 @@ public class CamelotServiceManager
             protected Void call() throws Exception
             {
                 updateTitle("Connecting to Camelot");
-                
-                if (configData.host.equals("localhost") || configData.host.equals("127.0.0.1"))
-                {
-                    serverProcess = new EmbeddedBinExecutor().execute(
-                            CorePlugin.class,
-                            "camelot",
-                            configData.port + ""
-                    );
-                }
+
+                // The server process is always created even if you are not the server 
+                // so the app always has a valid server to connect to
+                serverProcess = new EmbeddedBinExecutor().execute(
+                        CorePlugin.class,
+                        "camelot",
+                        configData.port + ""
+                );
 
                 // Create the client object to be connected to the server
                 CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);

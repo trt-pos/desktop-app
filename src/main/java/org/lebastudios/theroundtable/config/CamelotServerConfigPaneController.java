@@ -6,9 +6,10 @@ import javafx.scene.control.TextField;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
+import org.lebastudios.theroundtable.camelot.CamelotClient;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
-
-import java.net.Socket;
+import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.tasks.Task;
 
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {
@@ -34,7 +35,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
 
             if (newValue) updateUI(new CamelotServerConfigData());
         });
-        
+
         super.initialize();
     }
 
@@ -63,16 +64,16 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         serverAddress.setText(serverAddress.getText().trim());
         serverPort.setText(serverPort.getText().trim());
 
-        if (serverAddress.getText().isBlank()) 
+        if (serverAddress.getText().isBlank())
         {
             serverAddress.setText("localhost");
         }
-        
-        if (serverPort.getText().isBlank()) 
+
+        if (serverPort.getText().isBlank())
         {
             serverPort.setText("1237");
         }
-        
+
         if (!clientName.getText().matches("[a-zA-Z0-9_.]*"))
         {
             UIEffects.shakeNode(clientName);
@@ -85,18 +86,32 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
             return false;
         }
 
-        try (Socket _ = new Socket(serverAddress.getText(), Integer.parseInt(serverPort.getText()))) {}
-        catch (IllegalArgumentException e)
+        boolean[] valid = {false};
+
+        try (CamelotClient client = new CamelotClient("tmp", serverAddress.getText(),
+                Integer.parseInt(serverPort.getText())))
         {
+            Task<Void> task = client.validateTask()
+                    .setCancelable(true);
+
+            task.setOnSucceeded(_ -> valid[0] = true);
+            task.execute(true);
+        }
+        catch (Exception e)
+        {
+            Logs.getInstance().log(
+                    "Error closing temporal camelot client",
+                    e
+            );
+        }
+
+        if (!valid[0]) 
+        {
+            UIEffects.shakeNode(serverAddress);
             UIEffects.shakeNode(serverPort);
             return false;
         }
-        catch (Exception ignore)
-        {
-            // Maybe the server isn't up yet.
-            // Whe handle this when we call reload and the CamelotServiceManager tries to connect
-        }
-
+        
         return true;
     }
 
