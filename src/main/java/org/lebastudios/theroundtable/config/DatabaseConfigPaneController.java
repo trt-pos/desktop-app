@@ -116,6 +116,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
         
         DatabaseConfigData oldConf = configData.load();
 
+        // TODO: Move the migration logic to the on save
         // Making connections to the databases
         try (Connection newDbConnection = configData.getConnection();
              Connection oldDbConnection = oldConf.getConnection())

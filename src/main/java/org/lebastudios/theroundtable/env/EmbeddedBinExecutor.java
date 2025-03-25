@@ -5,13 +5,18 @@ import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 public class EmbeddedBinExecutor
 {
-    // This is a map of the extracted binaries from the jar file. The key is the absolute path to the bin file inside
-    // the jar file, and the value is the absolute path to the extracted bin file.
+    // This is a map of the extracted binaries from the jar file.
+    // The key is <iPlugin class name>:<binName>, and the value is the absolute path to the extracted bin file.
     private static final HashMap<String, String> jarExtractedBins = new HashMap<>();
 
     /**
@@ -22,8 +27,9 @@ public class EmbeddedBinExecutor
      * @return The process of the bin or null if the bin couldn't be executed.
      * @throws Exception
      */
-    public <T extends IPlugin> Process execute(Class<T> resources, String binName, String... args) throws IOException
+    public <T extends IPlugin> Process execute(Class<T> pluginImpl, String binName, String... args) throws IOException
     {
+        String binId = pluginImpl.getName() + ":" + binName;
         String finalBinName = binName + switch (Platform.getCurrent())
         {
             case WINDOWS -> "-win.exe";
@@ -31,26 +37,40 @@ public class EmbeddedBinExecutor
             case UNIX -> "-linux";
             case UNKNOWN -> throw new IllegalStateException("Unknown platform: " + Platform.getCurrent());
         };
-
-        URL binURL = resources.getResource("bin/" + finalBinName);
+        
+        URL binURL = pluginImpl.getResource("bin/" + finalBinName);
         
         if (binURL == null) 
         {
             throw new RuntimeException("The bin file does not exist: " + finalBinName);
         }
         
-        File binFile = new File(binURL.getPath());
+        if (!jarExtractedBins.containsKey(binId))
+        {
+            Path out = Paths.get(
+                    Directories.getTempDir().getPath(),
+                    finalBinName
+            );
+            try (InputStream is = binURL.openStream())
+            {
+                Files.copy(is, out, StandardCopyOption.REPLACE_EXISTING);
+                File outFile = out.toFile();
+                outFile.setExecutable(true);
+                jarExtractedBins.put(binId, outFile.getAbsolutePath());
+            }
+        }
+
+        File binFile = new File(jarExtractedBins.get(binId));
+        
         if (!binFile.exists() || !binFile.isFile()) 
         {
-            throw new RuntimeException("The bin file does not exist: " + binURL.getPath());
+            throw new RuntimeException("The bin file does not exist: " + binFile.getPath());
         }
         
         if (!binFile.isAbsolute()) 
         {
-            throw new RuntimeException("The bin file does not refer to an absolute path: " + binURL.getPath());
+            throw new RuntimeException("The bin file does not refer to an absolute path: " + binFile.getPath());
         }
-        
-        binFile.setExecutable(true);
         
         String[] command = new String[args.length + 1];
         

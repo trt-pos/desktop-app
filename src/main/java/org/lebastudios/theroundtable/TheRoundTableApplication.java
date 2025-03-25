@@ -88,6 +88,9 @@ public class TheRoundTableApplication extends Application
     {
         LangLoader.loadLang(Launcher.class, AppLocale.getActualLocale());
         Database.getInstance().initTask().execute(true);
+
+        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
+        
         CamelotServiceManager.getInstance().initTask().execute(true);
 
         CamelotEventsManager.getInstance().addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
@@ -98,8 +101,6 @@ public class TheRoundTableApplication extends Application
                 System.out.println(body);
             }
         });
-        
-        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
         
         new AccountStageController().instantiate(true);
 

@@ -30,4 +30,13 @@ public class Directories
 
         return homeDir + (Variables.isDev() ? "-dev" : "");
     }
+
+    public static File getTempDir()
+    {
+        File file = new File(System.getProperty("java.io.tmpdir"), "theroundtable");
+        
+        if (!file.exists()) file.mkdirs();
+        
+        return file;
+    }
 }

@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.ConfigPaneController;
 import org.lebastudios.theroundtable.ui.TitleBuilder;
 
+import java.net.URL;
+
 class ConfigPaneWrapperController extends SetupPaneController
 {
     private final ConfigPaneController<?> configPaneController;

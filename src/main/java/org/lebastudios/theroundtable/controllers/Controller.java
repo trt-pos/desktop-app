@@ -92,7 +92,7 @@ public abstract class Controller<T extends Controller<T>>
         }
     }
     
-    public final T getController()
+    public T getController()
     {
         return controller == null ? (T) this : controller;
     }
@@ -122,7 +122,17 @@ public abstract class Controller<T extends Controller<T>>
 
     public final FXMLLoader getFXMLLoader()
     {
-        var fxmlLoader = new FXMLLoader(getFXML());
+        final var fxml = getFXML();
+        
+        if (fxml == null) 
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.ERROR,
+                    "FXML loader resource is null for the controller " + this.getClass().getName()
+            );
+        }
+        
+        var fxmlLoader = new FXMLLoader(fxml);
         fxmlLoader.setClassLoader(getClass().getClassLoader());
 
         return fxmlLoader;

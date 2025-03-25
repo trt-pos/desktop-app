@@ -28,9 +28,4 @@ public class Platform
         
         return PlatformType.UNKNOWN;
     }
-    
-    public static File getTempDir()
-    {
-        return new File(System.getProperty("java.io.tmpdir"));
-    }
 }

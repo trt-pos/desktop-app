@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.tasks;
 
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.env.Platform;
+import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
@@ -51,7 +51,7 @@ public class DownloadFileTask extends Task<File>
         updateMessage("Preparing environment to save file...");
         String fileName = fileURI.toString().substring(fileURI.toString().lastIndexOf("/") + 1);
 
-        var tempFile = new File(Platform.getTempDir(), fileName);
+        var tempFile = new File(Directories.getTempDir(), fileName);
         
         if (tempFile.exists() && !tempFile.delete()) 
         {
