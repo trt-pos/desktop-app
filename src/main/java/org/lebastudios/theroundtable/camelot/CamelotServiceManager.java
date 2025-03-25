@@ -78,6 +78,18 @@ public class CamelotServiceManager
     {
         if (serverProcess == null) return;
 
+        if (client != null)
+        {
+            client.setOnErrorHandler(_ -> {});
+            client.setCallbacksHandler(_ -> {});
+            try
+            {
+                client.close();
+            }
+            catch (Exception ignored) {}
+            client = null;
+        }
+        
         serverProcess.destroy();
         serverProcess = null;
     }
@@ -108,7 +120,7 @@ public class CamelotServiceManager
     {
         Platform.runLater(() ->
         {
-            new InformationTextDialogController("Connection to Camelot lost: " + e.getMessage())
+            new InformationTextDialogController("Connection to Camelot lost: " + e)
                     .instantiate(true);
             new RequestConfigStageController(new CamelotServerConfigPaneController())
                     .instantiate(true);
