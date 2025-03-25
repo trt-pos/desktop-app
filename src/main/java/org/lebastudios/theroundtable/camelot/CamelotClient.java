@@ -363,6 +363,12 @@ public class CamelotClient implements AutoCloseable
         {
             onErrorHandler.accept(e);
         }
+        
+        synchronized (lastResponseContainer)
+        {
+            // Notify the waiting thread if an error ocurred while reading from the stream to avoid deadwaits
+            lastResponseContainer.notify();
+        }
     };
 
     @Setter
