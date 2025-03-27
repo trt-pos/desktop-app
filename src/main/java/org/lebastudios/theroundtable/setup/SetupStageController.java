@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import org.lebastudios.theroundtable.Launcher;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
 import org.lebastudios.theroundtable.config.GeneralConfigData;
@@ -15,6 +15,8 @@ import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.plugins.IPlugin;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
@@ -48,9 +50,9 @@ public class SetupStageController extends StageController<SetupStageController>
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
     @Override
@@ -114,23 +116,9 @@ public class SetupStageController extends StageController<SetupStageController>
 
         if (currentPane == setupPanes.length)
         {
-            ((BorderPane) getRoot()).getBottom().setVisible(false);
-            mainPane.setContent(new LoadingPaneController().getRoot());
-
-            new Thread(() ->
-            {
-                for (var pane : setupPanes)
-                {
-                    pane.apply();
-                }
-
-                final var settingsData = new GeneralConfigData().load();
-                settingsData.setupComplete = true;
-                settingsData.save();
-
-                Platform.runLater(this::close);
-            }).start();
-            
+            new ApplyConfigTask()
+                    .setOnTaskComplete(_ -> close())
+                    .execute(true);
             return;
         }
 
@@ -141,5 +129,41 @@ public class SetupStageController extends StageController<SetupStageController>
     public String getTitle()
     {
         return "Setup";
+    }
+
+    private static class ApplyConfigTask extends Task<Void>
+    {
+        @Override
+        protected Void call() throws Exception
+        {
+            updateTitle("Applying configuration");
+
+            for (int i = 0; i < setupPanes.length; i++)
+            {
+                final var actualPane = setupPanes[i];
+
+                Platform.runLater(() ->
+                {
+                    synchronized (actualPane)
+                    {
+
+                        actualPane.apply();
+                        actualPane.notify();
+                    }
+                });
+                
+                synchronized (actualPane)
+                {
+                    actualPane.wait();
+                }
+                updateProgress(i + 1, setupPanes.length);
+            }
+
+            final var settingsData = new GeneralConfigData().load();
+            settingsData.setupComplete = true;
+            settingsData.save();
+
+            return null;
+        }
     }
 }

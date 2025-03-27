@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -7,12 +8,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.File;
 import java.sql.Connection;
@@ -104,46 +107,6 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             configData.enableBackups = enableBackups.isSelected();
             configData.numMaxBackups = Integer.parseInt(numMaxBackups.getText());
         }
-
-        if (configData.enableBackups && !configData.enableRemoteDb)
-        {
-            Database.getInstance().initBackup();
-        }
-        else
-        {
-            Database.getInstance().stopBackup();
-        }
-        
-        DatabaseConfigData oldConf = configData.load();
-
-        // TODO: Move the migration logic to the on save
-        // Making connections to the databases
-        try (Connection newDbConnection = configData.getConnection();
-             Connection oldDbConnection = oldConf.getConnection())
-        {
-            // Saving the new conf so the reloadDatabase knows what parametters to use
-            configData.save();
-
-            // TODO: Start a task pane and convert this into an AppTask
-            // Reload should happend first so the plugins can create the db structure in the new database
-            if (!configData.getJdbcUrl().equals(oldConf.getJdbcUrl()))
-            {
-                Database.getInstance().reloadTask().execute(true);
-
-                final Exception migrationError = Database.getInstance().migrateTables(oldDbConnection, newDbConnection);
-                if (migrationError != null)
-                {
-                    new InformationTextDialogController("Migration failed\n" + migrationError).instantiate();
-                    oldConf.save(); // If the migration failed, we roll back the configuration and reload the db connections
-                    Database.getInstance().reloadTask().execute(true);
-                    return;
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -185,6 +148,53 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
                     : localDbSection);
             return false;
         }
+    }
+
+    @Override
+    public void onSave(DatabaseConfigData configData)
+    {
+        if (configData.enableBackups && !configData.enableRemoteDb)
+        {
+            Database.getInstance().initBackup();
+        }
+        else
+        {
+            Database.getInstance().stopBackup();
+        }
+
+        Database.getInstance().reloadTask().execute(true);
+        
+        /* TODO: WE ARE NOT IMPLEMENTING THE MIGRATION FEATURE RIGHT NOW
+        DatabaseConfigData oldConf = configData.load();
+
+        // Making connections to the databases
+        try (Connection newDbConnection = configData.getConnection();
+             Connection oldDbConnection = oldConf.getConnection())
+        {
+            // Saving the new conf so the reloadDatabase knows what parametters to use
+            configData.save();
+
+            // TODO: Start a task pane and convert this into an AppTask
+            // Reload should happend first so the plugins can create the db structure in the new database
+            if (!configData.getJdbcUrl().equals(oldConf.getJdbcUrl()))
+            {
+                Database.getInstance().reloadTask().execute(true);
+
+                final Exception migrationError = Database.getInstance().migrateTables(oldDbConnection, newDbConnection);
+                if (migrationError != null)
+                {
+                    new InformationTextDialogController("Migration failed\n" + migrationError).instantiate();
+                    oldConf.save(); // If the migration failed, we roll back the configuration and reload the db connections
+                    Database.getInstance().reloadTask().execute(true);
+                    return;
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        */
     }
 
     private void updateDatabaseDirectory(DatabaseConfigData data)
@@ -272,9 +282,9 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
 }

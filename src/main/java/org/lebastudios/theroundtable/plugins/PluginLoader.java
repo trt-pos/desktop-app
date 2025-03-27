@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.plugins;
 
 import lombok.Getter;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.locale.AppLocale;
@@ -36,6 +37,16 @@ public class PluginLoader
             for (IPlugin plugin : serviceLoader)
             {
                 var pluginData = plugin.getPluginData();
+                
+                if (pluginData.requiredDesktopAppVersion() == null) 
+                {
+                    Logs.getInstance().log(
+                            Logs.LogType.WARNING,
+                            "Plugin " + pluginData.pluginName + " does not specify a required desktop app version so it will be ignored"
+                    );
+                    continue;
+                }
+                
                 pluginsManager.getPluginsInstalled().put(pluginData.pluginId, plugin);
             }
 
@@ -48,6 +59,11 @@ public class PluginLoader
             );
         }
 
+        pluginsManager.getPluginsInstalled().put(
+                CorePlugin.getInstance().getPluginData().pluginId,
+                CorePlugin.getInstance()
+        );
+        
         // Load all plugins that can be loaded
         boolean keepTryingToLoad = true;
 
@@ -74,8 +90,6 @@ public class PluginLoader
                 pluginsManager.getPluginsLoaded().put(plugin.getPluginData().pluginId, plugin);
             }
         }
-
-        Database.getInstance().reloadTask().execute(true);
     }
 
     private static List<URL> getValidJars()

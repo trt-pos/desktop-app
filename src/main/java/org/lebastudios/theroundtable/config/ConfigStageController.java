@@ -20,6 +20,7 @@ import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
@@ -108,10 +109,9 @@ public class ConfigStageController extends StageController<ConfigStageController
             }
         });
         
-        configSectionsTreeView.getRoot().getChildren().add(CorePlugin.getInstance().getSettingsRootTreeItem());
         configSectionsTreeView.getRoot().getChildren().addAll(PluginsManager.getInstance().getSettingsTreeViews());
         
-        mainPane.setContent(new FXMLLoader(Launcher.class.getResource("defaultCenterPane.fxml")).load());
+        mainPane.setContent(new FXMLLoader(CorePlugin.class.getResource("defaultCenterPane.fxml")).load());
     }
     
     @FXML
@@ -156,9 +156,9 @@ public class ConfigStageController extends StageController<ConfigStageController
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
     @Override

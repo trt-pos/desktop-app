@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.locale;
 
 import javafx.fxml.FXMLLoader;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.util.*;
 
@@ -42,9 +43,9 @@ public class LangBundleLoader
         getInstance().resourceBundles.put(pluginClass.getPackageName() + ".lang", resourceBundle);
     }
 
-    public static void loadLang(FXMLLoader loader, Class<?> clazz)
+    public static void loadLang(FXMLLoader loader, Class<? extends IPlugin> pluginClazz)
     {
-        loader.setResources(getInstance().resourceBundles.get(clazz.getPackageName() + ".lang"));
+        loader.setResources(getInstance().resourceBundles.get(pluginClazz.getPackageName() + ".lang"));
     }
 
     public String getString(String key)

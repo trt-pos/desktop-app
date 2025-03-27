@@ -23,6 +23,7 @@ import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.tasks.TaskManager;
@@ -55,17 +56,8 @@ public class MainStageController extends PaneController<MainStageController>
     @Override
     protected void initialize()
     {
-        if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
-
-        leftTopButtons.getChildren().remove(pluginsButton);
-        
-        if (AccountManager.getInstance().isAccountAdmin()) 
-        {
-            leftTopButtons.getChildren().add(pluginsButton);
-        }
-
-        leftBottomButtons.getChildren().remove(2, leftBottomButtons.getChildren().size());
-        leftBottomButtons.getChildren().addAll(PluginsManager.getInstance().getLeftButtons());
+        leftTopButtons.getChildren().clear();
+        leftTopButtons.getChildren().addAll(PluginsManager.getInstance().getLeftButtons());
         
         rightBottomButtons.getChildren().clear();
         rightBottomButtons.getChildren().addAll(PluginsManager.getInstance().getRightButtons());
@@ -76,23 +68,6 @@ public class MainStageController extends PaneController<MainStageController>
         }
 
         CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World from Main stage!"));
-    }
-
-    @SneakyThrows
-    @FXML
-    private void openSettingsStage()
-    {
-        new ConfigStageController()
-                .setOwner(this.getStage())
-                .instantiate();
-    }
-
-    @FXML
-    private void openPluginsStage()
-    {
-        new PluginsStageController()
-                .setOwner(this.getStage())
-                .instantiate();
     }
 
     public void setCentralNode(Controller<?> controller)
@@ -158,9 +133,9 @@ public class MainStageController extends PaneController<MainStageController>
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
 }

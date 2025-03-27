@@ -5,8 +5,10 @@ import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.CacheHint;
 import javafx.util.Duration;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.PaneController;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 
 public class LoadingPaneController extends PaneController<LoadingPaneController>
 {
@@ -30,9 +32,9 @@ public class LoadingPaneController extends PaneController<LoadingPaneController>
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
 }

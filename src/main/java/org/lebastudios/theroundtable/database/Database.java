@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.database;
 
 import org.hibernate.Session;
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.sql.Connection;
@@ -22,6 +23,8 @@ public class Database
 
     public Task<Void> initTask()
     {
+        if (new DatabaseConfigData().load().enableBackups) Database.getInstance().initBackup();
+        
         return HibernateManager.getInstance().initTask();
     }
 

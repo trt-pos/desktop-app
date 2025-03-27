@@ -9,7 +9,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import org.lebastudios.theroundtable.Launcher;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconView;
@@ -61,9 +61,9 @@ public class PluginsStageController extends StageController<PluginsStageControll
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 
     @Override

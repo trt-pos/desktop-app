@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.ui.IconView;
@@ -40,10 +41,10 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         pluginDescriptionLabel.setText(pluginData.pluginDescription);
         pluginVendorLabel.setText(pluginData.pluginVendor);
         pluginVendorUrlLabel.setText(pluginData.pluginVendorUrl);
-        pluginRequiredCoreVersionLabel.setText(pluginData.pluginRequiredCoreVersion);
+        pluginRequiredCoreVersionLabel.setText(pluginData.requiredDesktopAppVersion());
         pluginVersionLabel.setText(pluginData.pluginVersion);
         
-        if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length == 0)
+        if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length == 1)
         {
             ((VBox) getRoot()).getChildren().remove(dependenciesPaneContainer);
         }
@@ -51,6 +52,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         {
             for (var dependency : pluginData.pluginDependencies)
             {
+                if (dependency.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) continue;
                 dependenciesPane.getChildren().add(createDependencyNode(dependency));
             }
         }
@@ -64,8 +66,8 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
     }
     
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 }

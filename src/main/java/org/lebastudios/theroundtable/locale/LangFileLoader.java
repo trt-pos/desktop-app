@@ -1,5 +1,7 @@
 package org.lebastudios.theroundtable.locale;
 
+import org.lebastudios.theroundtable.plugins.IPlugin;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +14,7 @@ public class LangFileLoader
 {
     private static final Map<String, String> translations = new HashMap<>();
 
-    public static void loadLang(Locale locale, Class<?> pluginClass)
+    public static void loadLang(Locale locale, Class<? extends IPlugin> pluginClass)
     {
         var resource = pluginClass.getResourceAsStream("languagesData.csv");
 

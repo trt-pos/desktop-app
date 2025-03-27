@@ -6,9 +6,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
-import org.lebastudios.theroundtable.database.entities.Account;
-import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -151,9 +150,6 @@ class HibernateManager
             updateProgress(50, 100);
             var config = databaseConfigData.getHibernateConf();
 
-            config.addAnnotatedClass(Account.class)
-                    .addAnnotatedClass(DatabaseVersion.class);
-
             // Loading all the plugin entities to the Hibernate configuration from the Plugins
             updateMessage("Adding plugins to the database configuration");
             PluginsManager.getInstance().getPluginDatabaseEntities().forEach(config::addAnnotatedClass);
@@ -226,8 +222,6 @@ class HibernateManager
             }
 
             updateMessage("Ask each plugin to update");
-            // Update the database version for the core
-            updateDatabaseFor(conn, "desktop-app", new DesktopAppDatabaseUpdater());
             
             // Update the database version for each plugin
             var plugins = PluginsManager.getInstance().getLoadedPlugins();

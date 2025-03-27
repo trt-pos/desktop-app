@@ -3,6 +3,7 @@ package org.lebastudios.theroundtable;
 import javafx.fxml.FXML;
 import javafx.scene.layout.FlowPane;
 import org.lebastudios.theroundtable.controllers.PaneController;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 public class HomePaneController extends PaneController<HomePaneController>
@@ -18,8 +19,8 @@ public class HomePaneController extends PaneController<HomePaneController>
     }
 
     @Override
-    public Class<?> getBundleClass()
+    public Class<? extends IPlugin> getBundleClass()
     {
-        return Launcher.class;
+        return CorePlugin.class;
     }
 }

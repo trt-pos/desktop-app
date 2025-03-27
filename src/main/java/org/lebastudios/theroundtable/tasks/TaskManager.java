@@ -1,9 +1,12 @@
 package org.lebastudios.theroundtable.tasks;
 
+import javafx.application.Platform;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.TaskProgressView;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.IconView;
 
 public class TaskManager
@@ -40,6 +43,7 @@ public class TaskManager
         thread.start();
     }
 
+    @SneakyThrows
     void startNewTask(Task<?> task, boolean wait)
     {
         new TaskStageController(task).instantiate(wait);

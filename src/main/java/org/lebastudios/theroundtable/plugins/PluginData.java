@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.plugins;
 
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -18,33 +19,10 @@ public class PluginData
     public String pluginVersion;
     public String pluginVendor;
     public String pluginVendorUrl;
-    public String pluginRequiredCoreVersion;
     public PluginDependencyData[] pluginDependencies;
 
     public boolean areDependenciesInstalled()
     {
-        final Version requiredCoreVersion = new Version(this.pluginRequiredCoreVersion);
-        final Version actualCoreVersion = new Version(TheRoundTableApplication.getAppVersion());
-
-        if (!requiredCoreVersion.hasSameMajor(actualCoreVersion))
-        {
-            Logs.getInstance().log(
-                    Logs.LogType.INFO,
-                    "The plugin " + this.pluginName
-                            + " requires a different major version of The Round Table."
-            );
-            return false;
-        }
-
-        if (actualCoreVersion.isLessThan(requiredCoreVersion))
-        {
-            Logs.getInstance().log(
-                    Logs.LogType.INFO, "The plugin " + this.pluginName
-                            + " requires a newer version of The Round Table."
-            );
-            return false;
-        }
-
         for (var pluginDependencyNeeded : this.pluginDependencies)
         {
             List<PluginData> pluginsData = PluginsManager.getInstance().getInstalledPlugins().stream()
@@ -90,6 +68,15 @@ public class PluginData
         return true;
     }
 
+    public String requiredDesktopAppVersion()
+    {
+        return Arrays.stream(pluginDependencies)
+                .filter(data -> data.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId))
+                .map(data -> data.pluginVersion)
+                .findFirst()
+                .orElse(null);
+    }
+    
     public boolean isDependencyOfOther()
     {
         for (IPlugin other : PluginsManager.getInstance().getPluginsInstalled().values())

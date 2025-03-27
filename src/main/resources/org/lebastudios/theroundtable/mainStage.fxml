@@ -13,9 +13,6 @@
                 <padding>
                     <Insets top="5" right="5" bottom="5" left="5"/>
                 </padding>
-
-                <IconButton onAction="#openSettingsStage" mnemonicParsing="false" iconName="settings.png"/>
-                <IconButton fx:id="pluginsButton" onAction="#openPluginsStage" mnemonicParsing="false" iconName="plugins.png"/>
             </VBox>
 
             <VBox VBox.vgrow="ALWAYS" spacing="10" fx:id="leftBottomButtons" alignment="BOTTOM_CENTER">

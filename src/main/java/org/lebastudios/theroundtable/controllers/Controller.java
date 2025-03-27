@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.IOException;
 import java.net.URL;
@@ -107,10 +108,8 @@ public abstract class Controller<T extends Controller<T>>
         return (Stage) getRoot().getScene().getWindow();
     }
 
-    public abstract Class<?> getBundleClass();
+    public abstract Class<? extends IPlugin> getBundleClass();
 
-    private static final HashMap<Class<Controller<?>>, FXMLLoader> loadersHashMap = new HashMap<>();
-    
     public URL getFXML()
     {
         Class<?> clazz = getClass();

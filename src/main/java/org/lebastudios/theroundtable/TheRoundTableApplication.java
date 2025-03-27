@@ -12,6 +12,7 @@ import org.lebastudios.theroundtable.camelot.CamelotEventListener;
 import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.camelot.FromBytesToString;
+import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
@@ -41,7 +42,7 @@ public class TheRoundTableApplication extends Application
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 factory.setIgnoringElementContentWhitespace(true);
                 Document document = factory.newDocumentBuilder().parse(new FileInputStream(new File(
-                        new File(Launcher.class.getResource("/").getFile()).getParentFile().getParentFile(),
+                        new File(CorePlugin.class.getResource("/").getFile()).getParentFile().getParentFile(),
                         "pom.xml"
                 )));
 
@@ -57,7 +58,7 @@ public class TheRoundTableApplication extends Application
         }
         else
         {
-            try (final var pomResource = Launcher.class.getResourceAsStream("/META-INF/maven/org.lebastudios.theroundtable/desktop-app/pom.properties"))
+            try (final var pomResource = CorePlugin.class.getResourceAsStream("/META-INF/maven/org.lebastudios.theroundtable/desktop-app/pom.properties"))
             {
                 var properties = new Properties();
 
@@ -78,7 +79,7 @@ public class TheRoundTableApplication extends Application
 
     public static String getAppDirectory()
     {
-        return new File(Launcher.class.getProtectionDomain().getCodeSource()
+        return new File(CorePlugin.class.getProtectionDomain().getCodeSource()
                 .getLocation().getFile()).getParentFile().getParent();
     }
 
@@ -86,12 +87,11 @@ public class TheRoundTableApplication extends Application
     @Override
     public void start(Stage stage)
     {
-        LangLoader.loadLang(Launcher.class, AppLocale.getActualLocale());
+        PluginLoader.loadPlugins();
         Database.getInstance().initTask().execute(true);
 
         if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
-        
-        CamelotServiceManager.getInstance().initTask().execute(true);
+
 
         CamelotEventsManager.getInstance().addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
         {
@@ -103,8 +103,6 @@ public class TheRoundTableApplication extends Application
         });
         
         new AccountStageController().instantiate(true);
-
-        PluginLoader.loadPlugins();
 
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
         stage.getIcons().add(ImageLoader.getIcon("the-round-table-logo.png"));

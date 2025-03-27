@@ -1,7 +1,8 @@
 package org.lebastudios.theroundtable.locale;
 
-import org.lebastudios.theroundtable.Launcher;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.events.AccountEvents;
+import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 import java.util.Locale;
@@ -15,14 +16,14 @@ public class LangLoader
     
     private static void reloadLangs()
     {
-        LangLoader.loadLang(Launcher.class, AppLocale.getActualLocale());
+        LangLoader.loadLang(CorePlugin.class, AppLocale.getActualLocale());
 
         PluginsManager.getInstance()
                 .getLoadedPlugins()
                 .forEach(plugin -> LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale()));
     }
     
-    public static void loadLang(Class<?> langClass, Locale locale)
+    public static void loadLang(Class<? extends IPlugin> langClass, Locale locale)
     {
         Thread langFileThread = new Thread(() -> LangFileLoader.loadLang(locale, langClass));
         Thread langBundleThread = new Thread(() -> LangBundleLoader.loadLang(langClass, locale));
