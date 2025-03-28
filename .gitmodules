@@ -1,3 +1,6 @@
 [submodule "trt-camelot"]
 	path = trt-camelot
 	url = https://github.com/trt-pos/trt-camelot.git
+[submodule "fxml2java"]
+	path = fxml2java
+	url = https://github.com/trt-pos/fxml2java.git
