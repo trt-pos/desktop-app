@@ -30,7 +30,6 @@ public class AccountStageController extends StageController<AccountStageControll
     @FXML public Label passwordError;
     @FXML public PasswordField passwordField;
     @FXML public VBox passwordBox;
-    @FXML public BorderPane root;
     @FXML public FlowPane accountsBox;
 
     private Account accountSelected;
@@ -46,7 +45,8 @@ public class AccountStageController extends StageController<AccountStageControll
             accounts.forEach(account -> accountsBox.getChildren().add(generateAccountBox(account)));
         });
 
-        Platform.runLater(() -> root.setCenter(accountsBox));
+        Platform.runLater(() -> ((BorderPane) getRoot()).setCenter(accountsBox));
+        Platform.runLater(() -> ((BorderPane) getRoot()).setBottom(null));
 
         CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World!"));
     }
@@ -65,7 +65,7 @@ public class AccountStageController extends StageController<AccountStageControll
     {
         accountSelected = controller.getAccount();
 
-        root.setCenter(passwordBox);
+        ((BorderPane) getRoot()).setCenter(passwordBox);
     }
 
     public void submitPassword(ActionEvent actionEvent)
@@ -99,7 +99,7 @@ public class AccountStageController extends StageController<AccountStageControll
         accountSelected = null;
         passwordField.clear();
         passwordError.setText("");
-        root.setCenter(accountsBox);
+        ((BorderPane) getRoot()).setCenter(accountsBox);
     }
 
     @Override

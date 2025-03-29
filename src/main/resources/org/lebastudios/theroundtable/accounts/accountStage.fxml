@@ -11,6 +11,9 @@
             prefHeight="500.0" prefWidth="800.0" fx:id="root">
     <center>
         <FlowPane hgap="10" vgap="10" fx:id="accountsBox" alignment="CENTER" />
+    </center>
+    
+    <bottom>
         <VBox alignment="CENTER" maxWidth="250" spacing="15" fx:id="passwordBox">
             <Label maxWidth="Infinity" text="%word.password" />
             <PasswordField fx:id="passwordField" />
@@ -20,5 +23,5 @@
             </HBox>
             <Label fx:id="passwordError" maxWidth="Infinity" style="-fx-font-style: italic; -fx-text-fill: red;" />
         </VBox>
-    </center>
+    </bottom>
 </BorderPane>
