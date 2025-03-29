@@ -21,22 +21,22 @@ import java.util.Arrays;
 
 public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseConfigData>
 {
-    @FXML CheckBox enableRemoteDb;
+    @FXML public CheckBox enableRemoteDb;
 
-    @FXML Node localDbSection;
-    @FXML Node remoteDbSection;
+    @FXML public Node localDbSection;
+    @FXML public Node remoteDbSection;
 
-    @FXML Label databasesDirectory;
-    @FXML CheckBox enableBackups;
-    @FXML Node backupSection;
-    @FXML Label databasesBackupDirectory;
-    @FXML TextField numMaxBackups;
-    
-    @FXML TextField remoteDbHost;
-    @FXML TextField remoteDbPort;
-    @FXML TextField remoteDbUser;
-    @FXML TextField remoteDbPassword;
-    @FXML TextField remoteDbName;
+    @FXML public Label databasesDirectory;
+    @FXML public CheckBox enableBackups;
+    @FXML public Node backupSection;
+    @FXML public Label databasesBackupDirectory;
+    @FXML public TextField numMaxBackups;
+      
+    @FXML public TextField remoteDbHost;
+    @FXML public TextField remoteDbPort;
+    @FXML public TextField remoteDbUser;
+    @FXML public TextField remoteDbPassword;
+    @FXML public TextField remoteDbName;
 
     public DatabaseConfigPaneController()
     {
@@ -68,7 +68,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 
         enableRemoteDb.setSelected(configData.enableRemoteDb);
     }
-    
+
     @Override
     public void updateConfigData(DatabaseConfigData configData)
     {
@@ -130,11 +130,11 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
                 return false;
             }
         }
-        
+
         DatabaseConfigData configData = new DatabaseConfigData();
         updateConfigData(configData);
-        
-        try (Connection _ = configData.getConnection()) 
+
+        try (Connection _ = configData.getConnection())
         {
             return true;
         }
@@ -253,7 +253,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @FXML
-    void selectDatabasesBackupDirectory(ActionEvent actionEvent)
+    public void selectDatabasesBackupDirectory(ActionEvent actionEvent)
     {
         File path = getDirectoryChooser("Select Backup Directory").showDialog(getStage());
         if (path == null) return;
@@ -262,7 +262,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @FXML
-    void selectDatabasesDirectory(ActionEvent actionEvent)
+    public void selectDatabasesDirectory(ActionEvent actionEvent)
     {
         File path = getDirectoryChooser("Select Databases Directory").showDialog(getStage());
         if (path == null) return;
