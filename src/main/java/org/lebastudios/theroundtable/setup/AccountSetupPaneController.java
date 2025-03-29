@@ -15,10 +15,10 @@ import java.net.URL;
 
 public class AccountSetupPaneController extends SetupPaneController
 {
-    @FXML private TextField usernameField;
-    @FXML private Label errorLabel;
-    @FXML private TextField passwordField;
-    @FXML private TextField confirmPasswordField;
+    @FXML public TextField usernameField;
+    @FXML public Label errorLabel;
+    @FXML public TextField passwordField;
+    @FXML public TextField confirmPasswordField;
 
     @FXML
     @Override

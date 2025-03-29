@@ -28,15 +28,15 @@ import java.util.Objects;
 
 public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile>
 {
-    @FXML private Label errorLabel;
-    @FXML private IconButton deleteAccount;
-    @FXML private ComboBox<String> accountType;
-    @FXML private CheckBox changePasswordOnNextLogin;
-    @FXML private PasswordField passwordField;
-    @FXML private VBox usersContainer;
-    @FXML private IconView userIcon;
-    @FXML private Label userName;
-    @FXML private StackPane userView;
+    @FXML public Label errorLabel;
+    @FXML public IconButton deleteAccount;
+    @FXML public ComboBox<String> accountType;
+    @FXML public CheckBox changePasswordOnNextLogin;
+    @FXML public PasswordField passwordField;
+    @FXML public VBox usersContainer;
+    @FXML public IconView userIcon;
+    @FXML public Label userName;
+    @FXML public StackPane userView;
 
     private Account selectedAccount;
 
@@ -131,7 +131,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
     }
 
     @FXML
-    private void removeUser()
+    public void removeUser(ActionEvent actionEvent)
     {
         if (selectedAccount == null) return;
 

@@ -17,8 +17,8 @@ import java.net.URL;
 
 public class ChangePasswordStageController extends StageController<ChangePasswordStageController>
 {
-    @FXML private PasswordField password;
-    @FXML private PasswordField confirmPassword;
+    @FXML public PasswordField password;
+    @FXML public PasswordField confirmPassword;
 
     private final Account account;
     private Runnable onAccept;
@@ -47,7 +47,7 @@ public class ChangePasswordStageController extends StageController<ChangePasswor
     }
 
     @FXML
-    private void changePassword(ActionEvent actionEvent)
+    public void changePassword(ActionEvent actionEvent)
     {
         if (!LocalPasswordValidator.isValidFormat(password.getText()))
         {
@@ -76,7 +76,7 @@ public class ChangePasswordStageController extends StageController<ChangePasswor
     }
 
     @FXML
-    private void cancel(ActionEvent actionEvent)
+    public void cancel(ActionEvent actionEvent)
     {
         close();
     }

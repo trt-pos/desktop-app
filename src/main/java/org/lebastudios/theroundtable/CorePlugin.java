@@ -9,9 +9,7 @@ import org.lebastudios.theroundtable.database.Dbms;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.fxml2java.CompileFxml;
-import org.lebastudios.theroundtable.locale.AppLocale;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.ui.IconButton;
@@ -24,9 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @CompileFxml(
-        fxmls = {
-                "src/main/resources/org/lebastudios/theroundtable/config/databaseConfigPane.fxml",
-                "src/main/resources/org/lebastudios/theroundtable/config/configStage.fxml"
+        directories = {
+                "src/main/resources/org/lebastudios/theroundtable/accounts",
+                "src/main/resources/org/lebastudios/theroundtable/config",
+                "src/main/resources/org/lebastudios/theroundtable/dialogs",
+                "src/main/resources/org/lebastudios/theroundtable/plugins",
+                "src/main/resources/org/lebastudios/theroundtable/setup",
+                "src/main/resources/org/lebastudios/theroundtable/tasks",
+                "src/main/resources/org/lebastudios/theroundtable/ui",
+                "src/main/resources/org/lebastudios/theroundtable",
         }
 )
 public class CorePlugin implements IPlugin

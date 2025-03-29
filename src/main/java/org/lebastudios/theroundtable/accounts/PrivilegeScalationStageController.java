@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.accounts;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -19,9 +20,9 @@ import java.util.function.Consumer;
 
 public class PrivilegeScalationStageController extends StageController<PrivilegeScalationStageController>
 {
-    @FXML private IconView iconView;
-    @FXML private TextField accountNameField;
-    @FXML private PasswordField accountPasswordField;
+    @FXML public IconView iconView;
+    @FXML public TextField accountNameField;
+    @FXML public PasswordField accountPasswordField;
 
     private final Consumer<Boolean> callback;
     private final Account.AccountType accountType;
@@ -40,14 +41,14 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     }
 
     @FXML
-    public void cancel()
+    public void cancel(ActionEvent actionEvent)
     {
         close();
         callback.accept(false);
     }
 
     @FXML
-    public void accept()
+    public void accept(ActionEvent actionEvent)
     {
         Account account = Database.getInstance().connectQuery(session ->
         {

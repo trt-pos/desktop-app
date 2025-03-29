@@ -14,10 +14,10 @@ import org.lebastudios.theroundtable.tasks.Task;
 
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {
-    @FXML private TextField clientName;
-    @FXML private TextField serverAddress;
-    @FXML private TextField serverPort;
-    @FXML private CheckBox defaultConfigCheckbox;
+    @FXML public TextField clientName;
+    @FXML public TextField serverAddress;
+    @FXML public TextField serverPort;
+    @FXML public CheckBox defaultConfigCheckbox;
 
     public CamelotServerConfigPaneController()
     {

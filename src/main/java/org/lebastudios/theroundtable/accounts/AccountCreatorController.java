@@ -21,10 +21,10 @@ import java.util.function.Consumer;
 
 public class AccountCreatorController extends StageController<AccountCreatorController>
 {
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private PasswordField confirmPasswordField;
-    @FXML private ChoiceBox<String> accountTypeChoiceBox;
+    @FXML public TextField usernameField;
+    @FXML public PasswordField passwordField;
+    @FXML public PasswordField confirmPasswordField;
+    @FXML public ChoiceBox<String> accountTypeChoiceBox;
 
     @Setter private Consumer<Account> accountConsumer;
 
@@ -40,7 +40,7 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     }
 
     @FXML
-    private void createAccount(ActionEvent actionEvent)
+    public void createAccount(ActionEvent actionEvent)
     {
         if (passwordField.getText().isBlank() || passwordField.getText().length() < 8)
         {
@@ -68,7 +68,7 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     }
 
     @FXML
-    private void cancel(ActionEvent actionEvent)
+    public void cancel(ActionEvent actionEvent)
     {
         close();
     }

@@ -19,10 +19,12 @@
     <center>
         <ScrollPane fitToHeight="true" fitToWidth="true" hvalue="Infinity"
                     hbarPolicy="NEVER" fx:id="mainPane" pannable="true">
-            <VBox maxWidth="Infinity" alignment="CENTER" spacing="10">
-                <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
-                <Label textAlignment="CENTER" wrapText="true" text="%phrase.setupwelcome"/>
-            </VBox>
+            <content>
+                <VBox maxWidth="Infinity" alignment="CENTER" spacing="10">
+                    <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
+                    <Label textAlignment="CENTER" wrapText="true" text="%phrase.setupwelcome"/>
+                </VBox>
+            </content>
         </ScrollPane>
     </center>
     

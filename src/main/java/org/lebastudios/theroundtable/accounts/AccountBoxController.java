@@ -18,8 +18,8 @@ public class AccountBoxController extends PaneController<AccountBoxController>
 {
     @Getter private final Account account;
 
-    @FXML private IconView accountIcon;
-    @FXML private Label accountName;
+    @FXML public IconView accountIcon;
+    @FXML public Label accountName;
 
     public AccountBoxController(Account account)
     {

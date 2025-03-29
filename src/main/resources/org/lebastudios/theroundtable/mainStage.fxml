@@ -25,10 +25,6 @@
         </VBox>
     </left>
 
-    <center>
-        <fx:include source="defaultCenterPane.fxml"/>
-    </center>
-
     <right>
         <VBox spacing="10" fx:id="rightBottomButtons" alignment="BOTTOM_CENTER">
             <padding>

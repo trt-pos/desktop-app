@@ -10,7 +10,7 @@ import org.lebastudios.theroundtable.server.LicenseValidatorTask;
 
 public class AccountConfigPaneController extends ConfigPaneController<AccountConfigData>
 {
-    @FXML private TextField licenseId;
+    @FXML public TextField licenseId;
 
     public AccountConfigPaneController()
     {

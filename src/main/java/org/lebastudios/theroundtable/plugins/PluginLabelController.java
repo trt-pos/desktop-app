@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.plugins;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -30,15 +31,15 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 {
     private static final Event onReloadLabelsRequest = new Event();
 
-    @FXML private IconView pluginIcon;
-    @FXML private Label pluginName;
-    @FXML private Label pluginDescription;
-    @FXML private IconButton unistallButton;
-    @FXML private IconTextButton notInstallableButton;
-    @FXML private Button installButton;
-    @FXML private Button restartAppButton;
-    @FXML private Button updatePlugin;
-    @FXML private HBox root;
+    @FXML public IconView pluginIcon;
+    @FXML public Label pluginName;
+    @FXML public Label pluginDescription;
+    @FXML public IconButton unistallButton;
+    @FXML public IconTextButton notInstallableButton;
+    @FXML public Button installButton;
+    @FXML public Button restartAppButton;
+    @FXML public Button updatePlugin;
+    @FXML public HBox root;
     private final PluginData pluginData;
 
     private final Node loadingNode = new LoadingPaneController().getRoot();
@@ -123,7 +124,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     }
 
     @FXML
-    private void installPlugin()
+    public void installPlugin(ActionEvent actionEvent)
     {
         root.getChildren().remove(installButton);
         root.getChildren().add(loadingNode);
@@ -132,7 +133,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     }
 
     @FXML
-    private void updatePlugin()
+    public void updatePlugin(ActionEvent actionEvent)
     {
         root.getChildren().remove(updatePlugin);
         root.getChildren().add(loadingNode);
@@ -151,7 +152,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
 
     @FXML
-    private void tryUninstallPlugin()
+    public void tryUninstallPlugin(ActionEvent actionEvent)
     {
         if (!pluginData.isDependencyOfOther())
         {
@@ -199,7 +200,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     }
 
     @FXML
-    private void restartApp()
+    public void restartApp(ActionEvent actionEvent)
     {
         Launcher.restartAplication();
     }

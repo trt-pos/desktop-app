@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
-<HBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.2-ea">
+<HBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.2-ea"
+      fx:controller="org.lebastudios.theroundtable.LogoPaneController">
     <VBox HBox.hgrow="ALWAYS" spacing="15" alignment="CENTER">
         <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
         <Label alignment="CENTER" contentDisplay="CENTER" text="The Round Table" textAlignment="CENTER"/>

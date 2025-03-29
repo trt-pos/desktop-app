@@ -12,11 +12,13 @@
     </padding>
     <StackPane styleClass="border-round">
         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true">
-            <VBox fx:id="usersContainer" spacing="5">
-                <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                </padding>
-            </VBox>
+            <content>
+                <VBox fx:id="usersContainer" spacing="5">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </VBox>
+            </content>
         </ScrollPane>
         <IconButton iconName="add-user.png" StackPane.alignment="BOTTOM_RIGHT" onAction="#addUser">
             <StackPane.margin>

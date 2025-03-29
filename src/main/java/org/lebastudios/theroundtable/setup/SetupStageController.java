@@ -33,9 +33,9 @@ public class SetupStageController extends StageController<SetupStageController>
 
     private int currentPane = -1;
 
-    @FXML private Button backButton;
-    @FXML private Button nextButton;
-    @FXML private ScrollPane mainPane;
+    @FXML public Button backButton;
+    @FXML public Button nextButton;
+    @FXML public ScrollPane mainPane;
 
     public static boolean checkIfStart()
     {
@@ -83,7 +83,7 @@ public class SetupStageController extends StageController<SetupStageController>
     }
 
     @FXML
-    private void backButtonAction(ActionEvent actionEvent)
+    public void backButtonAction(ActionEvent actionEvent)
     {
         currentPane--;
 
@@ -91,7 +91,7 @@ public class SetupStageController extends StageController<SetupStageController>
     }
 
     @FXML
-    private void nextButtonAction(ActionEvent actionEvent)
+    public void nextButtonAction(ActionEvent actionEvent)
     {
         if (currentPane > setupPanes.length - 1) return;
         if (currentPane >= 0 && !setupPanes[currentPane].getController().validate()) return;

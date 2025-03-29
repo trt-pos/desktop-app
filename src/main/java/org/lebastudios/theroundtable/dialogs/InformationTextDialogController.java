@@ -16,7 +16,7 @@ import java.net.URL;
 public class InformationTextDialogController extends StageController<InformationTextDialogController>
 {
     private final String informationText;
-    @FXML private Label textLabel;
+    @FXML public Label textLabel;
     
     public InformationTextDialogController(String informationText)
     {
@@ -29,7 +29,7 @@ public class InformationTextDialogController extends StageController<Information
     }
 
     @FXML
-    private void accept(ActionEvent actionEvent)
+    public void accept(ActionEvent actionEvent)
     {
         close();
     }

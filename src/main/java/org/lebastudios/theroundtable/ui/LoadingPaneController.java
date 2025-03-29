@@ -12,7 +12,7 @@ import org.lebastudios.theroundtable.plugins.IPlugin;
 
 public class LoadingPaneController extends PaneController<LoadingPaneController>
 {
-    @FXML private IconView loadingIcon;
+    @FXML public IconView loadingIcon;
     
     @Override
     protected void initialize()

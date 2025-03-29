@@ -15,10 +15,10 @@ import org.lebastudios.theroundtable.ui.StageBuilder;
 
 class TaskStageController extends StageController<TaskStageController>
 {
-    @FXML private Label taskTitleLabel;
-    @FXML private ProgressBar progressBar;
-    @FXML private Label messageLabel;
-    @FXML private Button cancelButton;
+    @FXML public Label taskTitleLabel;
+    @FXML public ProgressBar progressBar;
+    @FXML public Label messageLabel;
+    @FXML public Button cancelButton;
     
     private final Task<?> task;
 

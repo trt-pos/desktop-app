@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -14,7 +15,7 @@ import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 public class RequestConfigStageController extends StageController<RequestConfigStageController>
 {
-    @FXML private ScrollPane paneContainer;
+    @FXML public ScrollPane paneContainer;
     
     private ConfigPaneController<?> configPaneController;
 
@@ -39,7 +40,7 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     }
 
     @FXML
-    public void accept()
+    public void accept(ActionEvent actionEvent)
     {
         configPaneController.accept();
     }

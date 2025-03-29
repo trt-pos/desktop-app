@@ -19,7 +19,7 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
 {
     private final String informationText;
     private final Consumer<Boolean> action;
-    @FXML private Label textLabel;
+    @FXML public Label textLabel;
 
     public ConfirmationTextDialogController(String informationText, Consumer<Boolean> action)
     {
@@ -33,7 +33,7 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
     }
 
     @FXML
-    private void accept(ActionEvent actionEvent)
+    public void accept(ActionEvent actionEvent)
     {
         action.accept(true);
         close();

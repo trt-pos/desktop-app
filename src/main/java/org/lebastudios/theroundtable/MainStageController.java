@@ -35,11 +35,11 @@ public class MainStageController extends PaneController<MainStageController>
 {
     @Getter private static MainStageController instance;
     
-    @FXML private IconButton openTasksPopupButton;
-    @FXML private IconButton pluginsButton;
-    @FXML private VBox leftTopButtons;
-    @FXML private VBox leftBottomButtons;
-    @FXML private VBox rightBottomButtons;
+    @FXML public IconButton openTasksPopupButton;
+    @FXML public IconButton pluginsButton;
+    @FXML public VBox leftTopButtons;
+    @FXML public VBox leftBottomButtons;
+    @FXML public VBox rightBottomButtons;
     
     private final Button homeButton;
 
@@ -67,6 +67,10 @@ public class MainStageController extends PaneController<MainStageController>
             rightBottomButtons.getChildren().add(homeButton);
         }
 
+        ((BorderPane) this.getRoot()).setCenter(
+                new LogoPaneController().getRoot()
+        );
+        
         CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World from Main stage!"));
     }
 
@@ -110,14 +114,14 @@ public class MainStageController extends PaneController<MainStageController>
     }
 
     @FXML
-    private void openTasksPopup()
+    public void openTasksPopup(ActionEvent actionEvent)
     {
         TaskManager.getInstance().getTasksPopOver().show(openTasksPopupButton);
     }
 
     @SneakyThrows
     @FXML
-    private void closeSession(ActionEvent actionEvent)
+    public void closeSession(ActionEvent actionEvent)
     {
         Stage stage = getStage();
 

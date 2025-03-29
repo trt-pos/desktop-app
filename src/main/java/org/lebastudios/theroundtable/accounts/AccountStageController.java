@@ -27,11 +27,11 @@ import java.util.List;
 
 public class AccountStageController extends StageController<AccountStageController>
 {
-    @FXML private Label passwordError;
-    @FXML private PasswordField passwordField;
-    @FXML private VBox passwordBox;
-    @FXML private BorderPane root;
-    @FXML private FlowPane accountsBox;
+    @FXML public Label passwordError;
+    @FXML public PasswordField passwordField;
+    @FXML public VBox passwordBox;
+    @FXML public BorderPane root;
+    @FXML public FlowPane accountsBox;
 
     private Account accountSelected;
 

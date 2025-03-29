@@ -14,16 +14,16 @@ import org.lebastudios.theroundtable.ui.IconView;
 public class PluginViewerPaneController extends PaneController<PluginViewerPaneController>
 {
     private final PluginData pluginData;
-    @FXML private Label pluginVersionLabel;
-    @FXML private Label pluginVendorLabel;
-    @FXML private Label pluginVendorUrlLabel;
-    @FXML private Label pluginRequiredCoreVersionLabel;
-    @FXML private VBox dependenciesPane;
-    @FXML private HBox iconViewContainer;
-    @FXML private Label pluginNameLabel;
-    @FXML private Label pluginIdLabel;
-    @FXML private Label pluginDescriptionLabel;
-    @FXML private TitledPane dependenciesPaneContainer;
+    @FXML public Label pluginVersionLabel;
+    @FXML public Label pluginVendorLabel;
+    @FXML public Label pluginVendorUrlLabel;
+    @FXML public Label pluginRequiredCoreVersionLabel;
+    @FXML public VBox dependenciesPane;
+    @FXML public HBox iconViewContainer;
+    @FXML public Label pluginNameLabel;
+    @FXML public Label pluginIdLabel;
+    @FXML public Label pluginDescriptionLabel;
+    @FXML public TitledPane dependenciesPaneContainer;
 
     public PluginViewerPaneController(PluginData pluginData)
     {

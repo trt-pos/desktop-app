@@ -26,9 +26,9 @@ public class RequestTextDialogController extends StageController<RequestTextDial
     private final String info;
     private final String validationError;
     private final String title;
-    @FXML private TextField textInputField;
-    @FXML private Label infoLabel;
-    @FXML private Label errorLabel;
+    @FXML public TextField textInputField;
+    @FXML public Label infoLabel;
+    @FXML public Label errorLabel;
 
     public RequestTextDialogController(Consumer<String> action, String inputTip, String title,
             Function<String, Boolean> validator, String info, String validationError, Runnable onCancel)
@@ -64,7 +64,7 @@ public class RequestTextDialogController extends StageController<RequestTextDial
     }
 
     @FXML
-    private void accept(ActionEvent actionEvent)
+    public void accept(ActionEvent actionEvent)
     {
         if (!validateInput())
         {
@@ -88,7 +88,7 @@ public class RequestTextDialogController extends StageController<RequestTextDial
     }
 
     @FXML
-    private void cancel(ActionEvent actionEvent)
+    public void cancel(ActionEvent actionEvent)
     {
         onCancel.run();
         close();

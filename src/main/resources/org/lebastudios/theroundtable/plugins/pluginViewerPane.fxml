@@ -40,7 +40,9 @@
     </VBox>
     
     <TitledPane fx:id="dependenciesPaneContainer" text="%word.dependencies" style="-fx-font-size: 13;" maxWidth="Infinity" expanded="false">
-        <VBox fx:id="dependenciesPane" />
+        <content>
+            <VBox fx:id="dependenciesPane" />
+        </content>
     </TitledPane>
     
     <Label textAlignment="RIGHT" maxWidth="Infinity" fx:id="pluginVersionLabel" alignment="CENTER_RIGHT" />

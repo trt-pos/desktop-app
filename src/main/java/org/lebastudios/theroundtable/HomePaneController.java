@@ -8,7 +8,7 @@ import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 public class HomePaneController extends PaneController<HomePaneController>
 {
-    @FXML private FlowPane flowPane;
+    @FXML public FlowPane flowPane;
 
     @Override
     protected void initialize()

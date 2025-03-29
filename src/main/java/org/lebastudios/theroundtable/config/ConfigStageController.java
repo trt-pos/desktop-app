@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
+import org.lebastudios.theroundtable.LogoPaneController;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
@@ -111,7 +112,7 @@ public class ConfigStageController extends StageController<ConfigStageController
         
         configSectionsTreeView.getRoot().getChildren().addAll(PluginsManager.getInstance().getSettingsTreeViews());
         
-        mainPane.setContent(new FXMLLoader(CorePlugin.class.getResource("defaultCenterPane.fxml")).load());
+        mainPane.setContent(new LogoPaneController().getRoot());
     }
     
     @FXML

@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class PreferencesConfigPaneController extends ConfigPaneController<PreferencesConfigData>
 {
-    @FXML private ChoiceBox<String> themeChoiceBox;
-    @FXML private ChoiceBox<String> languageChoiceBox;
+    @FXML public ChoiceBox<String> themeChoiceBox;
+    @FXML public ChoiceBox<String> languageChoiceBox;
 
     public PreferencesConfigPaneController()
     {

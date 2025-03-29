@@ -2,6 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import com.github.anastaciocintra.escpos.EscPos;
 import com.github.anastaciocintra.output.PrinterOutputStream;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -17,9 +18,9 @@ import java.util.Arrays;
 
 public class PrintersConfigPaneController extends ConfigPaneController<PrintersConfigData>
 {
-    @FXML private CheckBox useOpenCashDrawerDefaultCommand;
-    @FXML private TextField openCashDrawerCommand;
-    @FXML private ChoiceBox<String> defaultPrinter;
+    @FXML public CheckBox useOpenCashDrawerDefaultCommand;
+    @FXML public TextField openCashDrawerCommand;
+    @FXML public ChoiceBox<String> defaultPrinter;
 
     public PrintersConfigPaneController()
     {
@@ -117,7 +118,7 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
     }
 
     @FXML
-    private void testDefaultPrinter()
+    public void testDefaultPrinter(ActionEvent actionEvent)
     {
         try (EscPos escPos = new EscPos(
                 new PrinterOutputStream(PrinterOutputStream.getPrintServiceByName(defaultPrinter.getValue()))))

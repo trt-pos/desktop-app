@@ -18,7 +18,7 @@ import org.lebastudios.theroundtable.ui.StageBuilder;
 
 public class PluginsStageController extends StageController<PluginsStageController>
 {
-    @FXML private TabPane tabPane;
+    @FXML public TabPane tabPane;
 
     @FXML
     @Override

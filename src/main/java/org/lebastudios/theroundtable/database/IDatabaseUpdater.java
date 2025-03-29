@@ -8,6 +8,7 @@ import java.util.Arrays;
 public interface IDatabaseUpdater
 {
     default int getDatabaseVersion() { return 0; }
+    // TODO: Try to use sql qritten inside a sql folder  
     default void updateDatabase(Connection conn, int oldVersion, int newVersion) throws Exception 
     {
         Dbms dbms = new DatabaseConfigData().load().getDbms();
