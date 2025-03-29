@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.config;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -9,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
@@ -19,27 +17,26 @@ import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseConfigData>
 {
-    @FXML private CheckBox enableRemoteDb;
+    @FXML CheckBox enableRemoteDb;
 
-    @FXML private Node localDbSection;
-    @FXML private Node remoteDbSection;
+    @FXML Node localDbSection;
+    @FXML Node remoteDbSection;
 
-    @FXML private Label databasesDirectory;
-    @FXML private CheckBox enableBackups;
-    @FXML private Node backupSection;
-    @FXML private Label databasesBackupDirectory;
-    @FXML private TextField numMaxBackups;
+    @FXML Label databasesDirectory;
+    @FXML CheckBox enableBackups;
+    @FXML Node backupSection;
+    @FXML Label databasesBackupDirectory;
+    @FXML TextField numMaxBackups;
     
-    @FXML private TextField remoteDbHost;
-    @FXML private TextField remoteDbPort;
-    @FXML private TextField remoteDbUser;
-    @FXML private TextField remoteDbPassword;
-    @FXML private TextField remoteDbName;
+    @FXML TextField remoteDbHost;
+    @FXML TextField remoteDbPort;
+    @FXML TextField remoteDbUser;
+    @FXML TextField remoteDbPassword;
+    @FXML TextField remoteDbName;
 
     public DatabaseConfigPaneController()
     {
@@ -256,7 +253,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @FXML
-    private void selectDatabasesBackupDirectory(ActionEvent actionEvent)
+    void selectDatabasesBackupDirectory(ActionEvent actionEvent)
     {
         File path = getDirectoryChooser("Select Backup Directory").showDialog(getStage());
         if (path == null) return;
@@ -265,7 +262,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @FXML
-    private void selectDatabasesDirectory(ActionEvent actionEvent)
+    void selectDatabasesDirectory(ActionEvent actionEvent)
     {
         File path = getDirectoryChooser("Select Databases Directory").showDialog(getStage());
         if (path == null) return;

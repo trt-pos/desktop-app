@@ -14,23 +14,31 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.11.2</junit.version>
         <java.version>22</java.version>
-        <javafx.version>24-ea+19</javafx.version>
+        <javafx.version>24</javafx.version>
         <hibernate.version>6.5.2.Final</hibernate.version>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <charm-down.version>3.8.6</charm-down.version>
     </properties>
 
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>24-ea+19</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>24-ea+19</version>
+            <version>${javafx.version}</version>
         </dependency>
         <!-- Available db to use -->
         <dependency>
@@ -66,13 +74,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.5.15</version> <!-- Usa la última versión disponible -->
         </dependency>
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
@@ -101,7 +102,19 @@
             <artifactId>bcrypt</artifactId>
             <version>0.10.2</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.lebastudios.theroundtable</groupId>
+            <artifactId>fxml2java</artifactId>
+            <version>0.1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -129,19 +142,19 @@
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-graphics</artifactId>
-                    <version>24-ea+5</version>
+                    <version>24</version>
                     <classifier>win</classifier>
                 </dependency>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-graphics</artifactId>
-                    <version>24-ea+5</version>
+                    <version>24</version>
                     <classifier>linux</classifier>
                 </dependency>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-graphics</artifactId>
-                    <version>24-ea+5</version>
+                    <version>24</version>
                     <classifier>mac</classifier>
                 </dependency>
             </dependencies>
@@ -150,7 +163,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.11.0</version>
+                        <version>3.13.0</version>
                         <configuration>
                             <source>22</source>
                             <target>22</target>
@@ -160,6 +173,16 @@
                                 <fileExtension>fxml</fileExtension>
                             </fileExtensions>
                             <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.lebastudios.theroundtable</groupId>
+                                    <artifactId>fxml2java</artifactId>
+                                    <version>0.1.4</version>
+                                </path>
+                                <path>
+                                    <groupId>org.lebastudios.theroundtable</groupId>
+                                    <artifactId>desktop-app</artifactId>
+                                    <version>3.0.0</version>
+                                </path>
                                 <path>
                                     <groupId>org.projectlombok</groupId>
                                     <artifactId>lombok</artifactId>

@@ -5,10 +5,10 @@ import javafx.scene.control.TreeItem;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.config.*;
-import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.Dbms;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
+import org.lebastudios.theroundtable.fxml2java.CompileFxml;
 import org.lebastudios.theroundtable.locale.AppLocale;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.locale.LangLoader;
@@ -23,6 +23,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@CompileFxml(
+        fxmls = {
+                "src/main/resources/org/lebastudios/theroundtable/config/databaseConfigPane.fxml"
+        }
+)
 public class CorePlugin implements IPlugin
 {
     private static CorePlugin instance;
@@ -30,7 +35,7 @@ public class CorePlugin implements IPlugin
     public static CorePlugin getInstance()
     {
         if (instance == null) instance = new CorePlugin();
-
+        
         return instance;
     }
 
