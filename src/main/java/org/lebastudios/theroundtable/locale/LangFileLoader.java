@@ -1,11 +1,9 @@
 package org.lebastudios.theroundtable.locale;
 
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -16,15 +14,23 @@ public class LangFileLoader
 
     public static void loadLang(Locale locale, Class<? extends IPlugin> pluginClass)
     {
-        var resource = pluginClass.getResourceAsStream("languagesData.csv");
-
-        if (resource == null)
+        try (InputStream resource = pluginClass.getResourceAsStream("languagesData.csv"))
         {
-            System.err.println("No locale file found in " + pluginClass.getName());
-            return;
-        }
+            if (resource == null)
+            {
+                System.err.println("No locale file found in " + pluginClass.getName());
+                return;
+            }
 
-        computeTranslations(locale, resource);
+            computeTranslations(locale, resource);
+        }
+        catch (IOException e)
+        {
+            Logs.getInstance().log(
+                    "Error loading translations file for " + pluginClass.getName(),
+                    e
+            );
+        }
     }
 
     private static void computeTranslations(Locale locale, InputStream fileToCompute)
@@ -46,7 +52,10 @@ public class LangFileLoader
         }
         catch (IOException exception)
         {
-            System.err.println("Error reading file languagesData.csv");
+            Logs.getInstance().log(
+                    "Error reading file languagesData.csv. Check that, at least, one language is defined",
+                    exception
+            );
         }
     }
 
@@ -64,9 +73,16 @@ public class LangFileLoader
 
         return alternativeIndex;
     }
-
+    
     public static String getTranslation(String key)
     {
-        return translations.getOrDefault(key, key);
+        String translation = translations.get(key);
+
+        if (translation == null) 
+        {
+            translation = LangBundleLoader.getInstance().getString(key);
+        }
+        
+        return translation;
     }
 }

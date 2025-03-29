@@ -25,7 +25,8 @@ import java.util.List;
 
 @CompileFxml(
         fxmls = {
-                "src/main/resources/org/lebastudios/theroundtable/config/databaseConfigPane.fxml"
+                "src/main/resources/org/lebastudios/theroundtable/config/databaseConfigPane.fxml",
+                "src/main/resources/org/lebastudios/theroundtable/config/configStage.fxml"
         }
 )
 public class CorePlugin implements IPlugin
@@ -35,7 +36,6 @@ public class CorePlugin implements IPlugin
     public static CorePlugin getInstance()
     {
         if (instance == null) instance = new CorePlugin();
-        
         return instance;
     }
 
@@ -46,7 +46,6 @@ public class CorePlugin implements IPlugin
     @Override
     public void initialize() 
     {
-        LangLoader.loadLang(CorePlugin.class, AppLocale.getActualLocale());
         CamelotServiceManager.getInstance().initTask().execute(true);
     }
 

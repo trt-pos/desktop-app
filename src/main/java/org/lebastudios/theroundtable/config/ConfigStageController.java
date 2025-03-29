@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -12,7 +13,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
@@ -36,9 +36,9 @@ public class ConfigStageController extends StageController<ConfigStageController
         AccountEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
     }
     
-    @FXML private Label versionLabel;
-    @FXML private TreeView<SettingsItem> configSectionsTreeView;
-    @FXML private ScrollPane mainPane;
+    @FXML public Label versionLabel;
+    @FXML public TreeView<SettingsItem> configSectionsTreeView;
+    @FXML public ScrollPane mainPane;
     
     private ConfigPaneController<?> currentPaneController;
 
@@ -115,7 +115,7 @@ public class ConfigStageController extends StageController<ConfigStageController
     }
     
     @FXML
-    private void apply()
+    public void apply(ActionEvent actionEvent)
     {
         if (currentPaneController == null)
         {
@@ -126,7 +126,7 @@ public class ConfigStageController extends StageController<ConfigStageController
     }
 
     @FXML
-    private void cancel()
+    public void cancel(ActionEvent actionEvent)
     {
         if (currentPaneController == null)
         {
@@ -138,11 +138,11 @@ public class ConfigStageController extends StageController<ConfigStageController
     }
 
     @FXML
-    private void accept()
+    public void accept(ActionEvent actionEvent)
     {
         if (currentPaneController == null)
         {
-            cancel();
+            cancel(actionEvent);
             return;
         }
 

@@ -1,12 +1,10 @@
 package org.lebastudios.theroundtable.tasks;
 
-import javafx.application.Platform;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.TaskProgressView;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.IconView;
 
 public class TaskManager

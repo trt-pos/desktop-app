@@ -8,13 +8,15 @@
       xmlns="http://javafx.com/javafx/17.0.2-ea"
       fx:controller="org.lebastudios.theroundtable.config.ConfigStageController">
     <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.25">
-        <TreeView style="-fx-background-color: transparent; -fx-border-color: transparent;" 
-                  showRoot="false"  prefWidth="200" fx:id="configSectionsTreeView">
-            <TreeItem />
+        <TreeView style="-fx-background-color: transparent; -fx-border-color: transparent;"
+                  showRoot="false" prefWidth="200" fx:id="configSectionsTreeView">
+            <root>
+                <TreeItem/>
+            </root>
         </TreeView>
 
         <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true" VBox.vgrow="ALWAYS"
-                    prefWidth="650" prefHeight="400" fx:id="mainPane" />
+                    prefWidth="650" prefHeight="400" fx:id="mainPane"/>
     </SplitPane>
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <padding>

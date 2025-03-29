@@ -10,29 +10,19 @@ import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.HashMap;
 
 public abstract class Controller<T extends Controller<T>>
 {
-    @FXML private Node root;
+    @FXML protected Node root;
     private T controller;
-    private Thread loadingRoot;
 
     @FXML
     protected void initialize() {}
 
     public Node getRoot()
     {
-        if (loadingRoot != null)
-        {
-            try
-            {
-                loadingRoot.join();
-            }
-            catch (InterruptedException _) {}
-        }
-
         if (root == null) loadFXML();
 
         if (root == null)
@@ -46,22 +36,27 @@ public abstract class Controller<T extends Controller<T>>
         return this.root;
     }
 
-    public void loadAsync()
-    {
-        Thread loadingThread = new Thread(() ->
-        {
-            loadFXML();
-            loadingRoot = null;
-        });
-        loadingThread.start();
-
-        loadingRoot = loadingThread;
-    }
-
-    public final void loadFXML()
+    protected void loadFXML()
     {
         if (root != null) return;
         
+        try
+        {
+            String viewClassName = this.getClass().getName().replace("Controller", "$View");
+            Class<?> viewClass = this.getClass().getClassLoader().loadClass(
+                    viewClassName
+            );
+
+            this.root = (Node) viewClass.getConstructors()[0].newInstance(this);
+            this.initialize();
+            return;
+        }
+        catch (ClassNotFoundException ignore) {}
+        catch (InvocationTargetException | InstantiationException | IllegalAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         loadFXML(true);
     }
 
@@ -136,8 +131,4 @@ public abstract class Controller<T extends Controller<T>>
 
         return fxmlLoader;
     }
-
-    // TODO: Pre-compile FXML files using a custom compiler that writes into every controller a private subclass
-    //  called View that generated the node defined in the FXML file.
-    //  Also is possible to use https://github.com/Paullo612/mlfx but everything marked as @FXML will be public.
 }

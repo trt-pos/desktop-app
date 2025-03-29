@@ -283,10 +283,4 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     {
         return CorePlugin.class;
     }
-
-    @Override
-    public Node getRoot()
-    {
-        return new org.lebastudios.theroundtable.config.DatabaseConfigPane$View(this);
-    }
 }
