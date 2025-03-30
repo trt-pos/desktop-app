@@ -70,8 +70,6 @@ public class MainStageController extends PaneController<MainStageController>
         ((BorderPane) this.getRoot()).setCenter(
                 new LogoPaneController().getRoot()
         );
-        
-        CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World from Main stage!"));
     }
 
     public void setCentralNode(Controller<?> controller)

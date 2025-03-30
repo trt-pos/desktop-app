@@ -87,16 +87,6 @@ public class TheRoundTableApplication extends Application
         Database.getInstance().initTask().execute(true);
 
         if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
-
-
-        CamelotEventsManager.getInstance().addListener("desktop-app:test", new CamelotEventListener<>(new FromBytesToString())
-        {
-            @Override
-            public void accept(String body)
-            {
-                System.out.println(body);
-            }
-        });
         
         new AccountStageController().instantiate(true);
 

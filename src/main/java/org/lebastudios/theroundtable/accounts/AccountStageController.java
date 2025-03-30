@@ -47,8 +47,6 @@ public class AccountStageController extends StageController<AccountStageControll
 
         Platform.runLater(() -> ((BorderPane) getRoot()).setCenter(accountsBox));
         Platform.runLater(() -> ((BorderPane) getRoot()).setBottom(null));
-
-        CamelotEventsManager.getInstance().invokeEvent("desktop-app:test", new FromStringToBytes("Hello World!"));
     }
 
     @SneakyThrows
