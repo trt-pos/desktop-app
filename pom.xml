@@ -21,6 +21,13 @@
         <charm-down.version>3.8.6</charm-down.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+    
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -95,9 +102,9 @@
             <version>0.10.2</version>
         </dependency>
         <dependency>
-            <groupId>org.lebastudios.theroundtable</groupId>
+            <groupId>com.github.trt-pos</groupId>
             <artifactId>fxml2java</artifactId>
-            <version>0.2.0</version>
+            <version>v0.2.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Lombok -->
@@ -161,9 +168,9 @@
                             <target>22</target>
                             <annotationProcessorPaths>
                                 <path>
-                                    <groupId>org.lebastudios.theroundtable</groupId>
+                                    <groupId>com.github.trt-pos</groupId>
                                     <artifactId>fxml2java</artifactId>
-                                    <version>0.2.0</version>
+                                    <version>v0.2.1</version>
                                 </path>
                                 <path>
                                     <groupId>org.lebastudios.theroundtable</groupId>
