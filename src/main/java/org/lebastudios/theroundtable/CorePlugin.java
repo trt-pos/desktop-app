@@ -23,14 +23,14 @@ import java.util.List;
 
 @CompileFxml(
         directories = {
-                "src/main/resources/org/lebastudios/theroundtable/accounts",
-                "src/main/resources/org/lebastudios/theroundtable/config",
-                "src/main/resources/org/lebastudios/theroundtable/dialogs",
-                "src/main/resources/org/lebastudios/theroundtable/plugins",
-                "src/main/resources/org/lebastudios/theroundtable/setup",
-                "src/main/resources/org/lebastudios/theroundtable/tasks",
-                "src/main/resources/org/lebastudios/theroundtable/ui",
-                "src/main/resources/org/lebastudios/theroundtable",
+                "org/lebastudios/theroundtable/accounts",
+                "org/lebastudios/theroundtable/config",
+                "org/lebastudios/theroundtable/dialogs",
+                "org/lebastudios/theroundtable/plugins",
+                "org/lebastudios/theroundtable/setup",
+                "org/lebastudios/theroundtable/tasks",
+                "org/lebastudios/theroundtable/ui",
+                "org/lebastudios/theroundtable",
         }
 )
 public class CorePlugin implements IPlugin

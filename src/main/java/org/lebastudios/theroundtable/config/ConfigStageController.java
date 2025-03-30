@@ -2,7 +2,6 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeCell;
@@ -14,7 +13,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.LogoPaneController;
-import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
@@ -166,7 +164,6 @@ public class ConfigStageController extends StageController<ConfigStageController
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setModality(Modality.WINDOW_MODAL)
-                .setResizeable(true)
-                .setOwner(MainStageController.getInstance().getStage());
+                .setResizeable(true);
     }
 }
