@@ -2,10 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.server.LicenseValidatorTask;
 
 public class AccountConfigPaneController extends ConfigPaneController<AccountConfigData>

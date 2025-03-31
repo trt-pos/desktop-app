@@ -11,16 +11,11 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
-import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
-import org.lebastudios.theroundtable.camelot.FromStringToBytes;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.util.List;

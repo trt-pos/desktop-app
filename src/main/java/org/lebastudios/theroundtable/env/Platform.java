@@ -2,8 +2,6 @@ package org.lebastudios.theroundtable.env;
 
 import lombok.Getter;
 
-import java.io.File;
-
 public class Platform
 {
     @Getter private static final PlatformType platformType = detectPlatformType();

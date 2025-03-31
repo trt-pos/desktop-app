@@ -3,11 +3,8 @@ package org.lebastudios.theroundtable.config;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.io.File;
 

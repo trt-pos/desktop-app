@@ -6,14 +6,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-import java.net.URL;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

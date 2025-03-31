@@ -4,13 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.camelot.CamelotClient;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.IPlugin;
-import org.lebastudios.theroundtable.tasks.Task;
 
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {

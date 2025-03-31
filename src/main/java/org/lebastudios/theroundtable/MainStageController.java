@@ -14,22 +14,13 @@ import org.controlsfx.control.Notifications;
 import org.controlsfx.control.action.Action;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
-import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
-import org.lebastudios.theroundtable.camelot.FromStringToBytes;
-import org.lebastudios.theroundtable.config.ConfigStageController;
-import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
-import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
-import org.lebastudios.theroundtable.ui.SceneBuilder;
 
 public class MainStageController extends PaneController<MainStageController>
 {

@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.LogoPaneController;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
@@ -19,7 +18,6 @@ import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 

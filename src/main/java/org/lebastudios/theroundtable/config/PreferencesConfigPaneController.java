@@ -2,11 +2,8 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.apparience.ThemeLoader;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 
 import java.util.Objects;
 

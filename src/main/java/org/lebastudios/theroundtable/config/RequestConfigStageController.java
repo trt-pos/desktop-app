@@ -7,9 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import lombok.NonNull;
-import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 import org.lebastudios.theroundtable.ui.TitleBuilder;
 

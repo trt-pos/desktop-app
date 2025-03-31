@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.locale;
 
-import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
