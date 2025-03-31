@@ -106,9 +106,7 @@ public abstract class Controller<T extends Controller<T>>
 
     public final Class<? extends IPlugin> getBundleClass()
     {
-        return PluginsManager.getInstance().getLoadedPlugins().stream()
-                .filter(plugin -> this.getClass().getModule().equals(plugin.getClass().getModule()))
-                .findFirst()
+        return PluginsManager.getInstance().getPluginOf(this.getClass())
                 .orElseThrow()
                 .getClass();
     }

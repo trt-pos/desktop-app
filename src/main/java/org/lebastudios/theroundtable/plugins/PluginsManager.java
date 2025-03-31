@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable.plugins;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import lombok.Getter;
-import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
@@ -125,5 +124,12 @@ public class PluginsManager
     public boolean isPluginLoaded(PluginData pluginData)
     {
         return pluginsLoaded.containsKey(pluginData.pluginId);
+    }
+    
+    public Optional<IPlugin> getPluginOf(Class<?> clazz)
+    {
+        return this.getLoadedPlugins().stream()
+                .filter(plugin -> clazz.getModule().equals(plugin.getClass().getModule()))
+                .findFirst();
     }
 }
