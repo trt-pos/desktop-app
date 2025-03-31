@@ -16,6 +16,11 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     boolean cancelable;
     
     public final Event1<Task<?>> onSubtaskStarted = new Event1<>();
+    
+    private static final Consumer<Throwable> defaultErrorHandler = e -> 
+    {
+        Logs.getInstance().log("Task failed", e);
+    };
 
     public Task(String iconName)
     {
@@ -25,6 +30,7 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     public Task()
     {
         this("task.png");
+        this.setOnFailure(defaultErrorHandler);
     }
     
     public Task<T> setCancelable(boolean cancelable)

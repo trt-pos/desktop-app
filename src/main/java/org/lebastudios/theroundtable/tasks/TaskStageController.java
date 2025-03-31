@@ -9,6 +9,7 @@ import javafx.stage.StageStyle;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.controllers.StageController;
+import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.ui.StageBuilder;
@@ -62,9 +63,13 @@ public class TaskStageController extends StageController<TaskStageController>
                     close();
                 }
                 case FAILED -> {
-                    // TODO: show error message instead of closing
-                    task.getException().printStackTrace();
-                    Logs.getInstance().log("Task " + task.getTitle() + " failed", task.getException());
+                    new ExceptionDialogController(task.getException())
+                            .setOwner(this.getStage())
+                            .instantiate(true);
+                    Logs.getInstance().log(
+                            "Task " + task.getTitle() + " failed", 
+                            task.getException()
+                    );
                     close();
                 }
                 case CANCELLED -> {

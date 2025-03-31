@@ -4905,7 +4905,7 @@ Add support for NO_HEADER tweak in tables .table-view.no-header > .column-header
 }
 
 .scroll-bar:horizontal {
-    -fx-pref-height: 8px;
+    -fx-pref-height: 12px;
 }
 
 .scroll-bar:vertical {
