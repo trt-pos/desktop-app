@@ -92,11 +92,10 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         try (CamelotClient client = new CamelotClient("tmp", serverAddress.getText(),
                 Integer.parseInt(serverPort.getText())))
         {
-            Task<Void> task = client.validateTask()
-                    .setCancelable(true);
-
-            task.setOnSucceeded(_ -> valid[0] = true);
-            task.execute(true);
+            client.validateTask()
+                    .setCancelable(true)
+                    .setOnTaskComplete(_ -> valid[0] = true)
+                    .execute(true);
         }
         catch (Exception e)
         {
@@ -121,7 +120,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     public void onSave(CamelotServerConfigData configData)
     {
         CamelotServiceManager.getInstance().reloadTask(configData)
-                .setCancelable(true)
                 .execute(true);
     }
 

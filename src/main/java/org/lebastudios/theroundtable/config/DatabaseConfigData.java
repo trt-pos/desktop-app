@@ -111,6 +111,21 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
         return new File(databaseFolder, establishmentDatabaseName + ".sqlite");
     }
     
+    public boolean isSameDatabase(DatabaseConfigData other)
+    {
+        if (enableRemoteDb != other.enableRemoteDb) return false;
+        
+        if (enableRemoteDb)
+        {
+            return remoteDbData.host.equals(other.remoteDbData.host) &&
+                    remoteDbData.port.equals(other.remoteDbData.port) &&
+                    remoteDbData.database.equals(other.remoteDbData.database);
+        }
+        
+        return databaseFolder.equals(other.databaseFolder) && 
+                establishmentDatabaseName.equals(other.establishmentDatabaseName);
+    }
+    
     @Override
     public File getFile()
     {

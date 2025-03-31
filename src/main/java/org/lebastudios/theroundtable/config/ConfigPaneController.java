@@ -52,8 +52,15 @@ public abstract class ConfigPaneController<T extends ConfigData<T>> extends Pane
             Logs.getInstance().log(Logs.LogType.INFO, "Invalid settings");
             return false;
         }
-
+        
         updateConfigData(configData);
+
+        if (configData.equals(configData.load()))
+        {
+            Logs.getInstance().log(Logs.LogType.INFO, "Config data equals");
+            return true;
+        }
+        
         configData.save();
         onSave(configData);
         return true;

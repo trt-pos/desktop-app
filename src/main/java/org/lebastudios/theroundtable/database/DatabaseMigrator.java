@@ -20,7 +20,7 @@ class DatabaseMigrator
             from.setAutoCommit(false);
             to.setAutoCommit(false);
 
-            new CoreMigrationStrategy().migrate();
+            new CoreAccountsMigrationStrategy().migrate();
 
             from.commit();
             to.commit();
@@ -157,7 +157,7 @@ class DatabaseMigrator
         void migrate() throws SQLException;
     }
 
-    private class CoreMigrationStrategy implements IMigratorStrategy
+    private class CoreAccountsMigrationStrategy implements IMigratorStrategy
     {
         @Override
         public void migrate() throws SQLException
@@ -165,7 +165,7 @@ class DatabaseMigrator
             DatabaseMetaData fromMetadata = from.getMetaData();
             DatabaseMetaData toMetadata = to.getMetaData();
 
-            List<Table> fromTables = Table.introspectTables(fromMetadata, "core_%");
+            List<Table> fromTables = Table.introspectTables(fromMetadata, "core_account");
 
             if (toMetadata.getDatabaseProductName().equals("MariaDB"))
             {

@@ -62,6 +62,7 @@ public class TaskStageController extends StageController<TaskStageController>
                     close();
                 }
                 case FAILED -> {
+                    // TODO: show error message instead of closing
                     task.getException().printStackTrace();
                     Logs.getInstance().log("Task " + task.getTitle() + " failed", task.getException());
                     close();

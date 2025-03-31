@@ -30,7 +30,14 @@ class BackupDB
     ScheduledExecutorService executor;
     private boolean running = false;
 
-    private BackupDB() {}
+    private BackupDB() 
+    {
+        AppLifeCicleEvents.OnAppClose.addListener((_) ->
+        {
+            stop();
+            realizeBackup();
+        });
+    }
 
     @SneakyThrows
     public void initialize()
@@ -38,12 +45,6 @@ class BackupDB
         if (running || !new DatabaseConfigData().load().enableBackups) return;
 
         running = true;
-
-        AppLifeCicleEvents.OnAppClose.addListener((_) ->
-        {
-            stop();
-            realizeBackup();
-        });
 
         try
         {
@@ -65,6 +66,8 @@ class BackupDB
 
     public void realizeBackup()
     {
+        if (!new DatabaseConfigData().load().enableBackups) return;
+        
         new BackupTask().executeInBackGround(true);
     }
 

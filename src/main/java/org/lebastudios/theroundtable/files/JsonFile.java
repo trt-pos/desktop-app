@@ -67,4 +67,17 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistence
             writer.write(fileContent);
         }
     }
+    
+    @Override
+    public final boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        JsonFile<?> jsonFile = (JsonFile<?>) obj;
+
+        if (getFile() == null || jsonFile.getFile() == null) return false;
+
+        return GSON.toJson(this).equals(GSON.toJson(jsonFile));
+    }
 }
