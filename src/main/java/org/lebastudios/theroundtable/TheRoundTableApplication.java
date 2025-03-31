@@ -10,6 +10,7 @@ import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.camelot.CamelotEventListener;
 import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
+import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.camelot.FromBytesToString;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.env.Directories;
@@ -17,6 +18,7 @@ import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
 import org.lebastudios.theroundtable.updates.UpdateAppJarTask;
 import org.w3c.dom.Document;
@@ -83,8 +85,25 @@ public class TheRoundTableApplication extends Application
     @Override
     public void start(Stage stage)
     {
-        PluginLoader.loadPlugins();
-        Database.getInstance().initTask().execute(true);
+        new Task<Void>()
+        {
+            @Override
+            protected Void call() throws Exception
+            {
+                updateTitle("Starting The Round Table");
+                
+                updateMessage("Loading plugins");
+                executeSubtask(PluginLoader.getInstance().loadPluginsTask());
+                
+                updateMessage("Starting database");
+                executeSubtask(Database.getInstance().initTask());
+                
+                updateMessage("Starting Camelot");
+                executeSubtask(CamelotServiceManager.getInstance().initTask());
+                
+                return null;
+            }
+        }.execute(true);
 
         if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
         

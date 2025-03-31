@@ -157,7 +157,8 @@ class HibernateManager
             // Adding the plugin ClassLoader to the Hibernate configuration
             StandardServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder(
-                            new BootstrapServiceRegistryBuilder().applyClassLoader(PluginLoader.getPluginsClassLoader())
+                            new BootstrapServiceRegistryBuilder()
+                                    .applyClassLoader(PluginLoader.getInstance().getPluginsClassLoader())
                                     .build())
                             .applySettings(config.getProperties())
                             .build();

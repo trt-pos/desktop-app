@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import org.lebastudios.theroundtable.accounts.AccountManager;
-import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.database.Dbms;
 import org.lebastudios.theroundtable.database.entities.Account;
@@ -50,7 +49,6 @@ public class CorePlugin implements IPlugin
     @Override
     public void initialize() 
     {
-        CamelotServiceManager.getInstance().initTask().execute(true);
     }
 
     @Override
