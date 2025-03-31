@@ -47,12 +47,6 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public URL getFXML()
     {
         return ConfirmationTextDialogController.class.getResource("confirmationTextDialog.fxml");

@@ -35,12 +35,6 @@ public class InformationTextDialogController extends StageController<Information
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public URL getFXML()
     {
         return InformationTextDialogController.class.getResource("informationTextDialog.fxml");

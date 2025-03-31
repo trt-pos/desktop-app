@@ -105,12 +105,6 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public void instantiate(Consumer<PrivilegeScalationStageController> acceptController, boolean shouldWait)
     {
         if (AccountManager.getInstance().getCurrentLogged().getType().hasEnoughAccessLevelAs(accountType))

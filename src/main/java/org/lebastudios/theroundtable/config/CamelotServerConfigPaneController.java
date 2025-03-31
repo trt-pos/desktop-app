@@ -122,10 +122,4 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         CamelotServiceManager.getInstance().reloadTask(configData)
                 .execute(true);
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }

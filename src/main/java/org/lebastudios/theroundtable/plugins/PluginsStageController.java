@@ -61,12 +61,6 @@ public class PluginsStageController extends StageController<PluginsStageControll
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public String getTitle()
     {
         return "Plugins";

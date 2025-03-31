@@ -82,12 +82,6 @@ public class ChangePasswordStageController extends StageController<ChangePasswor
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public URL getFXML()
     {
         return ChangePasswordStageController.class.getResource("changePasswordStage.fxml");

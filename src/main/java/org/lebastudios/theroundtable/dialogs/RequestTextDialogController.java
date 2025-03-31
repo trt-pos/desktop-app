@@ -101,12 +101,6 @@ public class RequestTextDialogController extends StageController<RequestTextDial
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public String getTitle()
     {
         return this.title;

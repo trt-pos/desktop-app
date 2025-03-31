@@ -50,12 +50,6 @@ public class SetupStageController extends StageController<SetupStageController>
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setResizeable(true)

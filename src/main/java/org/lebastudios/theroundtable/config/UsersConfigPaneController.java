@@ -202,10 +202,4 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         userView.setVisible(true);
     }
 
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
 }

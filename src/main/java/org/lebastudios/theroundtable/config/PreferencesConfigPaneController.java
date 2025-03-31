@@ -99,10 +99,6 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
         };
     }
     
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
+    
 
 }

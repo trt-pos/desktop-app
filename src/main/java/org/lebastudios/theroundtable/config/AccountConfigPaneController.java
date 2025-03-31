@@ -39,10 +39,4 @@ public class AccountConfigPaneController extends ConfigPaneController<AccountCon
         return valid[0];
     }
 
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
 }

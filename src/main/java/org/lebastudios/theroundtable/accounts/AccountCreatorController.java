@@ -86,12 +86,6 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public URL getFXML()
     {
         return AccountCreatorController.class.getResource("accountCreator.fxml");

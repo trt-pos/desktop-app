@@ -131,10 +131,4 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
                     .cut(EscPos.CutMode.PART);
         } catch (Exception _) { UIEffects.shakeNode(defaultPrinter); }
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }

@@ -17,10 +17,4 @@ public class HomePaneController extends PaneController<HomePaneController>
         
         flowPane.getChildren().addAll(PluginsManager.getInstance().getHomeButtons());
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }

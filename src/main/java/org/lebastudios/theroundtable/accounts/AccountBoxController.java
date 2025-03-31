@@ -38,12 +38,6 @@ public class AccountBoxController extends PaneController<AccountBoxController>
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     public URL getFXML()
     {
         return AccountBoxController.class.getResource("accountBox.fxml");

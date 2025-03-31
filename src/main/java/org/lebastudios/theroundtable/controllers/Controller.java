@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -103,7 +104,14 @@ public abstract class Controller<T extends Controller<T>>
         return (Stage) getRoot().getScene().getWindow();
     }
 
-    public abstract Class<? extends IPlugin> getBundleClass();
+    public final Class<? extends IPlugin> getBundleClass()
+    {
+        return PluginsManager.getInstance().getLoadedPlugins().stream()
+                .filter(plugin -> this.getClass().getModule().equals(plugin.getClass().getModule()))
+                .findFirst()
+                .orElseThrow()
+                .getClass();
+    }
 
     public URL getFXML()
     {

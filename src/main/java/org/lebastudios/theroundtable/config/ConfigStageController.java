@@ -155,12 +155,6 @@ public class ConfigStageController extends StageController<ConfigStageController
     }
 
     @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
-    @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setModality(Modality.WINDOW_MODAL)

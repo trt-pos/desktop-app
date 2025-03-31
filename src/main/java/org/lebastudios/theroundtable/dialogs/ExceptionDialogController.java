@@ -68,12 +68,6 @@ public class ExceptionDialogController extends StageController<ExceptionDialogCo
     @Override
     public String getTitle()
     {
-        return "Exception";
-    }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
+        return "";
     }
 }

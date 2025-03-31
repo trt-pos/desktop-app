@@ -134,10 +134,4 @@ public class MainStageController extends PaneController<MainStageController>
         stage.show();
     }
 
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
-
 }

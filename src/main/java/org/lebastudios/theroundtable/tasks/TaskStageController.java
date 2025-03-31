@@ -95,10 +95,4 @@ public class TaskStageController extends StageController<TaskStageController>
     {
         return "";
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }

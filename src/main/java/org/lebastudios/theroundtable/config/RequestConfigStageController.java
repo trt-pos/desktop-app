@@ -58,10 +58,4 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     {
         return "";
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }

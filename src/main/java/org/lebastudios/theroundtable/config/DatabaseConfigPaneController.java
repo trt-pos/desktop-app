@@ -289,10 +289,4 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
         directoryChooser.setTitle(title);
         return directoryChooser;
     }
-
-    @Override
-    public Class<? extends IPlugin> getBundleClass()
-    {
-        return CorePlugin.class;
-    }
 }
