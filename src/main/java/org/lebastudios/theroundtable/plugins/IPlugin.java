@@ -7,6 +7,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.database.IDatabaseUpdater;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
 import java.io.File;
@@ -41,6 +42,8 @@ public interface IPlugin extends IDatabaseUpdater
     }
 
     default List<Class<?>> getPluginEntities() { return new ArrayList<>(); }
+    
+    default Task<Boolean> purgeTask() { return null; }
     
     default File getPluginFolder()
     {

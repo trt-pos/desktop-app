@@ -9,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.apparience.UIEffects;
@@ -107,7 +108,7 @@ public class AccountStageController extends StageController<AccountStageControll
                 AppLifeCicleEvents.OnAppClose.invoke(e);
                 System.exit(0);
             }
-        }));
+        })).setModality(Modality.APPLICATION_MODAL);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.tasks;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -59,16 +60,13 @@ public class TaskStageController extends StageController<TaskStageController>
                     Logs.getInstance().log(Logs.LogType.INFO, "Task " + task.getTitle() + " done");
                     close();
                 }
-                case FAILED -> {
+                case FAILED -> Platform.runLater(() ->
+                {
                     new ExceptionDialogController(task.getException())
                             .setOwner(this.getStage())
                             .instantiate(true);
-                    Logs.getInstance().log(
-                            "Task " + task.getTitle() + " failed", 
-                            task.getException()
-                    );
                     close();
-                }
+                });
                 case CANCELLED -> {
                     Logs.getInstance().log(Logs.LogType.INFO, "Task " + task.getTitle() + " cancelled");
                     close();

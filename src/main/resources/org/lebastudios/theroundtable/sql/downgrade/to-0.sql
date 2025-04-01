@@ -1,0 +1,1 @@
+drop table core_account;
