@@ -13,8 +13,8 @@ mkdir "$OUTPUT_DIR"
   
   wait 
   
-  mv "target/x86_64-unknown-linux-gnu/release/camelot" "../$OUTPUT_DIR/camelot-linux"
-  mv "target/x86_64-pc-windows-gnu/release/camelot.exe" "../$OUTPUT_DIR/camelot-win.exe"
+  cp "target/x86_64-unknown-linux-gnu/release/camelot" "../$OUTPUT_DIR/camelot-linux"
+  cp "target/x86_64-pc-windows-gnu/release/camelot.exe" "../$OUTPUT_DIR/camelot-win.exe"
 )
   
   

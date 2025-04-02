@@ -5,9 +5,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.apparience.UIEffects;
-import org.lebastudios.theroundtable.camelot.CamelotClient;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
-import org.lebastudios.theroundtable.logs.Logs;
+
+import java.io.IOException;
+import java.net.Socket;
 
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {
@@ -84,25 +85,11 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
             return false;
         }
 
-        boolean[] valid = {false};
-
-        try (CamelotClient client = new CamelotClient("tmp", serverAddress.getText(),
-                Integer.parseInt(serverPort.getText())))
-        {
-            client.validateTask()
-                    .setCancelable(true)
-                    .setOnTaskComplete(_ -> valid[0] = true)
-                    .execute(true);
-        }
-        catch (Exception e)
-        {
-            Logs.getInstance().log(
-                    "Error closing temporal camelot client",
-                    e
-            );
-        }
-
-        if (!valid[0]) 
+        try (Socket _ = new Socket(
+                serverAddress.getText(),
+                Integer.parseInt(serverPort.getText())
+        )) {}
+        catch (IOException e)
         {
             UIEffects.shakeNode(serverAddress);
             UIEffects.shakeNode(serverPort);
@@ -116,7 +103,8 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @Override
     public void onSave(CamelotServerConfigData configData)
     {
-        CamelotServiceManager.getInstance().reloadTask(configData)
+        CamelotServiceManager.getInstance()
+                .reloadTask(configData)
                 .execute(true);
     }
 }

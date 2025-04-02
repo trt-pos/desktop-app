@@ -55,7 +55,7 @@ public abstract class ConfigPaneController<T extends ConfigData<T>> extends Pane
         
         updateConfigData(configData);
 
-        if (configData.equals(configData.load()))
+        if (configData.equalsSaved())
         {
             Logs.getInstance().log(Logs.LogType.INFO, "Config data equals");
             return true;

@@ -72,9 +72,8 @@ public class CamelotClient implements AutoCloseable
                     catch (ConnectException exception)
                     {
                         retries++;
-                        Logs.getInstance().log(
-                                Logs.LogType.WARNING,
-                                "Failed to connect to Camelot, retrying in " 
+                        updateMessage(
+                                "Failed to connect to Camelot, retrying in "
                                         + (milisToWait * retries + 25) / 1000 + " seconds"
                         );
                     }
@@ -89,7 +88,7 @@ public class CamelotClient implements AutoCloseable
             }
         };
     }
-    
+
     public Task<Void> connectTask()
     {
         return new Task<>()
@@ -331,13 +330,13 @@ public class CamelotClient implements AutoCloseable
                             try
                             {
                                 Response response = new Response().fromBytes(packet);
-                                
+
                                 Logs.getInstance().log(
                                         Logs.LogType.INFO,
                                         "Received response from Camelot (" + packet.length + " bytes) with status: " +
                                                 response.getStatusCode()
                                 );
-                                
+
                                 lastResponseContainer.setValue(response);
                             }
                             catch (ParseException exception)
@@ -363,7 +362,7 @@ public class CamelotClient implements AutoCloseable
         {
             onErrorHandler.accept(e);
         }
-        
+
         synchronized (lastResponseContainer)
         {
             // Notify the waiting thread if an error ocurred while reading from the stream to avoid deadwaits

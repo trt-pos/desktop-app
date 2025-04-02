@@ -21,8 +21,6 @@ services:
       - ./trt-camelot/target/x86_64-unknown-linux-gnu/release/camelot:/usr/local/bin/camelot
     command:
       - "/usr/local/bin/camelot"
-    ports:
-      - "8999:1273"
     networks:
       - trt-net
     
