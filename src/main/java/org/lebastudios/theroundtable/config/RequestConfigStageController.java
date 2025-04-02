@@ -6,6 +6,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
+import lombok.Builder;
 import lombok.NonNull;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.ui.StageBuilder;
@@ -16,10 +17,16 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     @FXML public ScrollPane paneContainer;
     
     private ConfigPaneController<?> configPaneController;
+    
+    private String title;
+    private String iconName;
 
     public RequestConfigStageController(@NonNull ConfigPaneController<?> configPaneController)
     {
         this.configPaneController = configPaneController;
+        
+        this.title = configPaneController.getTitle();
+        this.iconName = configPaneController.getIconName();
     }
 
     @Override
@@ -28,8 +35,8 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     {
         ((VBox) getRoot()).getChildren().addFirst(
                 new TitleBuilder()
-                        .setText(configPaneController.getTitle())
-                        .setIconName(configPaneController.getIconName())
+                        .setText(title)
+                        .setIconName(iconName)
                         .build()
         );
         
@@ -43,11 +50,24 @@ public class RequestConfigStageController extends StageController<RequestConfigS
         configPaneController.accept();
     }
 
+    public RequestConfigStageController setTitle(String title)
+    {
+        this.title = title;
+        return this;
+    }
+    
+    public RequestConfigStageController setIconName(String iconName)
+    {
+        this.iconName = iconName;
+        return this;
+    }
+    
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setModality(Modality.APPLICATION_MODAL)
                 .setStageStyle(StageStyle.UNDECORATED)
+                .setIconName(configPaneController.getIconName())
                 .setResizeable(true);
     }
 

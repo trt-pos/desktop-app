@@ -7,7 +7,8 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns="http://javafx.com/javafx" fx:id="root"
       xmlns:fx="http://javafx.com/fxml" spacing="10"
-      prefHeight="400.0" prefWidth="600.0">
+      fx:controller="org.lebastudios.theroundtable.config.RequestConfigStageController"
+      prefHeight="500.0" prefWidth="600.0">
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>

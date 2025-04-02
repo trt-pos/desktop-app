@@ -148,8 +148,9 @@ class HibernateManager
             {
                 executeInFxThread(() ->
                 {
-                    new InformationTextDialogController("Error initializing database, fix your configuration").instantiate(true);
-                    new RequestConfigStageController(new DatabaseConfigPaneController()).instantiate(true);
+                    new RequestConfigStageController(new DatabaseConfigPaneController())
+                            .setTitle("Invalid database configuration")
+                            .instantiate(true);
                 });
             }
 

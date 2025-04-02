@@ -75,8 +75,9 @@ public class CamelotServiceManager
                 {
                     executeInFxThread(() ->
                     {
-                        new InformationTextDialogController("Error connecting to camelot, fix your configuration").instantiate(true);
-                        new RequestConfigStageController(new CamelotServerConfigPaneController()).instantiate(true);
+                        new RequestConfigStageController(new CamelotServerConfigPaneController())
+                                .setTitle("Invalid Camelot configuration")
+                                .instantiate(true);
                     });
                 }
                 
@@ -121,6 +122,7 @@ public class CamelotServiceManager
         while (client == null)
         {
             new RequestConfigStageController(new CamelotServerConfigPaneController())
+                    .setTitle("Connecting to Camelot lost")
                     .instantiate(true);
         }
         
@@ -131,9 +133,8 @@ public class CamelotServiceManager
     {
         Platform.runLater(() ->
         {
-            new InformationTextDialogController("Connection to Camelot lost: " + e)
-                    .instantiate(true);
             new RequestConfigStageController(new CamelotServerConfigPaneController())
+                    .setTitle("Connection to Camelot lost")
                     .instantiate(true);
         });
     }
