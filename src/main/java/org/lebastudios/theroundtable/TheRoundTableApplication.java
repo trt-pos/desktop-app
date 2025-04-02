@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -9,7 +10,11 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
+import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
+import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.database.Database;
+import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
@@ -30,7 +35,7 @@ public class TheRoundTableApplication extends Application
 {
     public static String getAppVersion()
     {
-        if (Variables.isDev()) 
+        if (Variables.isDev())
         {
             try
             {
@@ -53,7 +58,8 @@ public class TheRoundTableApplication extends Application
         }
         else
         {
-            try (final var pomResource = CorePlugin.class.getResourceAsStream("/META-INF/maven/org.lebastudios.theroundtable/desktop-app/pom.properties"))
+            try (final var pomResource = CorePlugin.class.getResourceAsStream(
+                    "/META-INF/maven/org.lebastudios.theroundtable/desktop-app/pom.properties"))
             {
                 var properties = new Properties();
 
@@ -88,22 +94,26 @@ public class TheRoundTableApplication extends Application
             protected Void call() throws Exception
             {
                 updateTitle("Starting The Round Table");
-                
+
                 updateMessage("Loading plugins");
                 executeSubtask(PluginLoader.getInstance().loadPluginsTask());
-                
+
                 updateMessage("Starting database");
                 executeSubtask(Database.getInstance().initTask());
-                
+
                 updateMessage("Starting Camelot");
                 executeSubtask(CamelotServiceManager.getInstance().initTask());
-                
+
                 return null;
             }
-        }.execute(true);
+        }.setOnFailure(e ->
+        {
+            new ExceptionDialogController(e).instantiate(true);
+            System.exit(-1);
+        }).execute(true);
 
         if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
-        
+
         new AccountStageController().instantiate(true);
 
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
@@ -121,8 +131,8 @@ public class TheRoundTableApplication extends Application
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->
         {
             AppLifeCicleEvents.OnAppCloseRequest.invoke(e);
-            
-            if (!e.isConsumed()) 
+
+            if (!e.isConsumed())
             {
                 AppLifeCicleEvents.OnAppClose.invoke(e);
                 System.exit(0);

@@ -62,9 +62,7 @@ public class TaskStageController extends StageController<TaskStageController>
                 }
                 case FAILED -> Platform.runLater(() ->
                 {
-                    new ExceptionDialogController(task.getException())
-                            .setOwner(this.getStage())
-                            .instantiate(true);
+                    Logs.getInstance().log(Logs.LogType.ERROR, "Task " + task.getTitle() + " failed");
                     close();
                 });
                 case CANCELLED -> {

@@ -1,11 +1,16 @@
 package org.lebastudios.theroundtable.tasks;
 
+import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import lombok.Getter;
+import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
+import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.events.Event1;
 import org.lebastudios.theroundtable.logs.Logs;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public abstract class Task<T> extends javafx.concurrent.Task<T>
@@ -16,9 +21,13 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     
     public final Event1<Task<?>> onSubtaskStarted = new Event1<>();
     
-    private static final Consumer<Throwable> defaultErrorHandler = e -> 
+    private static final BiConsumer<Throwable, Task<?>> defaultErrorHandler = (e, task) -> 
     {
-        Logs.getInstance().log("Task failed", e);
+        // Only the root task should show the error dialog as default
+        if (task.rootTask != null) return;
+        
+        new ExceptionDialogController(e)
+                .instantiate(true);
     };
 
     public Task(String iconName)
@@ -29,7 +38,7 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     public Task()
     {
         this("task.png");
-        this.setOnFailure(defaultErrorHandler);
+        this.setOnFailure(e -> defaultErrorHandler.accept(e, this));
     }
     
     public Task<T> setCancelable(boolean cancelable)
@@ -76,6 +85,30 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
         executeInBackGround(false);
     }
 
+    protected synchronized void executeInFxThread(Runnable runnable) throws InterruptedException
+    {
+        Platform.runLater(() ->
+        {
+            try
+            {
+                runnable.run();
+            }
+            catch (Exception ex)
+            {
+                Logs.getInstance().log(
+                        "Error executing blocking action inside a task",
+                        ex
+                );
+            }
+            synchronized (this)
+            {
+                this.notify();
+            }
+        });
+        
+        this.wait();
+    }
+    
     protected <R> R executeSubtask(Task<R> task) throws Exception
     {
         Task<?> rootTask = this.rootTask == null ? this : this.rootTask;

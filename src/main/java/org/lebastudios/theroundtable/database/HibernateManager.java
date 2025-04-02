@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.database;
 
+import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -7,6 +8,9 @@ import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
+import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
+import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -24,6 +28,17 @@ class HibernateManager
 {
     private static HibernateManager instance;
 
+    static
+    {
+        AppLifeCicleEvents.OnAppClose.addListener((_) ->
+        {
+            if (instance.sessionFactory == null) return;
+
+            DatabaseEvents.onDatabaseClose.invoke();
+            instance.sessionFactory.close();
+        });
+    }
+
     private SessionFactory sessionFactory;
 
     public static HibernateManager getInstance()
@@ -34,17 +49,17 @@ class HibernateManager
     }
 
     private HibernateManager() {}
-    
+
     public Task<Void> initTask()
     {
-        return new  InitDatabaseTask();
+        return new InitDatabaseTask();
     }
-    
+
     public Task<Void> reloadTask()
     {
         return new ReloadDatabaseTask();
     }
-    
+
     public boolean connectTransaction(Consumer<Session> action)
     {
         if (sessionFactory == null) throw new IllegalStateException("Database not initialized");
@@ -94,57 +109,80 @@ class HibernateManager
             return null;
         }
     }
-    
+
+    private class StopDatabaseTask extends Task<Void>
+    {
+        @Override
+        protected Void call() throws Exception
+        {
+            updateTitle("Stopping database");
+
+            if (sessionFactory != null)
+            {
+                updateMessage("Closing database");
+                DatabaseEvents.onDatabaseClose.invoke();
+                sessionFactory.close();
+                sessionFactory = null;
+            }
+
+            return null;
+        }
+    }
+
     private class InitDatabaseTask extends Task<Void>
     {
         @Override
         protected Void call() throws Exception
         {
+            updateTitle("Starting database");
+
             if (sessionFactory != null) return null;
 
-            sessionFactory = executeSubtask(new BuildSessionFactoryTask());
-            DatabaseEvents.onDatabaseInit.invoke();
-
-            AppLifeCicleEvents.OnAppClose.addListener((_) ->
+            updateMessage("Starting database");
+            try
             {
-                DatabaseEvents.onDatabaseClose.invoke();
-                sessionFactory.close();
-            });
-            
+                sessionFactory = executeSubtask(new BuildSessionFactoryTask());
+                DatabaseEvents.onDatabaseInit.invoke();
+            }
+            catch (Exception e)
+            {
+                executeInFxThread(() ->
+                {
+                    new InformationTextDialogController("Error initializing database, fix your configuration").instantiate(true);
+                    new RequestConfigStageController(new DatabaseConfigPaneController()).instantiate(true);
+                });
+            }
+
             return null;
         }
     }
-    
+
     private class ReloadDatabaseTask extends Task<Void>
     {
         @Override
         protected Void call() throws Exception
         {
             updateTitle("Reloading database");
-            
-            updateMessage("Closing database");
-            DatabaseEvents.onDatabaseClose.invoke();
-            sessionFactory.close();
+
+            executeSubtask(new StopDatabaseTask());
             updateProgress(0.5, 1);
-            
-            updateMessage("Starting database");
-            sessionFactory = executeSubtask(new BuildSessionFactoryTask());
-            DatabaseEvents.onDatabaseInit.invoke();
+
+            executeSubtask(new InitDatabaseTask());
             updateProgress(1, 1);
             return null;
         }
     }
-    
+
     private static class BuildSessionFactoryTask extends Task<SessionFactory>
     {
         @Override
         protected SessionFactory call() throws Exception
         {
             updateTitle("Starting database connections");
-            
+
             DatabaseConfigData databaseConfigData = new DatabaseConfigData().load();
             executeSubtask(new PrepareDatabaseTask(databaseConfigData));
-            
+
             updateMessage("Building database configuration");
             updateProgress(50, 100);
             var config = databaseConfigData.getHibernateConf();
@@ -222,7 +260,7 @@ class HibernateManager
             }
 
             updateMessage("Ask each plugin to update");
-            
+
             // Update the database version for each plugin
             var plugins = PluginsManager.getInstance().getLoadedPlugins();
             int i = 0;
@@ -232,7 +270,7 @@ class HibernateManager
                 i++;
                 updateProgress(i, plugins.size());
             }
-            
+
             return null;
         }
 

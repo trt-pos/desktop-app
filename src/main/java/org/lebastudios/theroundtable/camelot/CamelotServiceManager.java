@@ -47,27 +47,38 @@ public class CamelotServiceManager
             {
                 updateTitle("Connecting to Camelot");
 
-                // The server process is always created even if you are not the server 
-                // so the app always has a valid server to connect to
-                serverProcess = new EmbeddedBinExecutor().execute(
-                        CorePlugin.class,
-                        "camelot",
-                        configData.port + ""
-                );
+                try
+                {
+                    // The server process is always created even if you are not the server 
+                    // so the app always has a valid server to connect to
+                    serverProcess = new EmbeddedBinExecutor().execute(
+                            CorePlugin.class,
+                            "camelot",
+                            configData.port + ""
+                    );
 
-                // Create the client object to be connected to the server
-                CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);
-                // Asigning the callback handler to the client to handle the events callbacks
-                tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
-                // Assigning the error handler to the client to handle the errors
-                tmpClient.setOnErrorHandler(CamelotServiceManager.this::onClientError);
-                // Execute the connection task to finally connect to the server
-                executeSubtask(tmpClient.connectTask());
+                    // Create the client object to be connected to the server
+                    CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);
+                    // Asigning the callback handler to the client to handle the events callbacks
+                    tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
+                    // Assigning the error handler to the client to handle the errors
+                    tmpClient.setOnErrorHandler(CamelotServiceManager.this::onClientError);
+                    // Execute the connection task to finally connect to the server
+                    executeSubtask(tmpClient.connectTask());
 
-                CamelotEventsManager.getInstance().updateServerEvents(tmpClient);
-                
-                // Assign the client object to the class variable if the connection was successful
-                client = tmpClient;
+                    CamelotEventsManager.getInstance().updateServerEvents(tmpClient);
+
+                    // Assign the client object to the class variable if the connection was successful
+                    client = tmpClient;
+                }
+                catch (Exception exception)
+                {
+                    executeInFxThread(() ->
+                    {
+                        new InformationTextDialogController("Error connecting to camelot, fix your configuration").instantiate(true);
+                        new RequestConfigStageController(new CamelotServerConfigPaneController()).instantiate(true);
+                    });
+                }
                 
                 return null;
             }

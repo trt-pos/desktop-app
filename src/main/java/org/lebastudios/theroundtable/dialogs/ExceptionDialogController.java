@@ -59,7 +59,7 @@ public class ExceptionDialogController extends StageController<ExceptionDialogCo
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
-        stageBuilder.setModality(Modality.WINDOW_MODAL)
+        stageBuilder.setModality(Modality.APPLICATION_MODAL)
                 .setResizeable(true);
     }
 
