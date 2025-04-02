@@ -2,10 +2,10 @@ package org.lebastudios.theroundtable.camelot;
 
 import javafx.application.Platform;
 import org.lebastudios.theroundtable.CorePlugin;
+import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.CamelotServerConfigData;
 import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
-import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.env.EmbeddedBinExecutor;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
@@ -73,7 +73,7 @@ public class CamelotServiceManager
                 }
                 catch (Exception exception)
                 {
-                    executeInFxThread(() ->
+                    TheRoundTableApplication.executeInFxThreadAndWait(() ->
                     {
                         new RequestConfigStageController(new CamelotServerConfigPaneController())
                                 .setTitle("Invalid Camelot configuration")

@@ -1,11 +1,8 @@
 package org.lebastudios.theroundtable.tasks;
 
-import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import lombok.Getter;
-import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
-import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.events.Event1;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -83,30 +80,6 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     public void executeInBackGround()
     {
         executeInBackGround(false);
-    }
-
-    protected synchronized void executeInFxThread(Runnable runnable) throws InterruptedException
-    {
-        Platform.runLater(() ->
-        {
-            try
-            {
-                runnable.run();
-            }
-            catch (Exception ex)
-            {
-                Logs.getInstance().log(
-                        "Error executing blocking action inside a task",
-                        ex
-                );
-            }
-            synchronized (this)
-            {
-                this.notify();
-            }
-        });
-        
-        this.wait();
     }
     
     protected <R> R executeSubtask(Task<R> task) throws Exception

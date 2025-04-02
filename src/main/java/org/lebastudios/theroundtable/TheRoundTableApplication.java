@@ -10,14 +10,12 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
-import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
-import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
-import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.Task;
@@ -30,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 public class TheRoundTableApplication extends Application
 {
@@ -140,4 +139,33 @@ public class TheRoundTableApplication extends Application
         });
     }
 
+    public static void executeInFxThreadAndWait(Runnable runnable)
+    {
+        if (Platform.isFxApplicationThread()) 
+        {
+            runnable.run();
+            return;
+        }
+        
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        
+        Platform.runLater(() ->
+        {
+            try
+            {
+                runnable.run();
+                future.complete(null);
+            }
+            catch (Exception ex)
+            {
+                Logs.getInstance().log(
+                        "Error executing blocking action inside a task",
+                        ex
+                );
+                future.completeExceptionally(ex);
+            }
+        });
+
+        future.join();
+    }
 }

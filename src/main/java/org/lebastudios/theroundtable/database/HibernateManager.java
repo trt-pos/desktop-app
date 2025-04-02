@@ -1,16 +1,15 @@
 package org.lebastudios.theroundtable.database;
 
-import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
-import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -40,6 +39,7 @@ class HibernateManager
     }
 
     private SessionFactory sessionFactory;
+    private Connection connection;
 
     public static HibernateManager getInstance()
     {
@@ -60,11 +60,37 @@ class HibernateManager
         return new ReloadDatabaseTask();
     }
 
-    public boolean connectTransaction(Consumer<Session> action)
+    public Session getSession()
     {
         if (sessionFactory == null) throw new IllegalStateException("Database not initialized");
+        
+        try
+        {
+            connection.createStatement().execute("SELECT 1");
+        }
+        catch (SQLException exception)
+        {
+            try
+            {
+                connection.close();
+            }
+            catch (SQLException ignore) {}
+            TheRoundTableApplication.executeInFxThreadAndWait(() ->
+            {
+                new RequestConfigStageController(new DatabaseConfigPaneController())
+                        .setTitle("Connection with the database lost")
+                        .instantiate(true);
+            });
+            
+            return getSession();
+        }
 
-        Session session = sessionFactory.openSession();
+        return sessionFactory.openSession();
+    }
+    
+    public boolean connectTransaction(Consumer<Session> action)
+    {
+        Session session = getSession();
 
         try
         {
@@ -96,10 +122,7 @@ class HibernateManager
 
     public <R> R connectQuery(Function<Session, R> action)
     {
-        if (sessionFactory == null) throw new IllegalStateException("Database not initialized");
-
-        // Ejemplo de uso de la sesión para interactuar con la base de datos
-        try (Session session = sessionFactory.openSession())
+        try (Session session = getSession())
         {
             return action.apply(session);
         }
@@ -142,11 +165,12 @@ class HibernateManager
             try
             {
                 sessionFactory = executeSubtask(new BuildSessionFactoryTask());
+                connection = new DatabaseConfigData().load().getConnection();
                 DatabaseEvents.onDatabaseInit.invoke();
             }
             catch (Exception e)
             {
-                executeInFxThread(() ->
+                TheRoundTableApplication.executeInFxThreadAndWait(() ->
                 {
                     new RequestConfigStageController(new DatabaseConfigPaneController())
                             .setTitle("Invalid database configuration")
