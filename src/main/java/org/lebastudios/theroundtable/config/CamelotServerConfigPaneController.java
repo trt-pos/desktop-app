@@ -2,6 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.apparience.UIEffects;
@@ -16,6 +17,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @FXML public TextField serverAddress;
     @FXML public TextField serverPort;
     @FXML public CheckBox defaultConfigCheckbox;
+    @FXML public Label serviceStatus;
 
     public CamelotServerConfigPaneController()
     {
@@ -32,7 +34,17 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
             serverAddress.setDisable(newValue);
             serverPort.setDisable(newValue);
 
-            if (newValue) updateUI(new CamelotServerConfigData());
+            if (newValue)
+            {
+                CamelotServerConfigData defaultConfigData = new CamelotServerConfigData();
+                
+                if (CamelotServiceManager.getInstance().isRunning())
+                {
+                    defaultConfigData.port = CamelotServiceManager.getInstance().getServerPort();
+                }
+                
+                updateUI(defaultConfigData);
+            }
         });
 
         super.initialize();
@@ -54,6 +66,26 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         clientName.setText(configData.clientName);
         serverAddress.setText(configData.host);
         serverPort.setText(Integer.toString(configData.port));
+
+        boolean isRunning = CamelotServiceManager.getInstance().isRunning();
+
+        String text;
+        String style;
+
+        if (isRunning)
+        {
+            int port = CamelotServiceManager.getInstance().getServerPort();
+            text = "The local Camelot server is running on port " + port;
+            style = "-fx-text-fill: green; -fx-font-size: 10";
+        }
+        else
+        {
+            text = "The local Camelot server is not running";
+            style = "-fx-text-fill: red; -fx-font-size: 10";
+        }
+
+        serviceStatus.setText(text);
+        serviceStatus.setStyle(style);
     }
 
     @Override

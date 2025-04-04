@@ -29,7 +29,7 @@ public class PortDistributor
         return actualPort;
     }
 
-    private boolean isPortAvailable(int port)
+    public boolean isPortAvailable(int port)
     {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             serverSocket.setReuseAddress(true);

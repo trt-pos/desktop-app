@@ -1,8 +1,10 @@
 package org.lebastudios.theroundtable.camelot;
 
 import javafx.application.Platform;
+import lombok.Getter;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
+import org.lebastudios.theroundtable.communications.PortDistributor;
 import org.lebastudios.theroundtable.config.CamelotServerConfigData;
 import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
@@ -25,6 +27,7 @@ public class CamelotServiceManager
 
     private CamelotClient client;
     private Process serverProcess;
+    @Getter private int serverPort;
 
     private CamelotServiceManager()
     {
@@ -49,16 +52,11 @@ public class CamelotServiceManager
 
                 try
                 {
-                    // The server process is always created even if you are not the server 
-                    // so the app always has a valid server to connect to
-                    serverProcess = new EmbeddedBinExecutor().execute(
-                            CorePlugin.class,
-                            "camelot",
-                            configData.port + ""
-                    );
+                    startServer(configData.usesLocalServer() ? configData.port : new CamelotServerConfigData().port);
 
                     // Create the client object to be connected to the server
-                    CamelotClient tmpClient = new CamelotClient(configData.clientName, configData.host, configData.port);
+                    CamelotClient tmpClient =
+                            new CamelotClient(configData.clientName, configData.host, configData.port);
                     // Asigning the callback handler to the client to handle the events callbacks
                     tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
                     // Assigning the error handler to the client to handle the errors
@@ -80,20 +78,42 @@ public class CamelotServiceManager
                                 .instantiate(true);
                     });
                 }
-                
+
                 return null;
             }
         };
     }
-    
+
+    private void startServer(int port) throws IOException
+    {
+        int tmpPort = port;
+
+        while (!PortDistributor.getInstance().isPortAvailable(tmpPort))
+        {
+            tmpPort++;
+        }
+
+        serverPort = tmpPort;
+
+        // The server process is always created even if you are not the server 
+        // so the app always has a valid server to connect to
+        serverProcess = new EmbeddedBinExecutor().execute(
+                CorePlugin.class,
+                "camelot",
+                serverPort + ""
+        );
+    }
+
     public void stop()
     {
         if (serverProcess == null) return;
 
         if (client != null)
         {
-            client.setOnErrorHandler(_ -> {});
-            client.setCallbacksHandler(_ -> {});
+            client.setOnErrorHandler(_ ->
+            {});
+            client.setCallbacksHandler(_ ->
+            {});
             try
             {
                 client.close();
@@ -101,7 +121,7 @@ public class CamelotServiceManager
             catch (Exception ignored) {}
             client = null;
         }
-        
+
         serverProcess.destroy();
         serverProcess = null;
     }
@@ -116,7 +136,7 @@ public class CamelotServiceManager
     {
         return reloadTask(new CamelotServerConfigData().load());
     }
-    
+
     CamelotClient getPersistentClient()
     {
         while (client == null)
@@ -125,10 +145,10 @@ public class CamelotServiceManager
                     .setTitle("Connecting to Camelot lost")
                     .instantiate(true);
         }
-        
+
         return client;
     }
-    
+
     private void onClientError(Exception e)
     {
         Platform.runLater(() ->
@@ -137,5 +157,10 @@ public class CamelotServiceManager
                     .setTitle("Connection to Camelot lost")
                     .instantiate(true);
         });
+    }
+
+    public boolean isRunning()
+    {
+        return serverProcess != null && serverProcess.isAlive();
     }
 }
