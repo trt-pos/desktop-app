@@ -68,13 +68,7 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistence
         }
     }
     
-    public final boolean equalsSaved()
-    {
-        if (getFile() == null || !getFile().exists()) return false; 
-        return this.equals(this.load());
-    }
-    
-    @Override
+   @Override
     public final boolean equals(Object obj)
     {
         if (this == obj) return true;
