@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" spacing="10"
+      fx:controller="org.lebastudios.theroundtable.config.UpdatesConfigPaneController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <CheckBox fx:id="disableUpdatesCheckBox" text="%coonfig.updates.disableappupdates" />
+</VBox>

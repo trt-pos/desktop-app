@@ -10,6 +10,7 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
+import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
@@ -20,7 +21,7 @@ import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
-import org.lebastudios.theroundtable.updates.UpdateAppTask;
+import org.lebastudios.theroundtable.updates.CheckAppUpdateTask;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -122,9 +123,9 @@ public class TheRoundTableApplication extends Application
         stage.setScene(mainScene);
         stage.show();
 
-        if (AccountManager.getInstance().isAccountAdmin())
+        if (AccountManager.getInstance().isAccountAdmin() && new UpdatesConfigData().load().checkUpdates)
         {
-            new UpdateAppTask().executeInBackGround();
+            new CheckAppUpdateTask().executeInBackGround();
         }
 
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->

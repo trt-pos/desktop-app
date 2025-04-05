@@ -82,6 +82,9 @@ public class CorePlugin implements IPlugin
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new CamelotServerConfigPaneController()))
             );
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem(new UpdatesConfigPaneController()))
+            );
         }
 
         return generalConfigSection;
