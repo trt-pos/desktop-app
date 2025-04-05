@@ -7,7 +7,7 @@ import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.server.requests.Updates;
 import org.lebastudios.theroundtable.tasks.Task;
 
-public class UpdateAppJarTask extends Task<Void>
+public class UpdateAppTask extends Task<Void>
 {
     @Override
     protected Void call() throws Exception

@@ -3,6 +3,9 @@ package org.lebastudios.theroundtable.server.requests;
 import com.google.gson.Gson;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
+import org.lebastudios.theroundtable.env.Platform;
+import org.lebastudios.theroundtable.env.PlatformArch;
+import org.lebastudios.theroundtable.env.PlatformOS;
 import org.lebastudios.theroundtable.server.Server;
 import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.tasks.MoveFileTask;
@@ -21,7 +24,8 @@ public class Updates
         try (var client = AppHttpClient.getInstance().newClient())
         {
             var request = HttpRequest.newBuilder()
-                    .uri(URI.create(Server.BASE_URL + "/update/available?version=" + TheRoundTableApplication.getAppVersion()))
+                    .uri(URI.create(
+                            Server.BASE_URL + "/update/available?version=" + TheRoundTableApplication.getAppVersion()))
                     .build();
 
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -44,14 +48,34 @@ public class Updates
             @Override
             protected Void call() throws Exception
             {
-                URI fileURI = new URI(Server.BASE_URL + "/update/desktop-app.jar");
-                File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
+                URI coreJar = new URI(Server.BASE_URL + "/update/desktop-app.jar");
 
-                File saveFile = new File(TheRoundTableApplication.getAppDirectory(), "/bin/desktop-app.jar");
-                saveFile.getParentFile().mkdirs();
+                PlatformArch arch = Platform.getPlatformArch();
+                PlatformOS os = Platform.getPlatformOS();
+                URI startBin = new URI(Server.BASE_URL
+                        + "/downloads/start-" + os.toString()
+                        + "-" + arch.toString() + ".bin"
+                );
                 
-                executeSubtask(new MoveFileTask(downloadedFile, saveFile));
+                File downloadedCoreJar = executeSubtask(new DownloadFileTask(coreJar));
+                File downloadedStart = executeSubtask(new DownloadFileTask(startBin));
 
+
+                File coreJarSaveFile = new File(
+                        TheRoundTableApplication.getAppDirectory(), 
+                        "/bin/desktop-app.jar"
+                );
+                coreJarSaveFile.getParentFile().mkdirs();
+
+                File startBinSaveFile = new File(
+                        TheRoundTableApplication.getAppDirectory(), 
+                        "start" + os.getBinaryExtension()
+                );
+                startBinSaveFile.getParentFile().mkdirs();
+
+                executeSubtask(new MoveFileTask(downloadedCoreJar, coreJarSaveFile));
+                executeSubtask(new MoveFileTask(downloadedStart, coreJarSaveFile));
+                
                 return null;
             }
         }.setOnTaskComplete(_ -> afterUpdate.run())

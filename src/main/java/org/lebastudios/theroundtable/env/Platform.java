@@ -1,29 +1,28 @@
 package org.lebastudios.theroundtable.env;
 
-import lombok.Getter;
-
 public class Platform
 {
-    @Getter private static final PlatformType platformType = detectPlatformType();
-
-    public enum PlatformType
-    {
-        WINDOWS,
-        LINUX,
-        MAC,
-        ANDROID,
-        UNKNOWN
-    }
-    
-    private static PlatformType detectPlatformType() 
+    public static PlatformOS getPlatformOS() 
     {
         String os = System.getProperty("os.name").toLowerCase();
         
-        if (os.contains("win")) return PlatformType.WINDOWS;
-        if (os.contains("nix") || os.contains("nux")) return PlatformType.LINUX;
-        if (os.contains("mac")) return PlatformType.MAC;
-        if (os.contains("droid")) return PlatformType.ANDROID;
+        if (os.contains("win")) return PlatformOS.WINDOWS;
+        if (os.contains("nix") || os.contains("nux")) return PlatformOS.LINUX;
+        if (os.contains("mac")) return PlatformOS.MAC;
+        if (os.contains("droid")) return PlatformOS.ANDROID;
         
-        return PlatformType.UNKNOWN;
+        return PlatformOS.UNKNOWN;
+    }
+    
+    public static PlatformArch getPlatformArch()
+    {
+        String arch = System.getProperty("os.arch").toLowerCase();
+        
+        if (arch.contains("64")) return PlatformArch.X64;
+        if (arch.contains("32")) return PlatformArch.X86;
+        if (arch.contains("arm")) return PlatformArch.ARM;
+        if (arch.contains("aarch64")) return PlatformArch.ARM64;
+        
+        return PlatformArch.UNKNOWN;
     }
 }

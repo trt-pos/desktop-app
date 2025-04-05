@@ -20,7 +20,7 @@ import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
-import org.lebastudios.theroundtable.updates.UpdateAppJarTask;
+import org.lebastudios.theroundtable.updates.UpdateAppTask;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -124,7 +124,7 @@ public class TheRoundTableApplication extends Application
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
-            new UpdateAppJarTask().executeInBackGround();
+            new UpdateAppTask().executeInBackGround();
         }
 
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->
