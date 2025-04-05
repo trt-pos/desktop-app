@@ -59,23 +59,25 @@ public class CamelotClient implements AutoCloseable
 
                 int retries = 0;
                 boolean success = false;
-                int milisToWait = 5000;
+                int milisToWaitPerTry = 5000;
                 while (retries < 3 && !success)
                 {
-                    int actualTimeToWait = milisToWait * retries + 25;
+                    int secsToWait = (milisToWaitPerTry * retries) / 1000;
+
+                    while (secsToWait-- > 0)
+                    {
+                        updateMessage("Failed to connect to Camelot, retrying in " + secsToWait + " seconds");
+                        Thread.sleep(1000);
+                    }
+                    
                     try
                     {
-                        Thread.sleep(actualTimeToWait);
                         socket = new Socket(host, port);
                         success = true;
                     }
                     catch (ConnectException exception)
                     {
                         retries++;
-                        updateMessage(
-                                "Failed to connect to Camelot, retrying in "
-                                        + (milisToWait * retries + 25) / 1000 + " seconds"
-                        );
                     }
                 }
 
