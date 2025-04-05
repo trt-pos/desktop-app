@@ -15,7 +15,6 @@ public class SearchBox extends HBox
 {
     private final TextField searchField;
     private final IconButton searchButton;
-    private final IconButton resetButton;
     
     @Setter @Getter private Consumer<String> onSearch = s -> {};
     
@@ -43,13 +42,9 @@ public class SearchBox extends HBox
 
         textFieldContainer.getChildren().addAll(searchField, searchButton);
         
-        resetButton = new IconButton("exit-outlined.png");
-        resetButton.setIconSize(20);
-        resetButton.setOnAction(e -> clear());
-        
         this.setSpacing(10);
         this.setAlignment(Pos.CENTER_LEFT);
-        this.getChildren().addAll(textFieldContainer, resetButton);
+        this.getChildren().addAll(textFieldContainer);
         
         this.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.ENTER)
@@ -63,13 +58,6 @@ public class SearchBox extends HBox
     public String getText()
     {
         return searchField.getText();
-    }
-    
-    public void clear()
-    {
-        searchField.clear();
-        
-        accept();
     }
     
     private void accept()
