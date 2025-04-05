@@ -5,13 +5,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
+import org.lebastudios.theroundtable.communications.AppHttpClient;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.ref.WeakReference;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -23,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ImageLoader
 {
     private static final Map<String, WeakReference<Image>> loadedIcons = new WeakHashMap<>();
+    private static final Map<String, WeakReference<Image>> downloadedIcons = new HashMap<>();
     private static final Map<String, Image> loadedTextures = new HashMap<>();
     private static final Map<String, WeakReference<Image>> loadedSavedImages = new WeakHashMap<>();
 
@@ -51,6 +57,40 @@ public class ImageLoader
         }
     }
 
+    public static Image getWebImage(String url) throws URISyntaxException
+    {
+        Image image = downloadedIcons.get(url).get();
+
+        if (image != null) return image;
+
+        HttpClient client = AppHttpClient.getInstance().getClient();
+
+        HttpRequest request = HttpRequest.newBuilder(new URI(url))
+                .GET()
+                .build();
+
+        try (InputStream is = client.send(request, HttpResponse.BodyHandlers.ofInputStream()).body())
+        {
+            image = new Image(is, 100, 100, true, true);
+        }
+        catch (InterruptedException | IOException e)
+        {
+            Logs.getInstance().log(
+                    "Error while downloading image from URL: " + url,
+                    e
+            );
+            
+            return getIcon("icon-not-found.png");
+        }
+        
+        synchronized (downloadedIcons)
+        {
+            downloadedIcons.put(url, new WeakReference<>(image));
+        }
+        
+        return image;
+    }
+    
     public synchronized static Image getTexture(String textureName)
     {
         Image image = loadedTextures.get(textureName);
