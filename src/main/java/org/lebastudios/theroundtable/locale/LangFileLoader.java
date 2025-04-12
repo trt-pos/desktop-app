@@ -17,7 +17,7 @@ public class LangFileLoader
 
     public static void loadLang(Locale locale, Class<? extends IPlugin> pluginClass)
     {
-        try (InputStream resource = pluginClass.getResourceAsStream("languagesData.csv"))
+        try (InputStream resource = pluginClass.getResourceAsStream("languages-data.csv"))
         {
             if (resource == null)
             {

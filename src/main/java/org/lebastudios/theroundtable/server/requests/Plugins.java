@@ -73,6 +73,11 @@ public class Plugins
             return null;
         }
     }
+    
+    public static String getWebIconUrl(PluginData pluginData)
+    {
+        return Server.BASE_URL + "/downloads/" + pluginData.pluginId + ".jar.icon.png";
+    }
 
     public static boolean needsUpdate(PluginData pluginData)
     {

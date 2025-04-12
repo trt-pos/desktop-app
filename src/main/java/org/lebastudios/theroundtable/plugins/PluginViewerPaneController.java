@@ -4,11 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.ui.IconView;
 
 public class PluginViewerPaneController extends PaneController<PluginViewerPaneController>
 {
@@ -32,8 +32,11 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
     @Override
     protected void initialize()
     {
-        final var iconView = new IconView(pluginData.pluginIcon + ".png");
-        iconView.setIconSize(100);
+        ImageView iconView = new ImageView(pluginData.getPluginIcon());
+        iconView.setPreserveRatio(true);
+        iconView.setFitHeight(100);
+        iconView.setFitWidth(100);
+        
         iconViewContainer.getChildren().add(iconView);
         pluginNameLabel.setText(pluginData.pluginName);
         pluginIdLabel.setText(pluginData.pluginId);
@@ -43,7 +46,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         pluginRequiredCoreVersionLabel.setText(pluginData.requiredDesktopAppVersion());
         pluginVersionLabel.setText(pluginData.pluginVersion);
         
-        if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length == 1)
+        if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length < 2)
         {
             ((VBox) getRoot()).getChildren().remove(dependenciesPaneContainer);
         }

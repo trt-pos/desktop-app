@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.lebastudios.theroundtable.Launcher;
@@ -21,7 +23,6 @@ import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconTextButton;
-import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 {
     private static final Event onReloadLabelsRequest = new Event();
 
-    @FXML public IconView pluginIcon;
+    @FXML public ImageView pluginIcon;
     @FXML public Label pluginName;
     @FXML public Label pluginDescription;
     @FXML public IconButton unistallButton;
@@ -38,9 +39,10 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML public Button installButton;
     @FXML public Button restartAppButton;
     @FXML public Button updatePlugin;
-    @FXML public HBox root;
     private final PluginData pluginData;
 
+    private HBox rootVBox;
+    
     private final Node loadingNode = new LoadingPaneController().getRoot();
     private final IEventMethod onReloadLabelsListener = () -> Platform.runLater(this::updateView);
 
@@ -55,7 +57,15 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @Override
     protected void initialize()
     {
-        pluginIcon.setIconName(pluginData.pluginIcon + ".png");
+        rootVBox = (HBox) root;
+
+        Image iconImg = pluginData.getPluginIcon();
+        pluginIcon.setImage(iconImg);
+        
+        pluginIcon.setPreserveRatio(true);
+        pluginIcon.setFitHeight(35);
+        pluginIcon.setFitWidth(35);
+        
         pluginName.setText(pluginData.pluginName);
         pluginDescription.setText(pluginData.pluginDescription);
 
@@ -68,23 +78,23 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
     private void updateView()
     {
-        root.getChildren().remove(installButton);
-        root.getChildren().remove(unistallButton);
-        root.getChildren().remove(restartAppButton);
-        root.getChildren().remove(updatePlugin);
-        root.getChildren().remove(notInstallableButton);
-        root.getChildren().remove(loadingNode);
+        rootVBox.getChildren().remove(installButton);
+        rootVBox.getChildren().remove(unistallButton);
+        rootVBox.getChildren().remove(restartAppButton);
+        rootVBox.getChildren().remove(updatePlugin);
+        rootVBox.getChildren().remove(notInstallableButton);
+        rootVBox.getChildren().remove(loadingNode);
 
         if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.pluginId))
         {
-            root.getChildren().add(restartAppButton);
+            rootVBox.getChildren().add(restartAppButton);
             return;
         }
 
         if (PluginsManager.getInstance().isPluginInstalled(pluginData))
         {
-            root.getChildren().add(unistallButton);
-            root.getChildren().add(loadingNode);
+            rootVBox.getChildren().add(unistallButton);
+            rootVBox.getChildren().add(loadingNode);
 
             new Thread(() ->
             {
@@ -103,19 +113,19 @@ public class PluginLabelController extends PaneController<PluginLabelController>
                     }
                     else
                     {
-                        Platform.runLater(() -> root.getChildren().add(newVersionData.areDependenciesInstalled()
+                        Platform.runLater(() -> rootVBox.getChildren().add(newVersionData.areDependenciesInstalled()
                                 ? updatePlugin
                                 : notInstallableButton
                         ));
                     }
                 }
 
-                Platform.runLater(() -> root.getChildren().remove(loadingNode));
+                Platform.runLater(() -> rootVBox.getChildren().remove(loadingNode));
             }).start();
             return;
         }
 
-        root.getChildren().add(
+        rootVBox.getChildren().add(
                 this.pluginData.areDependenciesInstalled()
                         ? installButton
                         : notInstallableButton
@@ -125,8 +135,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML
     public void installPlugin(ActionEvent actionEvent)
     {
-        root.getChildren().remove(installButton);
-        root.getChildren().add(loadingNode);
+        rootVBox.getChildren().remove(installButton);
+        rootVBox.getChildren().add(loadingNode);
 
         installPluginAsync();
     }
@@ -134,8 +144,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML
     public void updatePlugin(ActionEvent actionEvent)
     {
-        root.getChildren().remove(updatePlugin);
-        root.getChildren().add(loadingNode);
+        rootVBox.getChildren().remove(updatePlugin);
+        rootVBox.getChildren().add(loadingNode);
 
         installPluginAsync();
     }
@@ -144,7 +154,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     {
         new Thread(() -> Plugins.install(pluginData, () ->
         {
-            PluginsManager.getInstance().getPluginsRestartPending().put(pluginData.pluginId, pluginData);
+            PluginsManager.getInstance().getPluginsRestartPending()
+                    .put(pluginData.pluginId, pluginData);
             onReloadLabelsRequest.invoke();
         })).start();
     }
@@ -184,8 +195,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
         if (pluginFile.delete())
         {
-            root.getChildren().remove(unistallButton);
-            root.getChildren().add(loadingNode);
+            rootVBox.getChildren().remove(unistallButton);
+            rootVBox.getChildren().add(loadingNode);
 
             PluginsManager.getInstance().uninstallPlugin(pluginData);
 

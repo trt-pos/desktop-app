@@ -22,15 +22,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ImageLoader
 {
-    private static final Map<String, WeakReference<Image>> loadedIcons = new WeakHashMap<>();
+    private static final Map<String, WeakReference<Image>> loadedIcons = new HashMap<>();
     private static final Map<String, WeakReference<Image>> downloadedIcons = new HashMap<>();
     private static final Map<String, Image> loadedTextures = new HashMap<>();
-    private static final Map<String, WeakReference<Image>> loadedSavedImages = new WeakHashMap<>();
+    private static final Map<String, WeakReference<Image>> loadedSavedImages = new HashMap<>();
 
     private static final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
     

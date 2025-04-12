@@ -56,6 +56,11 @@ public interface IPlugin extends IDatabaseUpdater
         
         if (is == null) 
         {
+            is = this.getClass().getResourceAsStream("plugin-data.json");
+        }
+        
+        if (is == null) 
+        {
             throw new IllegalStateException("The pluginData.json file is missing");
         }
         
