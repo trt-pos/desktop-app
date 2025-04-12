@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public interface IDatabaseUpdater
 {
@@ -172,18 +174,34 @@ public interface IDatabaseUpdater
 
             if (sql.contains("CREATE TABLE") || sql.contains("create table"))
             {
-                sql = sql.replaceAll("(?i)AUTOINCREMENT",
-                        switch (dbms)
-                        {
-                            case SQLITE -> "autoincrement";
-                            case MYSQL, MARIADB -> "auto_increment";
-                            case POSTGRES -> "serial";
-                            default -> throw new IllegalStateException("Unexpected value: " + dbms);
-                        }
-                );
+                String replacement = switch (dbms)
+                {
+                    case SQLITE -> "autoincrement";
+                    case MARIADB -> "auto_increment";
+                };
+                
+                sql = replaceFirstGroup(" ((?i)AUTOINCREMENT)[ ,;]", replacement, sql);
             }
 
             statement.execute(sql);
+        }
+        
+        private String replaceFirstGroup(String regex, String replacement, String text)
+        {
+            StringBuilder modifiedSql = new StringBuilder();
+            
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(text);
+            int lastMatchEnd = 0;
+            while (matcher.find())
+            {
+                modifiedSql.append(text, lastMatchEnd, matcher.start(1));
+                modifiedSql.append(replacement);
+                lastMatchEnd = matcher.end(1);
+            }
+
+            modifiedSql.append(text, lastMatchEnd, text.length());
+            return modifiedSql.toString();
         }
     }
 }
