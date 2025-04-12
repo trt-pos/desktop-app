@@ -8,34 +8,41 @@ import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ThemeLoader
 {
-    private static final Set<Scene> scenesInstantiated = new HashSet<>();
-
+    private static final List<Scene> scenesInstantiated = new CopyOnWriteArrayList<>();
+    private static boolean iterating = false;
+    private static String actualTheme = new PreferencesConfigData().load().theme;
+    
     static {
         AccountEvents.OnAccountLogIn.addListener(a -> reloadThemes());
     }
     
     public synchronized static void reloadThemes()
     {
+        actualTheme = new PreferencesConfigData().load().theme;
+        removeRemovedScenes();
+        
+        iterating = true;
         for (var scene : scenesInstantiated)
         {
             scene.getStylesheets().removeLast();
             addActualTheme(scene);
         }
+        iterating = false;
     }
 
     @SneakyThrows
     public static Scene addActualTheme(Scene scene)
     {
-        removeRemovedScenes();
-
-        scenesInstantiated.add(scene);
-        
-        var actualTheme = new PreferencesConfigData().load().theme;
+        if (!iterating)
+        {
+            removeRemovedScenes();
+            scenesInstantiated.add(scene);
+        }
 
         String themeCss = new File(
                 TheRoundTableApplication.getAppDirectory() + "/styles/" + actualTheme + "/theme.css")

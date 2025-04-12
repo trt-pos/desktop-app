@@ -82,16 +82,18 @@ public class StageBuilder
         stage.setTitle(title);
         stage.setResizable(resizeable);
         stage.initOwner(owner);
-        
-        stage.initModality(modality);
 
-        if (modality == Modality.WINDOW_MODAL && owner == null) 
+        if (modality == Modality.WINDOW_MODAL && owner == null)
         {
             Logs.getInstance().log(
                     Logs.LogType.WARNING,
-                    "An stage with modality '" + modality + "' does not have a window owner an it's recommended."
+                    "An stage with modality '" + modality + "' does not have a window owner an it's recommended. " +
+                            "Loading as APPLICATION_MODAL instead until you fix it."
             );
+            modality = Modality.APPLICATION_MODAL;
         }
+        
+        stage.initModality(modality);
         
         stage.getIcons().add(ImageLoader.getIcon(iconName));
 

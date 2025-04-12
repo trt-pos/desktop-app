@@ -22,7 +22,6 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     {
         configData.language = transformLanguageToInternalText(languageChoiceBox.getValue());
         configData.theme = transformThemeToInternalText(themeChoiceBox.getValue());
-        ThemeLoader.reloadThemes();
     }
 
     @Override
@@ -56,6 +55,12 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     public boolean validate()
     {
         return true;
+    }
+
+    @Override
+    public void onSave(PreferencesConfigData configData)
+    {
+        ThemeLoader.reloadThemes();
     }
 
     private String transformThemeToDisplayableText(String theme)
@@ -95,7 +100,4 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
             default -> language;
         };
     }
-    
-    
-
 }
