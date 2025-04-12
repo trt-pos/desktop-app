@@ -39,7 +39,9 @@ public interface IDatabaseUpdater
         @Override
         public boolean updateDatabase(Connection conn, int oldVersion, int newVersion, Class<? extends IPlugin> clazz) throws Exception
         {
-            Optional<Method> someMethod = Arrays.stream(this.getClass().getMethods())
+            IPlugin plugin = PluginsManager.getInstance().getPluginOf(clazz).orElseThrow();
+            Method[] methods = clazz.getDeclaredMethods();
+            Optional<Method> someMethod = Arrays.stream(methods)
                     .filter(method -> method.getName().startsWith("downgradeTo") || method.getName().startsWith("upgradeTo"))
                     .findFirst();
 
@@ -50,25 +52,25 @@ public interface IDatabaseUpdater
             for (int i = oldVersion - 1; i >= newVersion; i--)
             {
                 var methodName = "downgradeTo" + i;
-                var updateMethod = Arrays.stream(clazz.getMethods())
+                var updateMethod = Arrays.stream(methods)
                         .filter(method -> method.getName().equals(methodName))
                         .findFirst();
 
                 if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
 
-                updateMethod.get().invoke(this, conn, dbms);
+                updateMethod.get().invoke(plugin, conn, dbms);
             }
 
             for (int i = oldVersion + 1; i <= newVersion; i++)
             {
                 var methodName = "upgradeTo" + i;
-                var updateMethod = Arrays.stream(clazz.getMethods())
+                var updateMethod = Arrays.stream(methods)
                         .filter(method -> method.getName().equals(methodName))
                         .findFirst();
 
                 if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
 
-                updateMethod.get().invoke(this, conn, dbms);
+                updateMethod.get().invoke(plugin, conn, dbms);
             }
             
             return true;
