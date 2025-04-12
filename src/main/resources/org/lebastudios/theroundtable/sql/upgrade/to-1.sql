@@ -1,6 +1,6 @@
 create table core_account
 (
-    id                             integer,
+    id                             integer autoincrement,
     changue_password_on_next_login boolean      not null,
     name                           varchar(255) not null,
     password                       varchar(255) not null,

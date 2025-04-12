@@ -19,7 +19,7 @@ public interface IDatabaseUpdater
     default void updateDatabase(Connection conn, int oldVersion, int newVersion, Dbms dbms) throws Exception
     {
         if (oldVersion == newVersion) return;
-        
+
         Class<? extends IPlugin> clazz =
                 PluginsManager.getInstance().getPluginOf(this.getClass()).orElseThrow().getClass();
 
@@ -31,7 +31,7 @@ public interface IDatabaseUpdater
 
     interface IUpdateStrategy
     {
-        boolean updateDatabase(Connection conn, int oldVersion, int newVersion, 
+        boolean updateDatabase(Connection conn, int oldVersion, int newVersion,
                 Class<? extends IPlugin> clazz, Dbms dbms) throws Exception;
     }
 
@@ -103,7 +103,7 @@ public interface IDatabaseUpdater
             {
                 try (InputStream is = getSQLFile(dbms, UpdateType.DOWNGRADE, i, clazz))
                 {
-                    executeSQL(conn, is);
+                    executeSQL(conn, is, dbms);
                 }
             }
 
@@ -111,7 +111,7 @@ public interface IDatabaseUpdater
             {
                 try (InputStream is = getSQLFile(dbms, UpdateType.UPGRADE, i, clazz))
                 {
-                    executeSQL(conn, is);
+                    executeSQL(conn, is, dbms);
                 }
             }
 
@@ -140,7 +140,7 @@ public interface IDatabaseUpdater
                     + "\tsql/<upgrade|downgrade>/<dbms>-to-<version>.sql ");
         }
 
-        private void executeSQL(Connection conn, InputStream is) throws SQLException, IOException
+        private void executeSQL(Connection conn, InputStream is, Dbms dbms) throws SQLException, IOException
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             Statement statement = conn.createStatement();
@@ -154,9 +154,7 @@ public interface IDatabaseUpdater
 
                 if (line.trim().startsWith(DELIMITER))
                 {
-                    String sqlString = sql.toString();
-
-                    if (!sqlString.trim().isBlank()) statement.execute(sqlString);
+                    executeStatement(statement, sql.toString(), dbms);
 
                     sql.setLength(0);
                     continue;
@@ -165,9 +163,27 @@ public interface IDatabaseUpdater
                 sql.append(line).append("\n");
             }
 
-            String sqlString = sql.toString();
+            executeStatement(statement, sql.toString(), dbms);
+        }
 
-            if (!sqlString.trim().isBlank()) statement.execute(sqlString);
+        private void executeStatement(Statement statement, String sql, Dbms dbms) throws SQLException
+        {
+            if (sql.trim().isBlank()) return;
+
+            if (sql.contains("CREATE TABLE") || sql.contains("create table"))
+            {
+                sql = sql.replaceAll("(?i)AUTOINCREMENT",
+                        switch (dbms)
+                        {
+                            case SQLITE -> "autoincrement";
+                            case MYSQL, MARIADB -> "auto_increment";
+                            case POSTGRES -> "serial";
+                            default -> throw new IllegalStateException("Unexpected value: " + dbms);
+                        }
+                );
+            }
+
+            statement.execute(sql);
         }
     }
 }
