@@ -170,6 +170,10 @@ class HibernateManager
             }
             catch (Exception e)
             {
+                Logs.getInstance().log(
+                        "Error connecting to the database",
+                        e
+                );
                 TheRoundTableApplication.executeInFxThreadAndWait(() ->
                 {
                     new RequestConfigStageController(new DatabaseConfigPaneController())
