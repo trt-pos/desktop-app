@@ -334,8 +334,28 @@ class HibernateManager
                 {
                     conn.setAutoCommit(false);
 
-                    updater.updateDatabase(conn, oldVersion, newVersion);
+                    Dbms dbms = new DatabaseConfigData().load().getDbms();
 
+                    conn.createStatement().execute(
+                            switch (dbms)
+                            {
+                                case MARIADB -> "set foreign_key_checks = 0";
+                                case SQLITE -> "PRAGMA foreign_keys = OFF";
+                                default -> "select 1";
+                            }
+                    );
+                    
+                    updater.updateDatabase(conn, oldVersion, newVersion, dbms);
+
+                    conn.createStatement().execute(
+                            switch (dbms)
+                            {
+                                case MARIADB -> "set foreign_key_checks = 1";
+                                case SQLITE -> "PRAGMA foreign_keys = ON";
+                                default -> "select 1";
+                            }
+                    );
+                    
                     sql = String.format(
                             exists
                                     ? "update core_database_version set version = %d where plugin_identifier = '%s'"
