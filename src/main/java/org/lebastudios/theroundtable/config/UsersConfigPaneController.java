@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.lebastudios.theroundtable.accounts.AccountCreatorController;
+import org.lebastudios.theroundtable.accounts.AccountCreatorStageController;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.ChangePasswordStageController;
 import org.lebastudios.theroundtable.database.Database;
@@ -21,13 +21,16 @@ import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconView;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile>
 {
     @FXML public Label errorLabel;
     @FXML public IconButton deleteAccount;
-    @FXML public ComboBox<String> accountType;
+    @FXML public ComboBox<Account.AccountType> accountType;
     @FXML public CheckBox changePasswordOnNextLogin;
     @FXML public PasswordField passwordField;
     @FXML public VBox usersContainer;
@@ -36,6 +39,9 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
     @FXML public StackPane userView;
 
     private Account selectedAccount;
+
+    private final Set<Account> addedAccounts = new HashSet<>();
+    private final Set<Account> removedAccounts = new HashSet<>();
 
     public UsersConfigPaneController()
     {
@@ -52,6 +58,9 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
         Database.getInstance().connectTransaction(session ->
         {
+            addedAccounts.forEach(session::persist);
+            removedAccounts.forEach(session::remove);
+            
             Account account = session.get(Account.class, selectedAccount.getId());
 
             account.setType(type);
@@ -60,20 +69,21 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
             session.merge(account);
         });
 
+        addedAccounts.clear();
+        removedAccounts.clear();
+        
         reloadUsersContainer();
     }
 
     @Override
     public void updateUI(NoConfigFile configData)
     {
-        userIcon.setIconSize(100);
+        addedAccounts.clear();
+        removedAccounts.clear();
 
         accountType.getItems().clear();
-        var accountTypes = Account.AccountType.values();
-        for (int i = 1; i < accountTypes.length; i++)
-        {
-            accountType.getItems().add(Account.getTypeString(accountTypes[i]));
-        }
+        accountType.getItems().addAll(Account.AccountType.values());
+        accountType.getItems().removeFirst();
 
         reloadUsersContainer();
 
@@ -101,32 +111,39 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
         Database.getInstance().connectQuery(session ->
         {
-            for (Account account : session.createQuery("from Account", Account.class).list())
-            {
-                final var currentLogged = AccountManager.getInstance().getCurrentLogged();
+            final var currentLogged = AccountManager.getInstance().getCurrentLogged();
 
-                if (account.getType() != Account.AccountType.ROOT &&
-                        Objects.equals(account.getId(), currentLogged.getId())) {continue;}
+            List<Account> accounts = session
+                    .createQuery("from Account", Account.class)
+                    .list();
+
+            accounts.addAll(addedAccounts);
+
+            for (Account account : accounts)
+            {
+                if (removedAccounts.contains(account)) continue;
+
+                if (account.getType() != Account.AccountType.ROOT 
+                        && Objects.equals(account.getId(), currentLogged.getId())) continue;
                 if (!currentLogged.hasAuthorityOver(account)) continue;
 
                 usersContainer.getChildren().add(createUserNode(account));
             }
         });
-        
+
         showAccount(AccountManager.getInstance().getCurrentLogged());
     }
 
     public void addUser(ActionEvent actionEvent)
     {
-        new AccountCreatorController()
-                .setOwner(this.getStage())
-                .instantiate(controller -> controller.setAccountConsumer(account ->
-                {
-                    if (account != null)
-                    {
-                        usersContainer.getChildren().add(createUserNode(account));
-                    }
-                }), false);
+        new AccountCreatorStageController(account ->
+        {
+            if (account != null)
+            {
+                usersContainer.getChildren().add(createUserNode(account));
+                addedAccounts.add(account);
+            }
+        }).setOwner(this.getStage()).instantiate(false);
     }
 
     @FXML
@@ -147,12 +164,10 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
             return;
         }
 
-        Database.getInstance().connectTransaction(session ->
+        if (!addedAccounts.remove(selectedAccount))
         {
-            Account account = session.get(Account.class, selectedAccount.getId());
-
-            session.remove(account);
-        });
+            removedAccounts.add(selectedAccount);
+        }
 
         showAccount(AccountManager.getInstance().getCurrentLogged());
         reloadUsersContainer();
@@ -168,6 +183,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         root.setOnMouseClicked(e -> showAccount(account));
 
         IconView icon = new IconView(account.getIconName());
+        icon.setIconSize(35);
         root.getChildren().add(icon);
 
         VBox info = new VBox();
@@ -177,7 +193,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         info.setSpacing(5);
 
         info.getChildren().add(new Label(account.getName()));
-        info.getChildren().add(new Label(account.getTypeString()));
+        info.getChildren().add(new Label(account.getType().toString()));
 
         return root;
     }
@@ -188,13 +204,13 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
         deleteAccount.setDisable(
                 account.getType() == Account.AccountType.ROOT
-                || account.getId().equals(AccountManager.getInstance().getCurrentLogged().getId())
+                        || account.getId() == AccountManager.getInstance().getCurrentLogged().getId()
         );
 
         userIcon.setIconName(account.getIconName());
         userName.setText(account.getName());
 
-        accountType.setValue(account.getTypeString());
+        accountType.setValue(account.getType());
         accountType.setDisable(account.getType() == Account.AccountType.ROOT);
 
         passwordField.setText("abc123.");
@@ -203,5 +219,4 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
         userView.setVisible(true);
     }
-
 }

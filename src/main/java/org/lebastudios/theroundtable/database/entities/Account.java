@@ -25,7 +25,7 @@ public class Account
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -52,16 +52,6 @@ public class Account
                     && account.getType() != AccountType.ADMIN && account.getType() != AccountType.MANAGER;
             case CASHIER, ACCOUNTANT -> false;
         };
-    }
-
-    public String getTypeString()
-    {
-        return getTypeString(type);
-    }
-
-    public static String getTypeString(AccountType type)
-    {
-        return LangFileLoader.getTranslation("enum.accounttype." + type.name().toLowerCase());
     }
 
     public String getIconName()
@@ -117,5 +107,30 @@ public class Account
                 default -> "account.png";
             };
         }
+
+        @Override
+        public String toString()
+        {
+            return LangFileLoader.getTranslation("enum.accounttype." + this.name().toLowerCase());
+        }
+    }
+
+    @Override
+    public final boolean equals(Object o)
+    {
+        if (!(o instanceof Account account)) return false;
+
+        return Objects.equals(id, account.id) && Objects.equals(name, account.name) &&
+                Objects.equals(password, account.password) && type == account.type;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(password);
+        result = 31 * result + Objects.hashCode(type);
+        return result;
     }
 }

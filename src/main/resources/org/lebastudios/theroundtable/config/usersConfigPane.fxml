@@ -20,7 +20,7 @@
                 </VBox>
             </content>
         </ScrollPane>
-        <IconButton iconName="add-user.png" StackPane.alignment="BOTTOM_RIGHT" onAction="#addUser">
+        <IconButton iconName="plus.png" StackPane.alignment="BOTTOM_RIGHT" onAction="#addUser">
             <StackPane.margin>
                 <Insets bottom="5" right="5"/>
             </StackPane.margin>
@@ -33,7 +33,7 @@
                 <Insets top="10" left="10" right="10" bottom="10"/>
             </padding>
             <VBox alignment="TOP_CENTER">
-                <IconView fx:id="userIcon" />
+                <IconView fx:id="userIcon" iconSize="100"/>
                 <Label style="-fx-font-size: 16" fx:id="userName" />
             </VBox>
             <VBox spacing="5" VBox.vgrow="ALWAYS" maxHeight="Infinity" alignment="CENTER">

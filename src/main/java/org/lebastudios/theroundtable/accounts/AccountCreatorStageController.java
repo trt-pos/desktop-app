@@ -6,7 +6,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import lombok.Setter;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
@@ -16,22 +15,24 @@ import org.lebastudios.theroundtable.ui.StageBuilder;
 import java.net.URL;
 import java.util.function.Consumer;
 
-public class AccountCreatorController extends StageController<AccountCreatorController>
+public class AccountCreatorStageController extends StageController<AccountCreatorStageController>
 {
     @FXML public TextField usernameField;
     @FXML public PasswordField passwordField;
     @FXML public PasswordField confirmPasswordField;
-    @FXML public ChoiceBox<String> accountTypeChoiceBox;
+    @FXML public ChoiceBox<Account.AccountType> accountTypeChoiceBox;
 
-    @Setter private Consumer<Account> accountConsumer;
+    private final Consumer<Account> accountConsumer;
 
+    public AccountCreatorStageController(Consumer<Account> accountConsumer)
+    {
+        this.accountConsumer = accountConsumer;
+    }
+    
     @FXML @Override protected void initialize()
     {
-        var accountTypes = Account.AccountType.values();
-        for (int i = 1; i < accountTypes.length; i++)
-        {
-            accountTypeChoiceBox.getItems().add(Account.getTypeString(accountTypes[i]));
-        }
+        accountTypeChoiceBox.getItems().addAll(Account.AccountType.values());
+        accountTypeChoiceBox.getItems().removeFirst();
 
         accountTypeChoiceBox.getSelectionModel().select(0);
     }
@@ -57,9 +58,7 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
                 Account.AccountType.values()[accountTypeChoiceBox.getSelectionModel().getSelectedIndex() + 1]
         );
 
-        Database.getInstance().connectTransaction(session -> session.persist(account));
-
-        cancel(actionEvent);
+        close();
         
         if (accountConsumer != null) accountConsumer.accept(account);
     }
@@ -85,6 +84,6 @@ public class AccountCreatorController extends StageController<AccountCreatorCont
     @Override
     public URL getFXML()
     {
-        return AccountCreatorController.class.getResource("accountCreator.fxml");
+        return AccountCreatorStageController.class.getResource("accountCreator.fxml");
     }
 }
