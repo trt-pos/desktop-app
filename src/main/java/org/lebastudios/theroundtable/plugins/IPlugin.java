@@ -43,7 +43,7 @@ public interface IPlugin extends IDatabaseUpdater
 
     default List<Class<?>> getPluginEntities() { return new ArrayList<>(); }
     
-    default Task<Boolean> purgeTask() { return null; }
+    default Task<PurgeTaskResult> purgeTask() { return null; }
     
     default File getPluginFolder()
     {
@@ -77,4 +77,6 @@ public interface IPlugin extends IDatabaseUpdater
             return null;
         }
     }
+    
+    record PurgeTaskResult(boolean success, String message) {}
 }

@@ -17,6 +17,7 @@ import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
+import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
@@ -43,7 +44,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     private final PluginData pluginData;
 
     private HBox rootVBox;
-    
+
     private final Node loadingNode = new LoadingPaneController().getRoot();
     private final IEventMethod onReloadLabelsListener = () -> Platform.runLater(this::updateView);
 
@@ -62,11 +63,11 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
         Image iconImg = pluginData.getPluginIcon();
         pluginIcon.setImage(iconImg);
-        
+
         pluginIcon.setPreserveRatio(true);
         pluginIcon.setFitHeight(35);
         pluginIcon.setFitWidth(35);
-        
+
         pluginName.setText(pluginData.pluginName);
         pluginDescription.setText(pluginData.pluginDescription);
 
@@ -87,7 +88,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         rootVBox.getChildren().remove(loadingNode);
 
         if (pluginData.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) return;
-        
+
         if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.pluginId))
         {
             rootVBox.getChildren().add(restartAppButton);
@@ -194,6 +195,32 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         {
             Logs.getInstance().log(Logs.LogType.WARNING, "Plugin does not exist: " + pluginFile);
             return;
+        }
+
+        IPlugin plugin = PluginsManager.getInstance().getPluginsInstalled().get(pluginData.pluginId);
+        
+        if (plugin != null && plugin.purgeTask() != null)
+        {
+            new ConfirmationTextDialogController(
+                    """
+                            This plugin can be purged, this action might remove all data related to it, depending on the \
+                            plugin developer implementation. \
+                             \
+                            Do you want to purge the plugin before uninstalling it?""",
+                    accept ->
+            {
+                if (!accept) return;
+
+                plugin.purgeTask().setOnTaskComplete(result ->
+                {
+                    if (!result.success()) 
+                    {
+                        new InformationTextDialogController(
+                                "Purge failed:\n\n" + result.message()
+                        ).instantiate(true);
+                    }
+                }).execute(true);
+            }).instantiate(true);
         }
 
         if (pluginFile.delete())
