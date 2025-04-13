@@ -112,6 +112,8 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
                 usersContainer.getChildren().add(createUserNode(account));
             }
         });
+        
+        showAccount(AccountManager.getInstance().getCurrentLogged());
     }
 
     public void addUser(ActionEvent actionEvent)
@@ -152,7 +154,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
             session.remove(account);
         });
 
-        userView.setVisible(false);
+        showAccount(AccountManager.getInstance().getCurrentLogged());
         reloadUsersContainer();
     }
 
@@ -163,7 +165,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         root.getStyleClass().add("button");
         root.setSpacing(10);
 
-        root.setOnMouseClicked(e -> onUserClicked(account));
+        root.setOnMouseClicked(e -> showAccount(account));
 
         IconView icon = new IconView(account.getIconName());
         root.getChildren().add(icon);
@@ -180,11 +182,14 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
         return root;
     }
 
-    private void onUserClicked(Account account)
+    private void showAccount(Account account)
     {
         this.selectedAccount = account;
 
-        deleteAccount.setDisable(account.getType() == Account.AccountType.ROOT);
+        deleteAccount.setDisable(
+                account.getType() == Account.AccountType.ROOT
+                || account.getId().equals(AccountManager.getInstance().getCurrentLogged().getId())
+        );
 
         userIcon.setIconName(account.getIconName());
         userName.setText(account.getName());
