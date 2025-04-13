@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import java.io.File;
 
-public class AccountConfigData extends ConfigData<AccountConfigData>
+public class LicenseConfigData extends ConfigData<LicenseConfigData>
 {
     public String email = "";
     public String password = "";

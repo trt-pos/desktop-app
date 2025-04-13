@@ -49,3 +49,4 @@ phrase.otherplugindepends,Other plugins need this one to work. Continue removing
 phrase.pluginsuninstall,You are about to uninstall a plugin. Are you sure about this?,Estás a punto de desinstalar un plugin. Deseas continuar?
 phrase.dependenciesnotsatisfied,Dependencies requirements not satisfied.,Las dependencias requeridas no están instaladas.
 word.updates,Updates,Actualizaciones
+word.license,License,Licencia

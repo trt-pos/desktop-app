@@ -5,23 +5,23 @@ import javafx.scene.control.TextField;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.server.LicenseValidatorTask;
 
-public class AccountConfigPaneController extends ConfigPaneController<AccountConfigData>
+public class LicenseConfigPaneController extends ConfigPaneController<LicenseConfigData>
 {
     @FXML public TextField licenseId;
 
-    public AccountConfigPaneController()
+    public LicenseConfigPaneController()
     {
-        super(new AccountConfigData(), LangFileLoader.getTranslation("word.account"), "user.png");
+        super(new LicenseConfigData(), LangFileLoader.getTranslation("word.license"), "user.png");
     }
 
     @Override
-    public void updateConfigData(AccountConfigData configData)
+    public void updateConfigData(LicenseConfigData configData)
     {
         configData.license = licenseId.getText();
     }
 
     @Override
-    public void updateUI(AccountConfigData configData)
+    public void updateUI(LicenseConfigData configData)
     {
         licenseId.setText(configData.license);
     }

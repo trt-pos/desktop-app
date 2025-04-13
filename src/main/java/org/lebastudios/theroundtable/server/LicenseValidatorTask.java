@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
-import org.lebastudios.theroundtable.config.AccountConfigData;
+import org.lebastudios.theroundtable.config.LicenseConfigData;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
@@ -49,7 +49,7 @@ public class LicenseValidatorTask extends Task<Void>
         tries++;
 
         updateMessage("Reading license...");
-        var license = new AccountConfigData().load().license;
+        var license = new LicenseConfigData().load().license;
 
         updateMessage("Validating license...");
         var validation = Licenses.isLicenseValid(license);
@@ -89,7 +89,7 @@ public class LicenseValidatorTask extends Task<Void>
             return;
         }
 
-        var accountData = new AccountConfigData().load();
+        var accountData = new LicenseConfigData().load();
         license = license.replace("-", "");
         accountData.license = license;
         accountData.save();

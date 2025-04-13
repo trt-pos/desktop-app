@@ -56,7 +56,7 @@ public class CorePlugin implements IPlugin
         if (AccountManager.getInstance().isAccountAdmin())
         {
             generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(new AccountConfigPaneController()))
+                    new TreeItem<>(new SettingsItem(new LicenseConfigPaneController()))
             );
 
             generalConfigSection.getChildren().add(

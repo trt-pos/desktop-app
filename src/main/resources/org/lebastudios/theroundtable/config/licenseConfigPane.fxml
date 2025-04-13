@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
       xmlns="http://javafx.com/javafx"
-      fx:controller="org.lebastudios.theroundtable.config.AccountConfigPaneController"
+      fx:controller="org.lebastudios.theroundtable.config.LicenseConfigPaneController"
       spacing="15">
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>
