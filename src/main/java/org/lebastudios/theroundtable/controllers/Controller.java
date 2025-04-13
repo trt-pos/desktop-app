@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.locale.LangBundleLoader;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -101,7 +102,11 @@ public abstract class Controller<T extends Controller<T>>
 
     public final Stage getStage()
     {
-        return (Stage) getRoot().getScene().getWindow();
+        Scene scene = getRoot().getScene();
+        
+        if (scene == null) return null;
+        
+        return (Stage) scene.getWindow();
     }
 
     public final Class<? extends IPlugin> getBundleClass()
