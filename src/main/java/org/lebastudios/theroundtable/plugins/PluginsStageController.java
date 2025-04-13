@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconTextButton;
@@ -27,8 +28,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
         this.instantiateInstalledPlugins();
         this.instantiateAvailablePlugins();
 
-        tabPane.getSelectionModel().selectedItemProperty()
-                .addListener((_, _, _) -> tabPane.getScene().getWindow().sizeToScene());
+        showPluginViewer(CorePlugin.getInstance().getPluginData());
     }
 
     private void instantiateInstalledPlugins()
@@ -61,7 +61,6 @@ public class PluginsStageController extends StageController<PluginsStageControll
         if (root.getChildren().size() > 1) root.getChildren().removeLast();
 
         root.getChildren().add(new PluginViewerPaneController(pluginData).getRoot());
-        getStage().sizeToScene();
     }
 
     @Override
