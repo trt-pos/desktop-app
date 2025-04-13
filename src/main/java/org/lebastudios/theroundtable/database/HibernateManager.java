@@ -10,6 +10,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
+import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -105,7 +106,7 @@ class HibernateManager
         }
         catch (Exception e)
         {
-            Logs.getInstance().log("Hibernate transaction failed.", e);
+            new ExceptionDialogController(e).instantiate();
             if (session.getTransaction().isActive())
             {
                 session.getTransaction().rollback();

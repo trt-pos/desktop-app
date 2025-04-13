@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.plugins;
 import lombok.Getter;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
-import org.lebastudios.theroundtable.locale.AppLocale;
+import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
@@ -105,7 +105,7 @@ public class PluginLoader
                     updateMessage("Initializing plugin " + pluginData.pluginName);
                     // All the chewcks passed, the plugin can be considered load and the user will be able to use it
                     // Load plugin translations
-                    LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale());
+                    LangLoader.loadLang(plugin.getClass(), LocaleManager.getInstance().getActualLocale());
 
                     // Initialize the plugin
                     plugin.initialize();

@@ -17,7 +17,7 @@ public class LangLoader
     {
         PluginsManager.getInstance()
                 .getLoadedPlugins()
-                .forEach(plugin -> LangLoader.loadLang(plugin.getClass(), AppLocale.getActualLocale()));
+                .forEach(plugin -> LangLoader.loadLang(plugin.getClass(), LocaleManager.getInstance().getActualLocale()));
     }
     
     public static void loadLang(Class<? extends IPlugin> langClass, Locale locale)
