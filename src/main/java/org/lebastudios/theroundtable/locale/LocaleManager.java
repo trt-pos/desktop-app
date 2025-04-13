@@ -39,4 +39,9 @@ public class LocaleManager
                 .ofLocalizedDateTime(FormatStyle.SHORT)
                 .withLocale(getActualLocale());
     }
+    
+    public Currency getActualCurrency()
+    {
+        return Currency.EUR;
+    }
 }
