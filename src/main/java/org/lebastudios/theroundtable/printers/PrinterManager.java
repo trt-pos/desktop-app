@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.lebastudios.theroundtable.config.PrintersConfigData;
 
 import javax.print.PrintService;
+import java.io.IOException;
 import java.util.HashMap;
 
 @Setter
@@ -25,7 +26,7 @@ public class PrinterManager
         return instance;
     }
 
-    public PrintService getDefaultPrintService() throws IllegalArgumentException
+    public PrintService getDefaultPrintService() throws IOException
     {
         var defaultPrinterName = new PrintersConfigData().load().defaultPrinter;
 
@@ -35,7 +36,17 @@ public class PrinterManager
             return printServices.get(key);
         }
 
-        final var defaultPrintService = PrinterOutputStream.getPrintServiceByName(defaultPrinterName);
+        PrintService defaultPrintService;
+        
+        try
+        {
+            defaultPrintService = PrinterOutputStream.getPrintServiceByName(defaultPrinterName);
+        }
+        catch (IllegalArgumentException exception)
+        {
+            throw new IOException(exception);
+        }
+        
         printServices.put(key, defaultPrintService);
         return defaultPrintService;
     }
