@@ -69,7 +69,7 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistence
     }
     
    @Override
-    public final boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
