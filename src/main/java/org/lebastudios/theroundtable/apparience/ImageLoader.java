@@ -58,8 +58,9 @@ public class ImageLoader
 
     public static Image getWebImage(String url) throws URISyntaxException
     {
-        Image image = downloadedIcons.get(url).get();
-
+        WeakReference<Image> imageWeakRef = downloadedIcons.get(url);
+        Image image = imageWeakRef == null ? null : imageWeakRef.get();
+        
         if (image != null) return image;
 
         HttpClient client = AppHttpClient.getInstance().getClient();
