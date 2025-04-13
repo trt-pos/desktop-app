@@ -4,6 +4,8 @@ import com.github.anastaciocintra.escpos.EscPos;
 import lombok.Setter;
 import org.lebastudios.theroundtable.tasks.Task;
 
+import java.io.IOException;
+
 public abstract class PrintTask extends Task<Void>
 {
     private final EscPos escpos;
@@ -30,5 +32,5 @@ public abstract class PrintTask extends Task<Void>
         return null;
     }
 
-    protected abstract EscPos print(EscPos escpos);
+    protected abstract EscPos print(EscPos escpos) throws IOException;
 }
