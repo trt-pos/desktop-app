@@ -4,6 +4,8 @@ import com.github.anastaciocintra.output.PrinterOutputStream;
 import lombok.Getter;
 import lombok.Setter;
 import org.lebastudios.theroundtable.config.PrintersConfigData;
+import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
+import org.lebastudios.theroundtable.config.RequestConfigStageController;
 
 import javax.print.PrintService;
 import java.io.IOException;
@@ -26,31 +28,43 @@ public class PrinterManager
         return instance;
     }
 
-    public PrintService getDefaultPrintService() throws IOException
+    public PrintService getDefaultPrintService()
     {
-        var defaultPrinterName = new PrintersConfigData().load().defaultPrinter;
-
-        final var key = "default:" + defaultPrinterName;
-        if (printServices.containsKey(key)) 
+        try
         {
-            return printServices.get(key);
+            return getPrintServiceByName(new PrintersConfigData().load().defaultPrinter);
+        }
+        catch (IOException e)
+        {
+            new RequestConfigStageController(new PrintersConfigPaneController())
+                    .setTitle("Error trying to obtain the default printer")
+                    .instantiate(true);
+            return getDefaultPrintService();
+        }
+    }
+
+    public PrintService getPrintServiceByName(String printerName) throws IOException
+    {
+        if (printServices.containsKey(printerName))
+        {
+            return printServices.get(printerName);
         }
 
         PrintService defaultPrintService;
-        
+
         try
         {
-            defaultPrintService = PrinterOutputStream.getPrintServiceByName(defaultPrinterName);
+            defaultPrintService = PrinterOutputStream.getPrintServiceByName(printerName);
         }
         catch (IllegalArgumentException exception)
         {
             throw new IOException(exception);
         }
-        
-        printServices.put(key, defaultPrintService);
+
+        printServices.put(printerName, defaultPrintService);
         return defaultPrintService;
     }
-
+    
     public String[] getAvailablePrinters()
     {
         return PrinterOutputStream.getListPrintServicesNames();

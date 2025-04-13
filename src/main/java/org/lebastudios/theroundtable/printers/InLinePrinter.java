@@ -3,6 +3,7 @@ package org.lebastudios.theroundtable.printers;
 import com.github.anastaciocintra.escpos.EscPos;
 import com.github.anastaciocintra.escpos.EscPosConst;
 import com.github.anastaciocintra.escpos.Style;
+import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
 
@@ -80,12 +81,20 @@ public class InLinePrinter implements IPrinter
 
         int emptySpaces = availableSpaces - leftText.length() - rightText.length();
 
+        String text;
+        
         if (emptySpaces < 0)
         {
-            throw new IllegalStateException("Text is too long for the available spaces");
+            Logs.getInstance().log(
+                    Logs.LogType.WARNING,
+                    "InLinePrinter: Printing text too long for the available space"
+            );
+            text = (leftText + " " + rightText);
         }
-
-        String text = leftText + " ".repeat(emptySpaces) + rightText;
+        else
+        {
+            text = leftText + " ".repeat(emptySpaces) + rightText;
+        }
 
         if (text.length() > availableSpaces) text = text.substring(0, availableSpaces);
 

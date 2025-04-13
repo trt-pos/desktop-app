@@ -70,12 +70,22 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
     @Override
     public boolean validate()
     {
-        if (parseCommand(openCashDrawerCommand.getText().trim()) == null) 
+        if (parseCommand(openCashDrawerCommand.getText().trim()) == null)
         {
             UIEffects.shakeNode(openCashDrawerCommand);
             return false;
         }
-        
+
+        try
+        {
+            PrinterOutputStream.getPrintServiceByName(defaultPrinter.getValue());
+        }
+        catch (IllegalArgumentException _)
+        {
+            UIEffects.shakeNode(defaultPrinter);
+            return false;
+        }
+
         return true;
     }
 
@@ -126,6 +136,7 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
                     .writeLF("Special characters: áéñ#*=¿¡")
                     .feed(5)
                     .cut(EscPos.CutMode.PART);
-        } catch (Exception _) { UIEffects.shakeNode(defaultPrinter); }
+        }
+        catch (Exception _) {UIEffects.shakeNode(defaultPrinter);}
     }
 }
