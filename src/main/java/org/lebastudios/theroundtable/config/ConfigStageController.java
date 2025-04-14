@@ -2,10 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,6 +18,8 @@ import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ConfigStageController extends StageController<ConfigStageController>
@@ -105,8 +104,11 @@ public class ConfigStageController extends StageController<ConfigStageController
                 this.setGraphic(imageView);
             }
         });
+
+        List<TreeItem<SettingsItem>> rootTrees =  PluginsManager.getInstance().getSettingsTreeViews();
+        Collections.reverse(rootTrees);
         
-        configSectionsTreeView.getRoot().getChildren().addAll(PluginsManager.getInstance().getSettingsTreeViews());
+        configSectionsTreeView.getRoot().getChildren().addAll(rootTrees);
         
         mainPane.setContent(new LogoPaneController().getRoot());
     }

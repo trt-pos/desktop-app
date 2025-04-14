@@ -15,6 +15,9 @@ import org.lebastudios.theroundtable.ui.IconTextButton;
 import org.lebastudios.theroundtable.ui.LazyTab;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class PluginsStageController extends StageController<PluginsStageController>
@@ -35,10 +38,15 @@ public class PluginsStageController extends StageController<PluginsStageControll
     {
         Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab(
                 "Installed",
-                () -> PluginsManager.getInstance().getInstalledPlugins()
-                        .stream()
-                        .map(IPlugin::getPluginData)
-                        .toArray(PluginData[]::new)
+                () ->
+                {
+                    List<IPlugin> installed = new ArrayList<>(PluginsManager.getInstance().getInstalledPlugins());
+                    Collections.reverse(installed);
+                    
+                    return installed.stream()
+                            .map(IPlugin::getPluginData)
+                            .toArray(PluginData[]::new);
+                }
         );
 
         tabPane.getTabs().addFirst(pluginTab);
@@ -82,33 +90,33 @@ public class PluginsStageController extends StageController<PluginsStageControll
             LazyTab lazyTab = new LazyTab(title, () ->
             {
                 PluginData[] plugins = pluginsSupplier.get();
-                
-                if (plugins == null) 
+
+                if (plugins == null)
                 {
                     VBox content = new VBox();
                     content.setSpacing(10);
                     content.setAlignment(Pos.CENTER);
-                    
+
                     content.getChildren().add(
                             new Label("Plugins couldn't be loaded")
                     );
-                    
+
                     Button reloadButton = new IconTextButton("reload.png");
                     reloadButton.setText("Reload");
-                    reloadButton.setOnAction(event -> 
+                    reloadButton.setOnAction(event ->
                     {
                         PluginData[] pluginsReloaded = pluginsSupplier.get();
-                        
+
                         if (pluginsReloaded == null) return;
 
                         content.getChildren().clear();
                         content.getChildren().add(generatePluginTabContent(pluginsReloaded));
                     });
-                    
+
                     content.getChildren().add(reloadButton);
                     return content;
                 }
-                
+
                 return generatePluginTabContent(plugins);
             });
 
@@ -116,7 +124,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
 
             return lazyTab;
         }
-        
+
         private Node generatePluginTabContent(PluginData[] plugins)
         {
             ScrollPane content = new ScrollPane();

@@ -22,8 +22,8 @@ public class PluginsManager
         return instance;
     }
 
-    private final Map<String, IPlugin> pluginsLoaded = new HashMap<>();
-    private final Map<String, IPlugin> pluginsInstalled = new HashMap<>();
+    private final Map<String, IPlugin> pluginsLoaded = new LinkedHashMap<>();
+    private final Map<String, IPlugin> pluginsInstalled = new LinkedHashMap<>();
     private final Map<String, PluginData> pluginsRestartPending = new HashMap<>();
     
     private PluginsManager() {}
