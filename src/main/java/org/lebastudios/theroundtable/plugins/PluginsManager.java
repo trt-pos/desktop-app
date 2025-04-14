@@ -7,6 +7,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
+import java.net.URL;
 import java.util.*;
 
 @Getter
@@ -128,8 +129,15 @@ public class PluginsManager
     
     public Optional<IPlugin> getPluginOf(Class<?> clazz)
     {
-        return this.getLoadedPlugins().stream()
-                .filter(plugin -> clazz.getModule().equals(plugin.getClass().getModule()))
-                .findFirst();
+        String clazzJar = clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
+        
+        for (var plugin : this.getLoadedPlugins())
+        {
+            String pluginJar = plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+            
+            if (pluginJar.equals(clazzJar)) return Optional.of(plugin);
+        }
+        
+        return Optional.empty();
     }
 }
