@@ -59,6 +59,13 @@ public class SearchBox extends HBox
     {
         return searchField.getText();
     }
+
+    public void clear()
+    {
+        searchField.clear();
+
+        accept();
+    }
     
     private void accept()
     {
