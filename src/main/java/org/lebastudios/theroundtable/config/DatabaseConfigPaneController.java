@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
+import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -7,13 +8,17 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.util.Duration;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.tasks.Task;
+import org.lebastudios.theroundtable.ui.SwitcheableNodePane;
 
 import java.io.File;
 import java.sql.Connection;
@@ -22,6 +27,7 @@ import java.util.Arrays;
 public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseConfigData>
 {
     @FXML public CheckBox enableRemoteDb;
+    @FXML public SwitcheableNodePane formContainer;
 
     @FXML public Node localDbSection;
     @FXML public Node remoteDbSection;
@@ -48,8 +54,26 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @Override
+    protected void initialize()
+    {
+        ((Pane) remoteDbSection.getParent()).getChildren().remove(remoteDbSection);
+        ((Pane) localDbSection.getParent()).getChildren().remove(localDbSection);
+        
+        enableRemoteDb.selectedProperty().addListener((_, _, newValue) ->
+        {
+            formContainer.switchContent(newValue ? remoteDbSection : localDbSection);
+        });
+        
+        backupSection.disableProperty().bind(enableBackups.selectedProperty().not());
+        
+        super.initialize();
+    }
+    
+    @Override
     public void updateUI(DatabaseConfigData configData)
     {
+        enableRemoteDb.setSelected(configData.enableRemoteDb);
+        
         databasesDirectory.setText(configData.databaseFolder);
         enableBackups.setSelected(configData.enableBackups);
         databasesBackupDirectory.setText(configData.backupFolder);
@@ -65,12 +89,6 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             remoteDbPassword.setText(remoteDbData.password);
             remoteDbName.setText(remoteDbData.database);
         }
-
-        backupSection.disableProperty().bind(enableBackups.selectedProperty().not());
-        remoteDbSection.disableProperty().bind(enableRemoteDb.selectedProperty().not());
-        localDbSection.disableProperty().bind(enableRemoteDb.selectedProperty());
-
-        enableRemoteDb.setSelected(configData.enableRemoteDb);
     }
 
     @Override

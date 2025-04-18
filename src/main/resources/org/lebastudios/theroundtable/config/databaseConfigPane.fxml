@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.ui.IconButton?>
+<?import org.lebastudios.theroundtable.ui.SwitcheableNodePane?>
 <VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
       xmlns="http://javafx.com/javafx"
       fx:controller="org.lebastudios.theroundtable.config.DatabaseConfigPaneController"
@@ -15,6 +16,7 @@
         <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.enableremotedb"/>
         <CheckBox fx:id="enableRemoteDb"/>
     </HBox>
+    <SwitcheableNodePane fx:id="formContainer" />
     <VBox fx:id="localDbSection" spacing="5">
         <HBox alignment="CENTER_LEFT" spacing="5">
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasedir"/>
