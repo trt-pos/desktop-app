@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.database;
 
+import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -106,7 +107,10 @@ class HibernateManager
         }
         catch (Exception e)
         {
-            new ExceptionDialogController(e).instantiate();
+            Logs.getInstance().log(
+                    "Error during transaction",
+                    e
+            );
             if (session.getTransaction().isActive())
             {
                 session.getTransaction().rollback();
