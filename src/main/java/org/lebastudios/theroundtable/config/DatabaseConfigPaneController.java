@@ -64,6 +64,8 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             formContainer.switchContent(newValue ? remoteDbSection : localDbSection);
         });
         
+        formContainer.switchContent(localDbSection);
+        
         backupSection.disableProperty().bind(enableBackups.selectedProperty().not());
         
         super.initialize();
