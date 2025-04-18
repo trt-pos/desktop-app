@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.LogoPaneController;
-import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
@@ -32,7 +31,6 @@ public class ConfigStageController extends StageController<ConfigStageController
         AccountEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
     }
     
-    @FXML public Label versionLabel;
     @FXML public TreeView<SettingsItem> configSectionsTreeView;
     @FXML public ScrollPane mainPane;
     
@@ -65,8 +63,6 @@ public class ConfigStageController extends StageController<ConfigStageController
     @SneakyThrows @FXML @Override
     protected void initialize()
     {
-        versionLabel.setText("Version: " + TheRoundTableApplication.getAppVersion());
-        
         configSectionsTreeView.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) ->
         {
             if (newValue == null || newValue.getValue() == null) return;

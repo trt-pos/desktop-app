@@ -3,29 +3,27 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1"
+<SplitPane xmlns:fx="http://javafx.com/fxml/1"
       prefWidth="800.0" maxHeight="600" fx:id="root"
-      xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns="http://javafx.com/javafx/17.0.2-ea" dividerPositions="0.25"
       fx:controller="org.lebastudios.theroundtable.config.ConfigStageController">
-    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.25">
-        <TreeView style="-fx-background-color: transparent; -fx-border-color: transparent;"
-                  showRoot="false" prefWidth="200" fx:id="configSectionsTreeView">
-            <root>
-                <TreeItem/>
-            </root>
-        </TreeView>
-
+    <TreeView style="-fx-background-color: transparent; -fx-border-color: transparent;"
+              showRoot="false" prefWidth="200" fx:id="configSectionsTreeView">
+        <root>
+            <TreeItem/>
+        </root>
+    </TreeView>
+    
+    <VBox spacing="5">
         <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true" VBox.vgrow="ALWAYS"
                     prefWidth="650" prefHeight="400" fx:id="mainPane"/>
-    </SplitPane>
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <padding>
-            <Insets top="10" right="10" bottom="10" left="10"/>
-        </padding>
-        <Label text="Version ?" fx:id="versionLabel" maxWidth="Infinity" HBox.hgrow="ALWAYS" 
-               style="-fx-font-size: 8;"/>
-        <Button text="%word.accept" onAction="#accept"/>
-        <Button defaultButton="true" text="%word.cancel" onAction="#cancel"/>
-        <Button text="%word.apply" onAction="#apply"/>
-    </HBox>
-</VBox>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="5" right="5" bottom="5" left="5"/>
+            </padding>
+            <Button text="%word.accept" onAction="#accept"/>
+            <Button defaultButton="true" text="%word.cancel" onAction="#cancel"/>
+            <Button text="%word.apply" onAction="#apply"/>
+        </HBox>
+    </VBox>
+</SplitPane>

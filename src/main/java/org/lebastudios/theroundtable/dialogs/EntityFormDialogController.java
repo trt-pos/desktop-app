@@ -12,7 +12,7 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-public class FormDialogController<T> extends StageController<FormDialogController<T>>
+public class EntityFormDialogController<T> extends StageController<EntityFormDialogController<T>>
 {
     @FXML public StackPane formContainer;
     @FXML public IconButton deleteButton;
@@ -20,9 +20,15 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     private final FormPaneController<T> formPaneController;
     private final T object;
 
-    public FormDialogController(@NonNull FormPaneController<T> formPaneController, @NonNull T object)
+    public EntityFormDialogController(@NonNull FormPaneController<T> formPaneController, @NonNull T object)
     {
         this.formPaneController = formPaneController;
+
+        if (!object.getClass().isAnnotationPresent(Entity.class)) 
+        {
+            throw new IllegalArgumentException("Object must be annotated with @Entity");
+        }
+        
         this.object = object;
     }
     
@@ -31,8 +37,6 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     {
         formContainer.getChildren().addAll(formPaneController.getRoot());
         formPaneController.setObject(object);
-        
-        deleteButton.setVisible(object.getClass().isAnnotationPresent(Entity.class));
     }
 
     @Override

@@ -8,7 +8,7 @@
 <?import org.lebastudios.theroundtable.ui.IconButton?>
 <VBox fx:id="root" spacing="5" prefWidth="400"
       xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.lebastudios.theroundtable.dialogs.FormDialogController">
+      fx:controller="org.lebastudios.theroundtable.dialogs.EntityFormDialogController">
     <padding>
         <Insets bottom="5" left="5" right="5" top="5" />
     </padding>
