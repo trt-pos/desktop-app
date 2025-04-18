@@ -10,6 +10,7 @@ wget https://lebastudios.org/api/v1/theroundtable/update/theroundtable-linux-x64
 
 # unzip the app
 unzip theroundtable-linux-x64.zip
+mv theroundtable-linux-x64 theroundtable
 
 # remove the zip file
 rm theroundtable-linux-x64.zip
