@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
@@ -34,7 +35,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     @FXML public TextField remoteDbHost;
     @FXML public TextField remoteDbPort;
     @FXML public TextField remoteDbUser;
-    @FXML public TextField remoteDbPassword;
+    @FXML public PasswordField remoteDbPassword;
     @FXML public TextField remoteDbName;
 
     private DatabaseConfigData oldConfig;

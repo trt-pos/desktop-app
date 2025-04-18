@@ -55,7 +55,7 @@
             <TextField prefWidth="150" fx:id="remoteDbUser"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label prefWidth="150" HBox.hgrow="SOMETIMES" maxWidth="Infinity" text="%word.password"/>
-            <TextField prefWidth="150" fx:id="remoteDbPassword"/>
+            <PasswordField prefWidth="150" fx:id="remoteDbPassword"/>
         </HBox>
     </VBox>
 </VBox>
