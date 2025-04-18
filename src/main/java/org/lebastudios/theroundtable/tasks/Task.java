@@ -95,7 +95,6 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
             rootTask.updateProgress(newValue.doubleValue(), 1);
         });
 
-        Logs.getInstance().log(Logs.LogType.INFO, "Executing subtask: " + task.getClass().getCanonicalName());
         rootTask.onSubtaskStarted.invoke(task);
         task.run();
         return task.get();
