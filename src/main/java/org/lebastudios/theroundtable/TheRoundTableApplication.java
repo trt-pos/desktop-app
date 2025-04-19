@@ -95,14 +95,14 @@ public class TheRoundTableApplication extends Application
             {
                 updateTitle("Starting The Round Table");
 
+                updateMessage("Starting Camelot");
+                executeSubtask(CamelotServiceManager.getInstance().initTask());
+                
                 updateMessage("Loading plugins");
                 executeSubtask(PluginLoader.getInstance().loadPluginsTask());
 
                 updateMessage("Starting database");
                 executeSubtask(Database.getInstance().initTask());
-
-                updateMessage("Starting Camelot");
-                executeSubtask(CamelotServiceManager.getInstance().initTask());
 
                 return null;
             }
