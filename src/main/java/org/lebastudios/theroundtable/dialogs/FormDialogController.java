@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import lombok.NonNull;
-import lombok.Setter;
 import org.lebastudios.theroundtable.controllers.FormPaneController;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.ui.IconButton;
@@ -21,8 +20,8 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     protected final FormPaneController<T> formPaneController;
     protected final T object;
 
-    @Setter private Function<T, Boolean> onDeleteAction = _ -> true;
-    @Setter private Function<T, Boolean> onSaveAction = _ -> true;
+    protected Function<T, Boolean> onDeleteAction = _ -> true;
+    protected Function<T, Boolean> onSaveAction = _ -> true;
 
     public FormDialogController(@NonNull FormPaneController<T> formPaneController, @NonNull T object)
     {
@@ -42,9 +41,9 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     @FXML
     public void deleteButtonAction(ActionEvent actionEvent)
     {
-        if (!formPaneController.onDeleteAction(object)) return;
-
         if (!onDeleteAction.apply(object)) return;
+        
+        if (!formPaneController.onDeleteAction(object)) return;
         
         this.close();
     }
@@ -66,10 +65,10 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
         }
 
         T buildedObject = formPaneController.buildObject(object);
-
-        if (!formPaneController.onSaveAction(buildedObject)) return;
-
+        
         if (!onSaveAction.apply(buildedObject)) return;
+        
+        if (!formPaneController.onSaveAction(buildedObject)) return;
 
         close();
     }

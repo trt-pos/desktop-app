@@ -16,20 +16,20 @@ public class EntityFormDialogController<T> extends FormDialogController<T>
             throw new IllegalArgumentException("Object must be annotated with @Entity");
         }
         
-        setOnDeleteAction((objectDeleted) ->
+        this.onDeleteAction = objectDeleted ->
         {
             return Database.getInstance().connectTransactionWithBool(session ->
             {
                 session.remove(objectDeleted);
             });
-        });
+        };
         
-        setOnSaveAction(objectBuilded ->
+        this.onSaveAction = objectBuilded ->
         {
             return Database.getInstance().connectTransactionWithBool(session ->
             {
                 session.persist(objectBuilded);
             });
-        });
+        };
     }
 }
