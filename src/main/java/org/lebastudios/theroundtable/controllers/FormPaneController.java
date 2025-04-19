@@ -14,4 +14,8 @@ public abstract class FormPaneController<T> extends Controller<FormPaneControlle
     
     public abstract boolean validate();
     public abstract T buildObject(T object);
+    
+    public boolean onDeleteAction(T object) { return true; }
+    public boolean onSaveAction(T object) { return true; }
+    public boolean onCancelAction() { return true; }
 }

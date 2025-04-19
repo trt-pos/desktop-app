@@ -21,48 +21,57 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     protected final FormPaneController<T> formPaneController;
     protected final T object;
 
-    @Setter private Runnable onDeleteAction;
+    @Setter private Function<T, Boolean> onDeleteAction = _ -> true;
     @Setter private Function<T, Boolean> onSaveAction = _ -> true;
-    
+
     public FormDialogController(@NonNull FormPaneController<T> formPaneController, @NonNull T object)
     {
         this.formPaneController = formPaneController;
         this.object = object;
     }
-    
+
     @Override
     protected void initialize()
     {
         formContainer.getChildren().addAll(formPaneController.getRoot());
         formPaneController.setObject(object);
-        
+
         deleteButton.setVisible(onDeleteAction != null);
     }
 
     @FXML
-    public void deleteButtonAction(ActionEvent actionEvent) 
+    public void deleteButtonAction(ActionEvent actionEvent)
     {
-        onDeleteAction.run();
-    }
+        if (!formPaneController.onDeleteAction(object)) return;
 
-    @FXML
-    public void cancelButtonAction(ActionEvent actionEvent) 
-    {
+        if (!onDeleteAction.apply(object)) return;
+        
         this.close();
     }
 
     @FXML
-    public void saveButtonAction(ActionEvent actionEvent) 
+    public void cancelButtonAction(ActionEvent actionEvent)
     {
-        if (!formPaneController.validate()) 
+        if (!formPaneController.onCancelAction()) return;
+        
+        this.close();
+    }
+
+    @FXML
+    public void saveButtonAction(ActionEvent actionEvent)
+    {
+        if (!formPaneController.validate())
         {
             return;
         }
 
-        if (onSaveAction.apply(formPaneController.buildObject(object)))
-        {
-            close();
-        }
+        T buildedObject = formPaneController.buildObject(object);
+
+        if (!formPaneController.onSaveAction(buildedObject)) return;
+
+        if (!onSaveAction.apply(buildedObject)) return;
+
+        close();
     }
 
     @Override
