@@ -11,11 +11,14 @@ import org.lebastudios.theroundtable.tasks.Task;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.function.Consumer;
+
+import static org.lebastudios.theroundtable.camelot.trtcp.StatusCode.ALREADY_CONNECTED;
 
 public class CamelotClient implements AutoCloseable
 {
@@ -105,9 +108,17 @@ public class CamelotClient implements AutoCloseable
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
 
-                new Thread(readCoroutine, "Camelot client " + name + " Thread").start();
+                CamelotClient.this.writeNotBlocking(Request.creteConnectRequest(name));
 
-                CamelotClient.this.write(Request.creteConnectRequest(name));
+                Response response = readResponse();
+                switch (response.getStatusCode())
+                {
+                    case StatusCode.OK -> {}
+                    case StatusCode.ALREADY_CONNECTED -> throw new ConnectException("Client name already in use");
+                    default -> throw new ConnectException("Unexpected error: " + response.getStatusCode());
+                }
+                
+                new Thread(readCoroutine, "Camelot client " + name + " Thread").start();
 
                 return null;
             }
@@ -151,6 +162,17 @@ public class CamelotClient implements AutoCloseable
         {
             onErrorHandler.accept(exception);
             return null;
+        }
+    }
+    
+    private void writeNotBlocking(IntoBytes data) throws IOException
+    {
+        byte[] bytes = data.intoBytes();
+
+        synchronized (this)
+        {
+            out.write(bytes);
+            out.flush();
         }
     }
 
@@ -264,6 +286,28 @@ public class CamelotClient implements AutoCloseable
         }
     }
 
+    private Response readResponse() throws Exception
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        byte msgType = in.readByte(); // msgType byte
+        buffer.write(msgType);
+
+        int length = in.readInt(); // length int
+        buffer.write((byte) (length >> 24));
+        buffer.write((byte) (length >> 16));
+        buffer.write((byte) (length >> 8));
+        buffer.write((byte) length);
+
+        buffer.write(in.readNBytes(length)); // head, middle and body bytes
+
+        byte[] packet = buffer.toByteArray();
+
+        if (msgType != 1) throw new Exception("Unexpected message type: " + msgType);
+
+        return new Response().fromBytes(packet);
+    }
+    
     private final Runnable readCoroutine = () ->
     {
         Socket tmpSocket = socket;

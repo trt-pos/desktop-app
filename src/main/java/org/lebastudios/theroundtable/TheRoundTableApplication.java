@@ -16,6 +16,8 @@ import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.locale.LangLoader;
+import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
@@ -88,6 +90,8 @@ public class TheRoundTableApplication extends Application
     @Override
     public void start(Stage stage)
     {
+        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
+        
         new Task<Void>()
         {
             @Override
@@ -95,6 +99,12 @@ public class TheRoundTableApplication extends Application
             {
                 updateTitle("Starting The Round Table");
 
+                updateMessage("Loading application core translations");
+                // Would like to differenciate between CorePlugin translations and basic app translations
+                // cause this is executed twice,
+                // one here and another when loading the plugins
+                LangLoader.loadLang(CorePlugin.class, LocaleManager.getInstance().getActualLocale()); 
+                
                 updateMessage("Starting Camelot");
                 executeSubtask(CamelotServiceManager.getInstance().initTask());
                 
@@ -111,8 +121,6 @@ public class TheRoundTableApplication extends Application
             new ExceptionDialogController(e).instantiate(true);
             System.exit(-1);
         }).execute(true);
-
-        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
 
         new AccountStageController().instantiate(true);
 
