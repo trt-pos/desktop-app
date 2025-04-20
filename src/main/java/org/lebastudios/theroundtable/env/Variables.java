@@ -4,6 +4,7 @@ public class Variables
 {
     private static EnvironmentType envType = detectEnvironmentType();
     private static Boolean showExceptionsBacktrace = null;
+    private static Boolean isVerbose = null;
     
     public enum EnvironmentType
     {
@@ -54,6 +55,25 @@ public class Variables
         }
         
         return showExceptionsBacktrace;
+    }
+
+    public static boolean isVerbose()
+    {
+        if (isVerbose == null)
+        {
+            String value = System.getenv("TRT_VERBOSE");
+
+            if (value == null)
+            {
+                isVerbose = false;
+            }
+            else
+            {
+                isVerbose = value.equals("1");
+            }
+        }
+
+        return isVerbose;
     }
     
     public static String getTestServerUrl()

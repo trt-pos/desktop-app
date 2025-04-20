@@ -1,6 +1,8 @@
 package org.lebastudios.theroundtable.events;
 
+import com.google.gson.GsonBuilder;
 import org.lebastudios.theroundtable.camelot.*;
+import org.lebastudios.theroundtable.env.Variables;
 
 import java.util.function.Consumer;
 
@@ -33,6 +35,13 @@ public class CamelotEvent<T extends IntoBytes & FromBytes<T>> extends EventHandl
         @Override
         public void accept(T body)
         {
+            
+            if (Variables.isVerbose())
+            {
+                System.out.println("Event: " + eventName);
+                System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(body));
+            }
+            
             for (var listener : getActiveListeners())
             {
                 try
