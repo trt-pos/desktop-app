@@ -34,8 +34,6 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     {
         formContainer.getChildren().addAll(formPaneController.getRoot());
         formPaneController.setObject(object);
-
-        deleteButton.setVisible(onDeleteAction != null);
     }
 
     @FXML
