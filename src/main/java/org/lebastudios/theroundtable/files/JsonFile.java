@@ -67,6 +67,28 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistence
             writer.write(fileContent);
         }
     }
+
+    public void delete() 
+    {
+        var file = this.getFile();
+
+        if (file == null) 
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.WARNING, 
+                    this.getClass().getSimpleName() + " file is null, is this intended?"
+            );
+            return;
+        }
+        
+        if (file.exists() && !file.delete())
+        {
+            Logs.getInstance().log(
+                    Logs.LogType.WARNING,
+                    "Error deleting " + this.getClass().getSimpleName() + " json file"
+            );
+        }
+    }
     
    @Override
     public boolean equals(Object obj)
