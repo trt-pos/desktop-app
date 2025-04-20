@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
 import org.lebastudios.theroundtable.config.GeneralConfigData;
 import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
@@ -24,7 +23,6 @@ public class SetupStageController extends StageController<SetupStageController>
             new AccountSetupPaneController(),
             new ConfigPaneWrapperController(new EstablishmentConfigPaneController()),
             new ConfigPaneWrapperController(new PrintersConfigPaneController()),
-            new ConfigPaneWrapperController(new DatabaseConfigPaneController()),
     };
 
     private int currentPane = -1;
