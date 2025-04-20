@@ -90,12 +90,12 @@ public class TheRoundTableApplication extends Application
     @Override
     public void start(Stage stage)
     {
+        Class.forName("org.mariadb.jdbc.Driver");
+
         // Would like to differenciate between CorePlugin translations and basic app translations
         // cause this is executed twice,
         // one here and another when loading the plugins
         LangLoader.loadLang(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
-
-        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
         
         new Task<Void>()
         {
@@ -121,6 +121,8 @@ public class TheRoundTableApplication extends Application
             System.exit(-1);
         }).execute(true);
 
+        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
+        
         new AccountStageController().instantiate(true);
 
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());

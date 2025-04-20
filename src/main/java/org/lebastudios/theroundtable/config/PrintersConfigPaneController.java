@@ -76,14 +76,17 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
             return false;
         }
 
-        try
+        if (!defaultPrinter.getItems().isEmpty())
         {
-            PrinterOutputStream.getPrintServiceByName(defaultPrinter.getValue());
-        }
-        catch (IllegalArgumentException _)
-        {
-            UIEffects.shakeNode(defaultPrinter);
-            return false;
+            try
+            {
+                PrinterOutputStream.getPrintServiceByName(defaultPrinter.getValue());
+            }
+            catch (IllegalArgumentException _)
+            {
+                UIEffects.shakeNode(defaultPrinter);
+                return false;
+            }
         }
 
         return true;

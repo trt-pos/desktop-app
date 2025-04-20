@@ -1,0 +1,54 @@
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: db_server
+    restart: always
+    environment:
+      MARIADB_USER: LOCAL_ADMIN
+      MARIADB_PASSWORD: "abc123."
+      MARIADB_DATABASE: establishment
+      MARIADB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "9000:3306"
+    networks:
+      - trt-net
+  
+  camelot-server:
+    image: ubuntu:latest
+    container_name: camelot_server
+    restart: always
+    volumes:
+      - ./trt-camelot/target/x86_64-unknown-linux-gnu/release/camelot:/usr/local/bin/camelot:ro
+    command:
+      - "/usr/local/bin/camelot"
+    networks:
+      - trt-net
+  
+  # Needs $ xhost +local:docker to allow GUI access
+  trt-client:
+    build:
+      context: .
+      dockerfile: containers/trt-client.dockerfile
+    environment:
+      - TRT_ENV=dev
+      - TRT_BACKTRACE=1
+      - TRT_VERBOSE=1
+      - TRT_TEST_SERVER_URL=http://172.19.0.1:8000/api/v1/theroundtable
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - ./output/theroundtable-linux-x64:/opt/theroundtable:ro # Application portable version
+      - /tmp/.X11-unix:/tmp/.X11-unix                          # For GUI access
+      - round_table_data:/root/.round-table
+      - round_table_dev_data:/root/.round-table-dev
+    networks:
+      - trt-net
+    stdin_open: true
+    tty: true
+    
+volumes:
+  round_table_data:
+  round_table_dev_data:
+    
+networks:
+  trt-net:
+    driver: bridge

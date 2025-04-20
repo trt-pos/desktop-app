@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.config;
 
-import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -9,9 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
-import javafx.util.Duration;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
@@ -28,6 +25,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 {
     @FXML public CheckBox enableRemoteDb;
     @FXML public SwitcheableNodePane formContainer;
+    @FXML public Label errorLabel;
 
     @FXML public Node localDbSection;
     @FXML public Node remoteDbSection;
@@ -43,6 +41,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     @FXML public TextField remoteDbUser;
     @FXML public PasswordField remoteDbPassword;
     @FXML public TextField remoteDbName;
+    
 
     private DatabaseConfigData oldConfig;
 
@@ -164,6 +163,8 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
         }
         catch (Exception e)
         {
+            errorLabel.setText(e.getMessage());
+            
             UIEffects.shakeNode(configData.enableRemoteDb
                     ? remoteDbSection
                     : localDbSection);

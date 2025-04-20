@@ -17,6 +17,12 @@
         <CheckBox fx:id="enableRemoteDb"/>
     </HBox>
     <SwitcheableNodePane fx:id="formContainer" />
+    <Label maxWidth="400" style="-fx-text-fill: red; 
+           -fx-font-style: italic;" fx:id="errorLabel"
+           wrapText="true"
+    />
+    
+    
     <VBox fx:id="localDbSection" spacing="5">
         <HBox alignment="CENTER_LEFT" spacing="5">
             <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.databasedir"/>
