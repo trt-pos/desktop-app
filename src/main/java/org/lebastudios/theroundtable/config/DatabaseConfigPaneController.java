@@ -25,7 +25,6 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 {
     @FXML public CheckBox enableRemoteDb;
     @FXML public SwitcheableNodePane formContainer;
-    @FXML public Label errorLabel;
 
     @FXML public Node localDbSection;
     @FXML public Node remoteDbSection;
@@ -130,7 +129,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
         try
         {
@@ -142,7 +141,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
         catch (Exception exception)
         {
             UIEffects.shakeNode(numMaxBackups);
-            return false;
+            return ValidationResult.invalid("Invalid number of backups");
         }
 
         if (enableRemoteDb.isSelected())
@@ -150,26 +149,23 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             if (!remoteDbPort.getText().matches("\\d{1,5}"))
             {
                 UIEffects.shakeNode(remoteDbPort);
-                return false;
+                return ValidationResult.invalid("Invalid port number");
             }
         }
 
         DatabaseConfigData configData = new DatabaseConfigData();
         updateConfigData(configData);
 
-        try (Connection _ = configData.getConnection())
-        {
-            return true;
-        }
+        try (Connection _ = configData.getConnection()) {}
         catch (Exception e)
         {
-            errorLabel.setText(e.getMessage());
-            
             UIEffects.shakeNode(configData.enableRemoteDb
                     ? remoteDbSection
                     : localDbSection);
-            return false;
+            return ValidationResult.invalid(e.getMessage());
         }
+        
+        return ValidationResult.valid();
     }
 
     @Override

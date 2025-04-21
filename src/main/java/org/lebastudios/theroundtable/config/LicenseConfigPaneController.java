@@ -27,13 +27,13 @@ public class LicenseConfigPaneController extends ConfigPaneController<LicenseCon
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
         boolean[] valid = {false};
         
         new LicenseValidatorTask(validation -> valid[0] = validation).execute(true);
         
-        return valid[0];
+        return valid[0] ? ValidationResult.valid() : ValidationResult.invalid("Couldn't validate license");
     }
 
 }

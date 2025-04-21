@@ -52,9 +52,9 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
-        return true;
+        return ValidationResult.valid();
     }
 
     @Override

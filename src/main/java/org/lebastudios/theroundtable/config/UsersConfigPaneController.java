@@ -100,9 +100,9 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
-        return true;
+        return ValidationResult.valid();
     }
 
     private void reloadUsersContainer()

@@ -2,6 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -14,7 +15,8 @@ import org.lebastudios.theroundtable.ui.TitleBuilder;
 public class RequestConfigStageController extends StageController<RequestConfigStageController>
 {
     @FXML public ScrollPane paneContainer;
-    
+    @FXML public Label errorLabel;
+
     private ConfigPaneController<?> configPaneController;
     
     private String title;
@@ -46,7 +48,17 @@ public class RequestConfigStageController extends StageController<RequestConfigS
     @FXML
     public void accept(ActionEvent actionEvent)
     {
-        configPaneController.accept();
+        ConfigPaneController.ValidationResult validationResult = configPaneController.apply();
+        
+        if (validationResult.success())
+        {
+            errorLabel.setText("");
+            this.close();
+        }
+        else
+        {
+            errorLabel.setText(validationResult.message());
+        }
     }
 
     public RequestConfigStageController setTitle(String title)

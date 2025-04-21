@@ -5,8 +5,9 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
 <VBox xmlns="http://javafx.com/javafx" fx:id="root"
-      xmlns:fx="http://javafx.com/fxml" spacing="10"
+      xmlns:fx="http://javafx.com/fxml" spacing="5"
       fx:controller="org.lebastudios.theroundtable.config.RequestConfigStageController"
       prefHeight="500.0" prefWidth="600.0">
     <padding>
@@ -18,7 +19,9 @@
             <Insets top="5" right="5" bottom="5" left="5"/>
         </padding>
     </ScrollPane>
-    
+
+    <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 13;" />
+        
     <HBox alignment="CENTER_RIGHT">
         <Button onAction="#accept" text="%word.accept" defaultButton="true" prefWidth="150"/>
     </HBox>

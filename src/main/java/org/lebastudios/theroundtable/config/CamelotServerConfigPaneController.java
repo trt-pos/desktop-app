@@ -89,7 +89,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
         clientName.setText(clientName.getText().trim());
         serverAddress.setText(serverAddress.getText().trim());
@@ -108,13 +108,13 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         if (!clientName.getText().matches("[a-zA-Z0-9_.]*"))
         {
             UIEffects.shakeNode(clientName);
-            return false;
+            return ValidationResult.invalid("Client name must be alphanumeric (a-zA-Z0-9_. only)");
         }
 
         if (!serverPort.getText().matches("[0-9]+"))
         {
             UIEffects.shakeNode(serverPort);
-            return false;
+            return ValidationResult.invalid("Port must be a number");
         }
 
         try (Socket _ = new Socket(
@@ -125,10 +125,10 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         {
             UIEffects.shakeNode(serverAddress);
             UIEffects.shakeNode(serverPort);
-            return false;
+            return ValidationResult.invalid("Cannot connect to server: " + e.getMessage());
         }
         
-        return true;
+        return ValidationResult.valid();
     }
 
     @SneakyThrows

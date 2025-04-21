@@ -38,6 +38,6 @@ class ConfigPaneWrapperController extends SetupPaneController
     @Override
     public boolean validate()
     {
-        return configPaneController.getController().validate();
+        return configPaneController.getController().validate().success();
     }
 }

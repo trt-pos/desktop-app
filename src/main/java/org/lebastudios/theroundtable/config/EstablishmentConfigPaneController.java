@@ -70,9 +70,9 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
-        return true;
+        return ValidationResult.valid();
     }
 
     @SneakyThrows

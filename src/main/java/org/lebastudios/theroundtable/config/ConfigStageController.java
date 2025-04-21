@@ -33,7 +33,8 @@ public class ConfigStageController extends StageController<ConfigStageController
     
     @FXML public TreeView<SettingsItem> configSectionsTreeView;
     @FXML public ScrollPane mainPane;
-    
+    @FXML public Label errorLabel;
+
     private ConfigPaneController<?> currentPaneController;
 
     @Override
@@ -76,6 +77,8 @@ public class ConfigStageController extends StageController<ConfigStageController
             mainPane.setContent(root);
             currentPaneController = controller.getController();
             currentPaneController.updateUI();
+            
+            errorLabel.setText("");
         });
         
         configSectionsTreeView.setCellFactory(_ -> new TreeCell<>()
@@ -117,7 +120,16 @@ public class ConfigStageController extends StageController<ConfigStageController
             return;
         }
 
-        currentPaneController.apply();
+        ConfigPaneController.ValidationResult validationResult = currentPaneController.apply();
+
+        if (validationResult.success())
+        {
+            errorLabel.setText("");
+        }
+        else
+        {
+            errorLabel.setText(validationResult.message());
+        }
     }
 
     @FXML
@@ -128,8 +140,10 @@ public class ConfigStageController extends StageController<ConfigStageController
             close();
             return;
         }
-
+        
+        errorLabel.setText("");
         currentPaneController.cancel();
+        this.close();
     }
 
     @FXML
@@ -141,7 +155,17 @@ public class ConfigStageController extends StageController<ConfigStageController
             return;
         }
 
-        currentPaneController.accept();
+        ConfigPaneController.ValidationResult validationResult = currentPaneController.apply();
+        
+        if (validationResult.success()) 
+        {
+            errorLabel.setText("");
+            this.close();
+        }
+        else
+        {
+            errorLabel.setText(validationResult.message());
+        }
     }
 
     @Override

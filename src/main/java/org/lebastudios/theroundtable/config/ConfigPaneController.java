@@ -2,7 +2,6 @@ package org.lebastudios.theroundtable.config;
 
 import lombok.Getter;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.logs.Logs;
 
 public abstract class ConfigPaneController<T extends ConfigData<T>> extends PaneController<ConfigPaneController<T>>
 {
@@ -24,46 +23,57 @@ public abstract class ConfigPaneController<T extends ConfigData<T>> extends Pane
     }
 
     public abstract void updateConfigData(T configData);
+
     public abstract void updateUI(T configData);
-    public abstract boolean validate();
+
+    public abstract ValidationResult validate();
+
     public void onSave(T configData) {}
-    
+
     public final void updateConfigData()
     {
         updateConfigData(configData);
     }
-    
+
     public final void updateUI()
     {
         updateUI(configData);
     }
-    
-    public final void accept()
-    {
-        if (!apply()) return;
 
-        getStage().close();
-    }
-
-    public final boolean apply() 
+    public final ValidationResult apply()
     {
-        if (!validate())
+        ValidationResult result = validate();
+
+        if (result.success)
         {
-            Logs.getInstance().log(Logs.LogType.INFO, "Invalid settings");
-            return false;
+            updateConfigData(configData);
+            configData.save();
+            onSave(configData);
         }
-        
-        updateConfigData(configData);
-        
-        configData.save();
-        onSave(configData);
-        return true;
+
+        return result;
     }
 
     public final void cancel()
     {
         updateUI(configData);
+    }
 
-        getStage().close();
+    public record ValidationResult(boolean success, String message)
+    {
+        public static ValidationResult valid()
+        {
+            return new ValidationResult(true, "");
+        }
+        
+        public static ValidationResult invalid(String message)
+        {
+            return new ValidationResult(false, message);
+        }
+
+        public static ValidationResult invalid()
+        {
+            return invalid("");
+        }
     }
 }

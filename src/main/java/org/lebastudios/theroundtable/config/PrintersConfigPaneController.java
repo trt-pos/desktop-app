@@ -68,12 +68,12 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
         if (parseCommand(openCashDrawerCommand.getText().trim()) == null)
         {
             UIEffects.shakeNode(openCashDrawerCommand);
-            return false;
+            return ValidationResult.invalid("The command is invalid");
         }
 
         if (!defaultPrinter.getItems().isEmpty())
@@ -85,11 +85,11 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
             catch (IllegalArgumentException _)
             {
                 UIEffects.shakeNode(defaultPrinter);
-                return false;
+                return ValidationResult.invalid("The selected printer isn't valid");
             }
         }
 
-        return true;
+        return ValidationResult.valid();
     }
 
     private byte[] parseCommand(String command)

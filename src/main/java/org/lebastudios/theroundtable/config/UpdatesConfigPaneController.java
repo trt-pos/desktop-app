@@ -30,8 +30,8 @@ public class UpdatesConfigPaneController extends ConfigPaneController<UpdatesCon
     }
 
     @Override
-    public boolean validate()
+    public ValidationResult validate()
     {
-        return true;
+        return ValidationResult.valid();
     }
 }

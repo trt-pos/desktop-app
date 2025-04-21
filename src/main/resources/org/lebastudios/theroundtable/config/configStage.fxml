@@ -15,12 +15,13 @@
     </TreeView>
     
     <VBox spacing="5">
+        <padding>
+            <Insets top="5" right="5" bottom="5" left="5"/>
+        </padding>
         <ScrollPane fitToWidth="true" fitToHeight="true" pannable="true" VBox.vgrow="ALWAYS"
                     prefWidth="650" prefHeight="400" fx:id="mainPane"/>
+        <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 13;" />
         <HBox spacing="10" alignment="CENTER_RIGHT">
-            <padding>
-                <Insets top="5" right="5" bottom="5" left="5"/>
-            </padding>
             <Button text="%word.accept" onAction="#accept"/>
             <Button defaultButton="true" text="%word.cancel" onAction="#cancel"/>
             <Button text="%word.apply" onAction="#apply"/>
