@@ -193,6 +193,10 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
                 // No need to migrate if the database is the same
                 if (configData.isSameDatabase(oldConfig)) return null;
 
+                // If the old configuration can't connect to a database we skip the migration
+                try (Connection oldDbConnection = oldConfig.getConnection()) {} 
+                catch (Exception ignore) { return null; }
+                
                 updateMessage("Migrating accounts");
                 try (Connection newDbConnection = configData.getConnection();
                      Connection oldDbConnection = oldConfig.getConnection())
