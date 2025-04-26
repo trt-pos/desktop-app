@@ -1,5 +1,6 @@
+use crate::actions::Action;
+use crate::{Error, INSTALLATION_DIR};
 use std::path;
-use crate::{Action, Error, INSTALLATION_DIR};
 use std::pin::Pin;
 use tokio::fs;
 use tokio::io::AsyncWriteExt;
@@ -16,7 +17,8 @@ impl Action for CreateShortcutAction {
         #[cfg(target_os = "linux")]
         {
             return Box::pin(async {
-                let shortcut_file = path::PathBuf::from(&*INSTALLATION_DIR).join("theroundtable.desktop");
+                let shortcut_file =
+                    path::PathBuf::from(&*INSTALLATION_DIR).join("theroundtable.desktop");
 
                 let file_content = format!(
                     r#"[Desktop Entry]

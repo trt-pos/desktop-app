@@ -14,6 +14,7 @@ pub enum Error {
 
     #[error("Ignorable error: {0}")]
     IgnorableError(Box<Error>),
+    
     #[error("Critical error: {0}")]
     CriticalError(Box<Error>),
 }

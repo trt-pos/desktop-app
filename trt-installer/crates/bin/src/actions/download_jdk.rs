@@ -1,4 +1,5 @@
-use crate::{Action, INSTALLATION_DIR};
+use crate::actions::Action;
+use crate::INSTALLATION_DIR;
 use flate2::read::GzDecoder;
 use std::ops::Deref;
 use std::pin::Pin;
@@ -59,13 +60,13 @@ impl Action for DownloadJDKAction {
     }
 
     fn execute(&self) -> Pin<Box<dyn Future<Output = Result<(), crate::Error>> + Send>> {
-        
         Box::pin(async {
             // Downloading the compressed JDK folder
             let url = JDK_DOWNLOAD_URL.deref();
             let response = reqwest::get(url).await?;
 
-            let compressed_file_path = INSTALLATION_DIR.join(format!("jdk.{}", *RESOURCE_EXTENSION));
+            let compressed_file_path =
+                INSTALLATION_DIR.join(format!("jdk.{}", *RESOURCE_EXTENSION));
             let mut file = File::create(&compressed_file_path).await?;
             let content = response.bytes().await?;
 
@@ -73,7 +74,7 @@ impl Action for DownloadJDKAction {
 
             let file = std::fs::File::open(&compressed_file_path)?;
             let output_path = INSTALLATION_DIR.join("jdk");
-            
+
             // Extracting the compressed JDK folder
             match RESOURCE_EXTENSION.deref().as_str() {
                 "zip" => {
@@ -90,7 +91,10 @@ impl Action for DownloadJDKAction {
             };
 
             if let Err(e) = std::fs::remove_file(&compressed_file_path) {
-                eprintln!("Failed to remove the downloaded file after extracting its contents: {}", e);
+                eprintln!(
+                    "Failed to remove the downloaded file after extracting its contents: {}",
+                    e
+                );
             };
 
             // Moving the inner folder inside the decompressed folder to the parent folder and renaming it to "jdk"
@@ -99,10 +103,10 @@ impl Action for DownloadJDKAction {
                 .next()
                 .expect("Failed to get next entry")?
                 .path();
-            
+
             let tmp_path = INSTALLATION_DIR.join("tmp");
             std::fs::rename(&inner_folder, &tmp_path)?;
-            
+
             fs::remove_dir(&output_path).await?;
             std::fs::rename(&tmp_path, &output_path)?;
 
