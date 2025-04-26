@@ -26,7 +26,7 @@ impl StepController for FilesStepController {
     }
 
     fn icon(&self) -> &'static [u8] {
-        include_bytes!("../../resources/copy.png")
+        include_bytes!("../../resources/icons/copy.png")
     }
 
     fn apply(&self) -> Task<Self::Msg> {

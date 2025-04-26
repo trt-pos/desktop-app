@@ -8,6 +8,7 @@ mod actions;
 mod controllers;
 mod error;
 mod steps;
+mod translations;
 
 use crate::controllers::StepController;
 use crate::steps::StepMessage;

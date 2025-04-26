@@ -31,7 +31,7 @@ impl StepController for WelcomeStepController {
     }
 
     fn icon(&self) -> &'static [u8] {
-        include_bytes!("../../resources/logo.png")
+        include_bytes!("../../resources/icons/logo.png")
     }
 
     fn apply(&self) -> Task<Self::Msg> {

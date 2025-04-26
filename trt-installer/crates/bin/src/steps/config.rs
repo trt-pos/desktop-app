@@ -24,7 +24,7 @@ impl StepController for ConfigStepController {
     }
 
     fn icon(&self) -> &'static [u8] {
-        include_bytes!("../../resources/settings.png")
+        include_bytes!("../../resources/icons/settings.png")
     }
 
     fn apply(&self) -> Task<Self::Msg> {

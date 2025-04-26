@@ -32,7 +32,7 @@ impl StepController for JdkStepController {
         })
     }
 fn icon(&self) -> &'static [u8] { 
-    include_bytes!("../../resources/download.png")
+    include_bytes!("../../resources/icons/download.png")
 }
 
     fn title(&self) -> &'static str {
