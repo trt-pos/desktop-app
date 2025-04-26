@@ -1,8 +1,5 @@
-mod download_jdk;
 mod shortcut;
 
-pub use download_jdk::DownloadJDKAction;
-pub use shortcut::CreateShortcutAction;
 use std::future::Future;
 use std::pin::Pin;
 
