@@ -1,16 +1,20 @@
 use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::widget::{column, image, row};
+use iced::widget::{column, image, row, value};
 use iced::{Border, ContentFit, Element, Task, color, widget};
 use std::fs;
 use std::fs::File;
 use std::path::PathBuf;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use futures::future::ok;
 
 #[derive(Clone)]
 pub struct ConfigStep {
     installation_dir: String,
     create_checkbox: bool,
+    application_dir_name: String,
+    tmp_installation_dir: PathBuf,
 }
 
 impl Default for ConfigStep {
@@ -33,9 +37,22 @@ impl Default for ConfigStep {
             panic!("Application is running in an unexpected OS")
         };
 
+        let tmp_installation_dir = std::env::temp_dir().join(format!(
+            "theroundtable-{}",
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("UNIX_EPOCH is before SystemTime::now()")
+                .as_secs()
+        ));
+        
+        let _ = fs::remove_dir(&tmp_installation_dir);
+        let _ = fs::create_dir_all(&tmp_installation_dir);
+
         Self {
             installation_dir,
             create_checkbox: false,
+            application_dir_name: "theroundtable".to_string(),
+            tmp_installation_dir,
         }
     }
 }
@@ -45,6 +62,7 @@ impl Into<InstallationConfig> for ConfigStep {
         InstallationConfig {
             installation_dir: self.installation_dir,
             create_shortcut: self.create_checkbox,
+            application_dir_name: self.application_dir_name,
         }
     }
 }
@@ -87,6 +105,9 @@ impl Step for ConfigStep {
             .align_y(iced::Alignment::Center)
             .spacing(5),
             widget::Space::new(10, 0),
+            widget::text("Application directory name"),
+            widget::text_input("", &self.application_dir_name).on_input(Message::ApplicationDirNameInputText),
+            widget::Space::new(10, 0),
             widget::checkbox("Create app shortcut   ", self.create_checkbox)
                 .on_toggle(|value| { Message::CreateShortcutCheckbox(value) }),
         )
@@ -111,6 +132,7 @@ impl Step for ConfigStep {
                     }
                 });
             }
+            Message::ApplicationDirNameInputText(value) => self.application_dir_name = value,
             Message::CreateShortcutCheckbox(value) => self.create_checkbox = value,
             _ => {}
         }
@@ -127,7 +149,7 @@ impl Step for ConfigStep {
             let _ = fs::create_dir_all(&dir);
             let test_file_path = dir.join("trt-write-test-file");
             if let Err(e) = File::create(&test_file_path) {
-                return Message::Error(format!("Failed to create test file: {}", e))
+                return Message::Error(format!("Failed to create test file: {}", e));
             };
 
             let _ = fs::remove_file(&test_file_path);

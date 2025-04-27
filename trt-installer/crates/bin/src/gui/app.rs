@@ -49,6 +49,7 @@ pub enum Message {
 
     FolderSelection,
     FolderSelected(String),
+    ApplicationDirNameInputText(String),
     CreateShortcutCheckbox(bool),
 
     DownloadProgress(Arc<RwLock<ProgressTaskStatus>>),

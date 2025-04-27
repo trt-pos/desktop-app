@@ -6,6 +6,7 @@ static CONFIG: OnceLock<InstallationConfig> = OnceLock::new();
 pub struct InstallationConfig {
     pub installation_dir: String,
     pub create_shortcut: bool,
+    pub application_dir_name: String,
 }
 
 impl InstallationConfig {
