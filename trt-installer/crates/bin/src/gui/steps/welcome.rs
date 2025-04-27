@@ -26,9 +26,7 @@ impl Step for WelcomeStep {
         Task::none()
     }
 
-    fn validate(&self) -> bool {
-        true
-    }
+
 
     fn apply(&self) -> Task<Message> {
         Task::future(async move { Message::NextStep })

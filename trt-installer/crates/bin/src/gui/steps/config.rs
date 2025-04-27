@@ -118,24 +118,24 @@ impl Step for ConfigStep {
         Task::none()
     }
 
-    fn validate(&self) -> bool {
-        let dir = PathBuf::from(&self.installation_dir);
-
-        let _ = fs::create_dir_all(&dir);
-        let test_file_path = dir.join("trt-write-test-file");
-        let test_file = File::create(&test_file_path);
-
-        let result = test_file.is_ok();
-
-        let _ = fs::remove_file(&test_file_path);
-
-        result
-    }
-
     fn apply(&self) -> Task<Message> {
-        let config = (*self).clone();
-        InstallationConfig::set_config(config.into());
-        Task::future(async move { Message::NextStep })
+        let config = self.clone();
+
+        Task::future(async move {
+            let dir = PathBuf::from(&config.installation_dir);
+
+            let _ = fs::create_dir_all(&dir);
+            let test_file_path = dir.join("trt-write-test-file");
+            if let Err(e) = File::create(&test_file_path) {
+                return Message::Error(format!("Failed to create test file: {}", e))
+            };
+
+            let _ = fs::remove_file(&test_file_path);
+
+            InstallationConfig::set_config(config.into());
+
+            Message::NextStep
+        })
     }
 }
 

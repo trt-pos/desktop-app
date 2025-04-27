@@ -30,13 +30,13 @@ impl Step for FilesStep {
         Task::none()
     }
 
-    fn validate(&self) -> bool {
-        true
-    }
+
 
     fn apply(&self) -> Task<Message> {
         Task::future(async {
-            copy_files().await;
+            if let Err(e) = copy_files().await {
+                return Message::Error(format!("Failed to copy files: {}", e));
+            }
             Message::NextStep
         })
     }

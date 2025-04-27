@@ -91,7 +91,7 @@ impl Step for JdkStep {
         match message {
             Message::DownloadProgress(progress) => {
                 let progress = progress.read().unwrap();
-                self.download_progress = progress.progress / progress.length  
+                self.download_progress = progress.progress / progress.length
             },
             Message::DownloadStarted => self.download_started = true,
             Message::DownloadComplete => {
@@ -104,13 +104,9 @@ impl Step for JdkStep {
         Task::none()
     }
 
-    fn validate(&self) -> bool {
-        true
-    }
-
     fn apply(&self) -> Task<Message> {
         let (tx, mut rx) = tokio::sync::mpsc::channel(100);
-        
+
         Task::batch([
             Task::future(async move {
                 if let Err(e) = download_jdk(tx).await {
@@ -137,7 +133,7 @@ async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskS
         length: 0.0,
         message: "".to_string(),
     }));
-    
+
     // Downloading the compressed JDK folder
     let url = JDK_DOWNLOAD_URL.deref();
     let response = reqwest::get(url).await?;
@@ -151,7 +147,7 @@ async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskS
         download_status.message = format!("Downloading JDK from {}", url);
     }
     sender.send(Arc::clone(&download_status)).await.ok();
-    
+
     let installation_config = config::InstallationConfig::get_config();
     let installation_dir = &(installation_config.installation_dir);
     let compressed_file_path = PathBuf::from(installation_dir)
@@ -170,7 +166,7 @@ async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskS
             let mut download_status = download_status.write().unwrap();
             download_status.progress = downloaded as f32 / total_size as f32;
         }
-        
+
         sender.send(Arc::clone(&download_status)).await.ok();
     }
 

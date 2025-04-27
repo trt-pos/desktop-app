@@ -15,6 +15,5 @@ pub trait Step {
     fn icon(&self) -> &'static [u8];
     fn view(&self) -> iced::Element<Message>;
     fn update(&mut self, message: Message) -> Task<Message>;
-    fn validate(&self) -> bool;
     fn apply(&self) -> Task<Message>;
 }
