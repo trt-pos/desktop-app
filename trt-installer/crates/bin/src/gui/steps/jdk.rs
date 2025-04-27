@@ -77,6 +77,8 @@ impl Step for JdkStep {
             "The JDK is required to run the application. Please wait while the wizard downloads it."
         };
 
+        println!("{}", self.download_progress);
+        
         iced::widget::column![
             widget::Space::new(iced::Fill, iced::Fill),
             widget::text(text),

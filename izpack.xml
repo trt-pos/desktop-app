@@ -4,7 +4,7 @@
                      xsi:schemaLocation="http://izpack.org/schema/installation http://izpack.org/schema/5.0/izpack-installation-5.0.xsd">
     <info>
         <appname>The Round Table</appname>
-        <appversion>2.5.0</appversion>
+        <appversion>3.0.0</appversion>
         <appsubpath>theroundtable</appsubpath>
         <javaversion>1.2</javaversion>
         <url>https://lebastudios.org</url>
@@ -26,21 +26,7 @@
         <langpack iso3="spa"/>
     </locale>
 
-    <guiprefs width="800" height="600" resizable="no" />
-    <!--
-    <guiprefs width="800" height="600" resizable="no">
-        <laf name="substance">
-            <os family="windows" />
-            <os family="unix" />
-            <param name="variant" value="mist-silver" />
-        </laf>
-        <laf name="substance">
-            <os family="mac" />
-            <param name="variant" value="mist-aqua" />
-        </laf>
-        <modifier key="useHeadingPanel" value="yes" />
-    </guiprefs>
-    -->
+    <guiprefs width="800" height="600" resizable="yes" />
 
     <panels>
         <panel classname="TargetPanel"/>
