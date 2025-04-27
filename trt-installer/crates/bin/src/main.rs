@@ -1,6 +1,4 @@
 use iced::{window, Size};
-use std::path::PathBuf;
-use std::sync::LazyLock;
 mod actions;
 mod error;
 mod gui;
@@ -9,14 +7,6 @@ pub mod config;
 
 use crate::gui::TrtInstallerApp;
 pub use error::Error;
-
-static INSTALLATION_DIR: LazyLock<PathBuf> = LazyLock::new(|| {
-    let bin_path = std::env::current_exe().expect("Failed to get current executable path");
-    bin_path
-        .parent()
-        .expect("Binary file should have a parent")
-        .to_path_buf()
-});
 
 fn main() {
     let window_settings = window::Settings {

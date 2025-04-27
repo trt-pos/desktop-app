@@ -1,3 +1,4 @@
+use std::sync::{Arc, RwLock};
 use crate::gui::steps;
 use crate::gui::steps::Step;
 use iced::widget::image::Handle;
@@ -24,8 +25,16 @@ impl Default for TrtInstallerApp {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct ProgressTaskStatus {
+    pub message: String,
+    pub progress: f32,
+    pub length: f32,
+}
+
 #[derive(Debug, Clone)]
 pub enum Message {
+    None,
     AppTick,
     
     AcceptStep,
@@ -38,7 +47,7 @@ pub enum Message {
     FolderSelected(String),
     CreateShortcutCheckbox(bool),
     
-    DownloadProgress(f32),
+    DownloadProgress(Arc<RwLock<ProgressTaskStatus>>),
     DownloadComplete,
     DownloadStarted,
 }

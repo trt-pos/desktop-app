@@ -1,11 +1,12 @@
-use crate::gui::app::Message;
+use crate::gui::app::{ProgressTaskStatus, Message};
 use crate::gui::steps::Step;
-use crate::{INSTALLATION_DIR, config};
+use crate::{config};
 use flate2::read::GzDecoder;
 use iced::{Element, Task, widget};
 use std::ops::Deref;
 use std::path::PathBuf;
-use std::sync::LazyLock;
+use std::sync::{Arc, LazyLock, RwLock};
+use futures::StreamExt;
 use tokio::fs;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
@@ -88,7 +89,10 @@ impl Step for JdkStep {
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::DownloadProgress(progress) => self.download_progress = progress,
+            Message::DownloadProgress(progress) => {
+                let progress = progress.read().unwrap();
+                self.download_progress = progress.progress / progress.length  
+            },
             Message::DownloadStarted => self.download_started = true,
             Message::DownloadComplete => {
                 self.download_progress = 1.0;
@@ -105,29 +109,70 @@ impl Step for JdkStep {
     }
 
     fn apply(&self) -> Task<Message> {
-        Task::future(async {
-            if let Err(e) = download_jdk().await {
-                return Message::Error(e.to_string());
-            }
-            Message::NextStep
-        })
+        let (tx, mut rx) = tokio::sync::mpsc::channel(100);
+        
+        Task::batch([
+            Task::future(async move {
+                if let Err(e) = download_jdk(tx).await {
+                    return Message::Error(e.to_string());
+                }
+
+                Message::NextStep
+            }),
+            Task::future(async move {
+                while let Some(status) = rx.recv().await {
+                    return Message::DownloadProgress(status);
+                }
+
+                Message::DownloadComplete
+            })
+        ])
     }
 }
 
 // TODO: Use a system tmp folder
-async fn download_jdk() -> Result<(), crate::Error> {
+async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskStatus>>>) -> Result<(), crate::Error> {
+    let download_status = Arc::new(RwLock::new(ProgressTaskStatus {
+        progress: 0.0,
+        length: 0.0,
+        message: "".to_string(),
+    }));
+    
     // Downloading the compressed JDK folder
     let url = JDK_DOWNLOAD_URL.deref();
     let response = reqwest::get(url).await?;
+    let total_size = response
+        .content_length()
+        .unwrap_or(200_000);
 
+    {
+        let mut download_status = download_status.write().unwrap();
+        download_status.length = total_size as f32;
+        download_status.message = format!("Downloading JDK from {}", url);
+    }
+    sender.send(Arc::clone(&download_status)).await.ok();
+    
     let installation_config = config::InstallationConfig::get_config();
     let installation_dir = &(installation_config.installation_dir);
     let compressed_file_path = PathBuf::from(installation_dir)
         .join(format!("jdk.{}", *RESOURCE_EXTENSION));
-    let mut file = File::create(&compressed_file_path).await?;
-    let content = response.bytes().await?;
 
-    file.write_all(&content).await?;
+    let mut file = File::create(&compressed_file_path).await?;
+    let mut downloaded = 0u64;
+    let mut stream = response.bytes_stream();
+
+    while let Some(item) = stream.next().await {
+        let chunk = item?;
+        file.write_all(&chunk).await?;
+        downloaded += chunk.len() as u64;
+
+        {
+            let mut download_status = download_status.write().unwrap();
+            download_status.progress = downloaded as f32 / total_size as f32;
+        }
+        
+        sender.send(Arc::clone(&download_status)).await.ok();
+    }
 
     let file = std::fs::File::open(&compressed_file_path)?;
     let output_path = PathBuf::from(installation_dir).join("jdk");
@@ -149,13 +194,11 @@ async fn download_jdk() -> Result<(), crate::Error> {
             {
                 panic!("Unsupported extension: {}", *RESOURCE_EXTENSION)
             }
-            
-            return Err(crate::Error::GenericError(
-                RESOURCE_EXTENSION.to_string(),
-            ));
-        },
+
+            return Err(crate::Error::GenericError(RESOURCE_EXTENSION.to_string()));
+        }
     };
-    
+
     let _ = std::fs::remove_file(&compressed_file_path);
 
     // Moving the inner folder inside the decompressed folder to the parent folder and renaming it to "jdk"

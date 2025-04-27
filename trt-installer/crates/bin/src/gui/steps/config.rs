@@ -11,7 +11,6 @@ use std::path::PathBuf;
 pub struct ConfigStep {
     installation_dir: String,
     create_checkbox: bool,
-    waiting_dialog: bool,
 }
 
 impl Default for ConfigStep {
@@ -37,7 +36,6 @@ impl Default for ConfigStep {
         Self {
             installation_dir,
             create_checkbox: false,
-            waiting_dialog: false,
         }
     }
 }
@@ -97,20 +95,11 @@ impl Step for ConfigStep {
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
-        if let Message::FolderSelected(_) = &message {
-            self.waiting_dialog = false;
-        }
-        
-        if self.waiting_dialog {
-            return Task::none();
-        }
-
         match message {
             Message::FolderSelected(path) => {
                 self.installation_dir = path;
             }
             Message::FolderSelection => {
-                self.waiting_dialog = true;
                 let installation_dir = self.installation_dir.clone();
 
                 return Task::future(async move {
@@ -130,10 +119,6 @@ impl Step for ConfigStep {
     }
 
     fn validate(&self) -> bool {
-        if self.waiting_dialog {
-            return false;
-        }
-
         let dir = PathBuf::from(&self.installation_dir);
 
         let _ = fs::create_dir_all(&dir);
@@ -148,10 +133,6 @@ impl Step for ConfigStep {
     }
 
     fn apply(&self) -> Task<Message> {
-        if self.waiting_dialog {
-            return Task::none();
-        }
-
         let config = (*self).clone();
         InstallationConfig::set_config(config.into());
         Task::future(async move { Message::NextStep })
