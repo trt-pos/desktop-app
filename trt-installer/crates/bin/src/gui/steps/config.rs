@@ -63,6 +63,7 @@ impl Into<InstallationConfig> for ConfigStep {
             installation_dir: self.installation_dir,
             create_shortcut: self.create_checkbox,
             application_dir_name: self.application_dir_name,
+            tmp_installation_dir: self.tmp_installation_dir,
         }
     }
 }

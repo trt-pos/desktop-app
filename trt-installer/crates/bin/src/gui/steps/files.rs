@@ -1,10 +1,9 @@
-use std::io;
-use std::io::Write;
-use std::sync::LazyLock;
+use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
 use iced::{widget, Element, Task};
-use crate::config::InstallationConfig;
+use std::io;
+use std::io::Write;
 
 static COMPRESSED_FILES: &[u8] = include_bytes!("../../../resources/app-files.zip");
 
@@ -44,8 +43,7 @@ impl Step for FilesStep {
 
 // TODO: Use a tmp folder
 async fn copy_files() -> io::Result<()> {
-    let installation_dir = &InstallationConfig::get_config().installation_dir;
-    let installation_dir = std::path::PathBuf::from(installation_dir);
+    let installation_dir = &InstallationConfig::get_config().tmp_installation_dir;
     
     let zip_file_path = installation_dir.join("theroundtable.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;

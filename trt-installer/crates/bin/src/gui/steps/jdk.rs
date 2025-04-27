@@ -1,15 +1,17 @@
-use crate::gui::app::{ProgressTaskStatus, Message};
+use crate::config;
+use crate::gui::app::{Message, ProgressTaskStatus};
 use crate::gui::steps::Step;
-use crate::{config};
 use flate2::read::GzDecoder;
+use futures::StreamExt;
+use iced::widget::row;
 use iced::{Element, Task, widget};
 use std::ops::Deref;
 use std::path::PathBuf;
-use std::sync::{Arc, LazyLock, RwLock};
-use futures::StreamExt;
+use std::sync::{Arc, LazyLock};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
+use tokio::sync::{Mutex, MutexGuard, RwLock, RwLockWriteGuard, TryLockError};
 
 /// JDK 23.0.2 download URLs:
 /// Linux/AArch64: https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-aarch64_bin.tar.gz
@@ -55,9 +57,19 @@ static RESOURCE_EXTENSION: LazyLock<String> = LazyLock::new(|| {
     .to_string()
 });
 
+static DOWNLOAD_STATUS: LazyLock<Arc<Mutex<ProgressTaskStatus>>> = LazyLock::new(|| {
+    Arc::new(Mutex::new(ProgressTaskStatus {
+        message: String::new(),
+        progress: 0.0,
+        length: 0.0,
+    }))
+});
+
 #[derive(Default)]
 pub struct JdkStep {
     download_progress: f32,
+    download_total: f32,
+    download_message: String,
     download_started: bool,
 }
 
@@ -77,29 +89,56 @@ impl Step for JdkStep {
             "The JDK is required to run the application. Please wait while the wizard downloads it."
         };
 
-        println!("{}", self.download_progress);
-        
+        let status_bar = if self.download_started {
+            let message = self.download_message.clone();
+            let progress_over_one = self.download_progress;
+            let progress = progress_over_one * self.download_total;
+            let progress_percentage = (progress_over_one * 100.0).round() as u32;
+
+            row![
+                widget::Space::new(iced::Fill, 0),
+                widget::text(message).width(150),
+                widget::text(format!("{:.2} MB", progress / 1_000_000.0)).width(100),
+                widget::text(format!("{:.2} MB", self.download_total / 1_000_000.0)).width(100),
+                widget::text(format!("{}%", progress_percentage)).width(50),
+                widget::Space::new(15, 0),
+            ]
+            .spacing(5)
+        } else {
+            row![]
+        };
+
         iced::widget::column![
             widget::Space::new(iced::Fill, iced::Fill),
             widget::text(text),
-            widget::Space::new(iced::Fill, 5),
             widget::progress_bar(0f32..=1f32, self.download_progress),
+            status_bar,
             widget::Space::new(iced::Fill, iced::Fill),
         ]
+            .spacing(5)
         .into()
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         match message {
-            Message::DownloadProgress(progress) => {
-                let progress = progress.read().unwrap();
-                self.download_progress = progress.progress / progress.length
-            },
+            Message::DownloadProgress(download_status) => {
+                self.download_progress = download_status.progress;
+                self.download_message = download_status.message;
+                self.download_total = download_status.length;
+            }
             Message::DownloadStarted => self.download_started = true,
             Message::DownloadComplete => {
                 self.download_progress = 1.0;
             }
-            Message::AppTick => {}
+            Message::AppTick => {
+                return Task::future(async {
+                    let download_status = match DOWNLOAD_STATUS.try_lock() {
+                        Ok(v) => v,
+                        Err(_) => return Message::None,
+                    };
+                    Message::DownloadProgress(download_status.clone())
+                });
+            }
             _ => {}
         }
 
@@ -107,53 +146,34 @@ impl Step for JdkStep {
     }
 
     fn apply(&self) -> Task<Message> {
-        let (tx, mut rx) = tokio::sync::mpsc::channel(100);
-
         Task::batch([
+            Task::done(Message::DownloadStarted),
             Task::future(async move {
-                if let Err(e) = download_jdk(tx).await {
+                if let Err(e) = download_jdk().await {
                     return Message::Error(e.to_string());
                 }
 
                 Message::NextStep
             }),
-            Task::future(async move {
-                while let Some(status) = rx.recv().await {
-                    return Message::DownloadProgress(status);
-                }
-
-                Message::DownloadComplete
-            })
         ])
     }
 }
 
-// TODO: Use a system tmp folder
-async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskStatus>>>) -> Result<(), crate::Error> {
-    let download_status = Arc::new(RwLock::new(ProgressTaskStatus {
-        progress: 0.0,
-        length: 0.0,
-        message: "".to_string(),
-    }));
-
+async fn download_jdk() -> Result<(), crate::Error> {
     // Downloading the compressed JDK folder
     let url = JDK_DOWNLOAD_URL.deref();
     let response = reqwest::get(url).await?;
-    let total_size = response
-        .content_length()
-        .unwrap_or(200_000);
+    let total_size = response.content_length().unwrap_or(200_000_000);
 
     {
-        let mut download_status = download_status.write().unwrap();
+        let mut download_status = DOWNLOAD_STATUS.lock().await;
         download_status.length = total_size as f32;
-        download_status.message = format!("Downloading JDK from {}", url);
+        download_status.message = "Downloading...".to_string();
     }
-    sender.send(Arc::clone(&download_status)).await.ok();
 
     let installation_config = config::InstallationConfig::get_config();
-    let installation_dir = &(installation_config.installation_dir);
-    let compressed_file_path = PathBuf::from(installation_dir)
-        .join(format!("jdk.{}", *RESOURCE_EXTENSION));
+    let tmp_dir = &(installation_config.tmp_installation_dir);
+    let compressed_file_path = tmp_dir.join(format!("jdk.{}", *RESOURCE_EXTENSION));
 
     let mut file = File::create(&compressed_file_path).await?;
     let mut downloaded = 0u64;
@@ -165,15 +185,25 @@ async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskS
         downloaded += chunk.len() as u64;
 
         {
-            let mut download_status = download_status.write().unwrap();
+            let mut download_status = match DOWNLOAD_STATUS.try_lock() {
+                Ok(v) => v,
+                Err(_) => continue,
+            };
+            download_status.length = total_size as f32;
             download_status.progress = downloaded as f32 / total_size as f32;
+            download_status.message = "Downloading...".to_string();
         }
-
-        sender.send(Arc::clone(&download_status)).await.ok();
     }
 
+    {
+        let mut download_status = DOWNLOAD_STATUS.lock().await;
+        download_status.length = 1.0;
+        download_status.progress = 0.0;
+        download_status.message = "Extracting files...".to_string();
+    }
+    
     let file = std::fs::File::open(&compressed_file_path)?;
-    let output_path = PathBuf::from(installation_dir).join("jdk");
+    let output_path = PathBuf::from(tmp_dir).join("jdk");
 
     // Extracting the compressed JDK folder
     match RESOURCE_EXTENSION.deref().as_str() {
@@ -206,7 +236,7 @@ async fn download_jdk(sender: tokio::sync::mpsc::Sender<Arc<RwLock<ProgressTaskS
         .expect("Failed to get next entry")?
         .path();
 
-    let tmp_path = PathBuf::from(installation_dir).join("tmp");
+    let tmp_path = tmp_dir.join("tmp");
     std::fs::rename(&inner_folder, &tmp_path)?;
 
     fs::remove_dir(&output_path).await?;

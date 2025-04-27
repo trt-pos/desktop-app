@@ -52,7 +52,7 @@ pub enum Message {
     ApplicationDirNameInputText(String),
     CreateShortcutCheckbox(bool),
 
-    DownloadProgress(Arc<RwLock<ProgressTaskStatus>>),
+    DownloadProgress(ProgressTaskStatus),
     DownloadComplete,
     DownloadStarted,
 }

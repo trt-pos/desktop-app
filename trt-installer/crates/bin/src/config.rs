@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::OnceLock;
 
 static CONFIG: OnceLock<InstallationConfig> = OnceLock::new();
@@ -7,6 +8,7 @@ pub struct InstallationConfig {
     pub installation_dir: String,
     pub create_shortcut: bool,
     pub application_dir_name: String,
+    pub tmp_installation_dir: PathBuf,
 }
 
 impl InstallationConfig {
