@@ -129,6 +129,20 @@ impl TrtInstallerApp {
                     self.actual_panel -= 1;
                     return iced::exit();
                 }
+
+                let mut actual_panel = self
+                    .panels
+                    .get_mut(self.actual_panel)
+                    .expect("Index out of bounds");
+
+                while actual_panel.skip() {
+                    self.actual_panel += 1;
+
+                    actual_panel = self
+                        .panels
+                        .get_mut(self.actual_panel)
+                        .expect("Index out of bounds");
+                }
             }
             Message::PreviousStep => {
                 self.actual_panel -= 1;
