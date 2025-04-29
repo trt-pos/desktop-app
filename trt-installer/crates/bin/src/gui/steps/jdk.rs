@@ -4,14 +4,14 @@ use crate::gui::steps::Step;
 use flate2::read::GzDecoder;
 use futures::StreamExt;
 use iced::widget::row;
-use iced::{Element, Task, widget};
+use iced::{widget, Element, Task};
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::sync::{Arc, LazyLock};
 use tokio::fs;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
-use tokio::sync::{Mutex, MutexGuard, RwLock, RwLockWriteGuard, TryLockError};
+use tokio::sync::Mutex;
 
 /// JDK 23.0.2 download URLs:
 /// Linux/AArch64: https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-aarch64_bin.tar.gz
@@ -82,6 +82,10 @@ impl Step for JdkStep {
         include_bytes!("../../../resources/icons/download.png")
     }
 
+    fn button_text(&self) -> &'static str {
+        "Download"
+    }
+
     fn view(&self) -> Element<Message> {
         let text = if self.download_started {
             "Downloading JDK..."
@@ -142,9 +146,6 @@ impl Step for JdkStep {
                 self.download_total = download_status.length;
             }
             Message::DownloadStarted => self.download_started = true,
-            Message::DownloadComplete => {
-                self.download_progress = 1.0;
-            }
             Message::AppTick => {
                 return Task::future(async {
                     let download_status = match DOWNLOAD_STATUS.try_lock() {

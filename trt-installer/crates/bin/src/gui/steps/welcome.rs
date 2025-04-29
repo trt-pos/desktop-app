@@ -15,6 +15,10 @@ impl Step for WelcomeStep {
         include_bytes!("../../../resources/icons/logo.png")
     }
 
+    fn button_text(&self) -> &'static str {
+        "Continue"
+    }
+
     fn view(&self) -> Element<Message> {
         column![
             widget::text("Through this application you will be able to configure and install The Round Table, the open source POS software!").align_x(iced::Alignment::Center),

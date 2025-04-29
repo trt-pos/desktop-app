@@ -1,13 +1,12 @@
 use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::widget::{column, image, row, value};
-use iced::{Border, ContentFit, Element, Task, color, widget};
+use iced::widget::{column, image, row};
+use iced::{color, widget, Border, ContentFit, Element, Task};
 use std::fs;
 use std::fs::File;
 use std::path::PathBuf;
-use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use futures::future::ok;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Clone)]
 pub struct ConfigStep {
@@ -75,6 +74,10 @@ impl Step for ConfigStep {
 
     fn icon(&self) -> &'static [u8] {
         include_bytes!("../../../resources/icons/settings.png")
+    }
+
+    fn button_text(&self) -> &'static str {
+        "Continue"
     }
 
     fn view(&self) -> Element<Message> {

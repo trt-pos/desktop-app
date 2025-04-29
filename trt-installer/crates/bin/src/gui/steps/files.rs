@@ -15,11 +15,15 @@ pub struct FilesStep {
 
 impl Step for FilesStep {
     fn title(&self) -> &'static str {
-        "Copy application files"
+        "Install application files"
     }
 
     fn icon(&self) -> &'static [u8] {
         include_bytes!("../../../resources/icons/copy.png")
+    }
+
+    fn button_text(&self) -> &'static str {
+        "Install"
     }
 
     fn view(&self) -> Element<Message> {

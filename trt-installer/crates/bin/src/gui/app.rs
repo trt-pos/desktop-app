@@ -53,7 +53,6 @@ pub enum Message {
     CreateShortcutCheckbox(bool),
 
     DownloadProgress(ProgressTaskStatus),
-    DownloadComplete,
     DownloadStarted,
 }
 
@@ -64,13 +63,15 @@ impl TrtInstallerApp {
             .get(self.actual_panel)
             .expect("Index out of bounds");
 
+        let button_text = actual_panel.button_text();
+        
         let continue_button = if !self.waiting_apply {
-            widget::button("Continue")
+            widget::button(button_text)
                 .style(button::primary)
                 .on_press(Message::AcceptStep)
                 .width(125)
         } else {
-            widget::button("Continue")
+            widget::button(button_text)
                 .style(button::primary)
                 .width(125)
         };
@@ -117,7 +118,7 @@ impl TrtInstallerApp {
             .get_mut(self.actual_panel)
             .expect("Index out of bounds");
 
-        match message {
+        match message.clone() {
             Message::AcceptStep => {
                 self.waiting_apply = true;
                 return actual_panel.apply();
@@ -138,6 +139,7 @@ impl TrtInstallerApp {
             Message::Error(error) => {
                 self.waiting_apply = false;
                 self.last_error = error;
+                return actual_panel.update(message);
             }
             other => {
                 return actual_panel.update(other);
