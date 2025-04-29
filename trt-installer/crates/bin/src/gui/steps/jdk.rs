@@ -91,31 +91,46 @@ impl Step for JdkStep {
 
         let status_bar = if self.download_started {
             let message = self.download_message.clone();
-            let progress_over_one = self.download_progress;
-            let progress = progress_over_one * self.download_total;
-            let progress_percentage = (progress_over_one * 100.0).round() as u32;
+            let progress = self.download_progress * self.download_total;
 
             row![
                 widget::Space::new(iced::Fill, 0),
                 widget::text(message).width(150),
-                widget::text(format!("{:.2} MB", progress / 1_000_000.0)).width(100),
-                widget::text(format!("{:.2} MB", self.download_total / 1_000_000.0)).width(100),
-                widget::text(format!("{}%", progress_percentage)).width(50),
-                widget::Space::new(15, 0),
+                widget::text(format!("{:.2} ", progress / 1_000_000.0,))
+                    .width(60)
+                    .align_x(iced::Right),
+                widget::text(" / "),
+                widget::text(format!("{:.2} MB", self.download_total / 1_000_000.0))
+                    .width(95)
+                    .align_x(iced::Left),
+                widget::Space::new(40, 0),
             ]
             .spacing(5)
         } else {
             row![]
         };
 
+        let progress_percentage = (self.download_progress * 100.0).round() as u32;
+
         iced::widget::column![
             widget::Space::new(iced::Fill, iced::Fill),
-            widget::text(text),
-            widget::progress_bar(0f32..=1f32, self.download_progress),
-            status_bar,
+            widget::column![
+                widget::text(text),
+                row![
+                    widget::progress_bar(0f32..=1f32, self.download_progress),
+                    widget::text(format!("{} %", progress_percentage))
+                        .align_x(iced::Center)
+                        .width(60)
+                ]
+                .align_y(iced::Center),
+                status_bar,
+            ]
+            .width(550)
+            .spacing(10),
             widget::Space::new(iced::Fill, iced::Fill),
         ]
-            .spacing(5)
+        .spacing(5)
+        .align_x(iced::Center)
         .into()
     }
 
@@ -201,7 +216,7 @@ async fn download_jdk() -> Result<(), crate::Error> {
         download_status.progress = 0.0;
         download_status.message = "Extracting files...".to_string();
     }
-    
+
     let file = std::fs::File::open(&compressed_file_path)?;
     let output_path = PathBuf::from(tmp_dir).join("jdk");
 
