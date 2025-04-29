@@ -12,6 +12,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 pub struct ConfigStep {
     installation_dir: String,
     create_checkbox: bool,
+    send_analytics: bool,
     application_dir_name: String,
     tmp_installation_dir: PathBuf,
 }
@@ -51,6 +52,7 @@ impl Default for ConfigStep {
             installation_dir,
             create_checkbox: false,
             application_dir_name: "theroundtable".to_string(),
+            send_analytics: false,
             tmp_installation_dir,
         }
     }
@@ -62,6 +64,7 @@ impl Into<InstallationConfig> for ConfigStep {
             installation_dir: self.installation_dir,
             create_shortcut: self.create_checkbox,
             application_dir_name: self.application_dir_name,
+            send_analytics: self.send_analytics,
             tmp_installation_dir: self.tmp_installation_dir,
         }
     }
@@ -108,12 +111,13 @@ impl Step for ConfigStep {
             .height(50)
             .align_y(iced::Alignment::Center)
             .spacing(5),
-            widget::Space::new(10, 0),
             widget::text("Application directory name"),
             widget::text_input("", &self.application_dir_name).on_input(Message::ApplicationDirNameInputText),
-            widget::Space::new(10, 0),
+            widget::Space::new(0, 15),
             widget::checkbox("Create app shortcut   ", self.create_checkbox)
                 .on_toggle(|value| { Message::CreateShortcutCheckbox(value) }),
+            widget::checkbox("Send anonymous analytics   ", self.send_analytics)
+                .on_toggle(|value| { Message::SendAnalyticsCheckbox(value) }),
         )
         .spacing(5)
         .into()
@@ -138,6 +142,7 @@ impl Step for ConfigStep {
             }
             Message::ApplicationDirNameInputText(value) => self.application_dir_name = value,
             Message::CreateShortcutCheckbox(value) => self.create_checkbox = value,
+            Message::SendAnalyticsCheckbox(value) => self.send_analytics = value,
             _ => {}
         }
 

@@ -64,11 +64,11 @@ impl Step for FilesStep {
     }
 }
 
-// TODO: Use a tmp folder
 async fn copy_files() -> io::Result<()> {
-    let installation_dir = &InstallationConfig::get_config().tmp_installation_dir;
+    let config = InstallationConfig::get_config();
+    let installation_dir = &config.tmp_installation_dir;
 
-    let zip_file_path = installation_dir.join("theroundtable.zip");
+    let zip_file_path = installation_dir.join("app.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;
     file.write_all(COMPRESSED_FILES)?;
 

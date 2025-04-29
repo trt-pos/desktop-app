@@ -9,6 +9,7 @@ pub struct InstallationConfig {
     pub create_shortcut: bool,
     pub application_dir_name: String,
     pub tmp_installation_dir: PathBuf,
+    pub send_analytics: bool,
 }
 
 impl InstallationConfig {

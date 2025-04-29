@@ -51,6 +51,7 @@ pub enum Message {
     FolderSelected(String),
     ApplicationDirNameInputText(String),
     CreateShortcutCheckbox(bool),
+    SendAnalyticsCheckbox(bool),
 
     DownloadProgress(ProgressTaskStatus),
     DownloadStarted,
@@ -64,7 +65,7 @@ impl TrtInstallerApp {
             .expect("Index out of bounds");
 
         let button_text = actual_panel.button_text();
-        
+
         let continue_button = if !self.waiting_apply {
             widget::button(button_text)
                 .style(button::primary)
