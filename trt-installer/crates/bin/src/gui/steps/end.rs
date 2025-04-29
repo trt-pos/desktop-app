@@ -1,7 +1,7 @@
 use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::{widget, Element, Task};
+use iced::{Element, Task, widget};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
@@ -62,6 +62,49 @@ async fn move_files_to_final_dir() -> io::Result<()> {
     // Copy the app files
     copy_dir_recursive(&tmp_app_dir, &final_app_dir)?;
     copy_dir_recursive(&tmp_jdk_dir, &final_jdk_dir)?;
+
+    // Create the app shortcuts if needed
+    if config.create_shortcut {
+        match std::env::consts::OS {
+            "windows" => {
+                let shortcut_path =
+                    final_app_dir.join(format!("{}.lnk", config.application_dir_name));
+                let target_path = final_app_dir.join("start.exe");
+            }
+            "linux" => {
+                let global_shortcut_path = PathBuf::from(format!(
+                    "/usr/share/applications/{}.desktop",
+                    config.application_dir_name
+                ));
+                let user_shortcut_path = PathBuf::from(format!(
+                    "{}/.local/share/applications/{}.desktop",
+                    std::env::var("HOME").unwrap(),
+                    config.application_dir_name
+                ));
+                let target_path = final_app_dir.join("start");
+
+                let file_content = format!(
+                    r#"[Desktop Entry]
+Version=1.0
+Type=Application
+Name=The Round Table
+Exec="{}/start"
+Icon={}/images/icon.png
+Categories=Application;
+"#,
+                    target_path.display(),
+                    target_path.display()
+                );
+
+                if fs::write(&global_shortcut_path, &file_content).is_err() {
+                    fs::write(&user_shortcut_path, &file_content)?;
+                }
+            }
+            _ => {
+                panic!("Unsupported OS: {}", std::env::consts::OS);
+            }
+        }
+    }
 
     Ok(())
 }
