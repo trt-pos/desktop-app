@@ -54,7 +54,7 @@ async fn move_files_to_final_dir() -> io::Result<()> {
     let tmp_jdk_dir = config.tmp_installation_dir.join("jdk");
 
     let final_app_dir = PathBuf::from(&config.installation_dir).join(&config.application_dir_name);
-    let final_jdk_dir = PathBuf::from(&config.installation_dir).join("jdk");
+    let final_jdk_dir = final_app_dir.join("jdk");
 
     fs::create_dir_all(&final_app_dir)?;
     fs::create_dir_all(&final_jdk_dir)?;
