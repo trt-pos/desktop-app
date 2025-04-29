@@ -219,18 +219,81 @@ async fn download_jdk() -> Result<(), crate::Error> {
 
     let file = std::fs::File::open(&compressed_file_path)?;
     let output_path = PathBuf::from(tmp_dir).join("jdk");
+    std::fs::create_dir_all(&output_path)?;
 
     // Extracting the compressed JDK folder
     match RESOURCE_EXTENSION.deref().as_str() {
         "zip" => {
             let reader = std::io::BufReader::new(file);
             let mut archive = zip::ZipArchive::new(reader)?;
-            archive.extract(&output_path)?;
+
+            let total_files = archive.len() as f32;
+            {
+                let mut download_status = DOWNLOAD_STATUS.lock().await;
+                download_status.length = total_files;
+            }
+
+            for i in 0..archive.len() {
+                let mut file = archive.by_index(i)?;
+                let outpath = output_path.join(file.mangled_name());
+
+                if (&*file.name()).ends_with('/') {
+                    std::fs::create_dir_all(&outpath)?;
+                } else {
+                    if let Some(p) = outpath.parent() {
+                        if !p.exists() {
+                            std::fs::create_dir_all(&p)?;
+                        }
+                    }
+                    let mut outfile = std::fs::File::create(&outpath)?;
+                    std::io::copy(&mut file, &mut outfile)?;
+                }
+
+                {
+                    let mut status = DOWNLOAD_STATUS.lock().await;
+                    status.progress = i as f32 / total_files;
+                    status.message = format!("Extracting file {}/{}", i + 1, total_files);
+                }
+            }
         }
         "tar.gz" => {
-            let tar = GzDecoder::new(file);
+            let mut tar = GzDecoder::new(&file);
+
+            // let total_entries = {
+            //     let mut archive = tar::Archive::new(&mut tar);
+//
+            //     let entries = archive.entries()?.collect::<Result<Vec<_>, _>>()?;
+            //     entries.len().clone() as f32
+            // };
+//
+            // {
+            //     let mut download_status = DOWNLOAD_STATUS.lock().await;
+            //     download_status.length = total_entries;
+            // }
+
+            let total_entries = 1000.0;
             let mut archive = tar::Archive::new(tar);
-            archive.unpack(&output_path)?;
+            let entries = archive.entries()?.collect::<Result<Vec<_>, _>>()?;
+
+            for (i, mut entry) in entries.into_iter().enumerate() {
+                let file_name = if let Some(name) = entry.link_name()? {
+                    name
+                } else {
+                    entry.path()?
+                };
+                let output_path = output_path.clone().join(file_name);
+                if let Some(parent) = output_path.parent() {
+                    if !parent.exists() {
+                        std::fs::create_dir_all(parent)?;
+                    }
+                }
+                entry.unpack(&output_path)?;
+
+                if let Ok(mut status) = DOWNLOAD_STATUS.try_lock() {
+                    status.progress = i as f32 / total_entries;
+                    status.message = format!("Extracted file {}/{}", i, total_entries as usize);
+                }
+            }
         }
         _ => {
             #[cfg(debug_assertions)]
