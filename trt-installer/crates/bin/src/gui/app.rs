@@ -3,12 +3,11 @@ use crate::gui::steps::Step;
 use iced::widget::image::Handle;
 use iced::widget::{button, column, row};
 use iced::{Subscription, Task, Theme, widget};
-use std::sync::{Arc, RwLock};
 use std::time::Duration;
 
 pub struct TrtInstallerApp {
     actual_panel: usize,
-    panels: [Box<dyn Step>; 4],
+    panels: [Box<dyn Step>; 5],
     last_error: String,
     waiting_apply: bool,
 }
@@ -22,6 +21,7 @@ impl Default for TrtInstallerApp {
                 Box::new(steps::ConfigStep::default()),
                 Box::new(steps::FilesStep::default()),
                 Box::new(steps::JdkStep::default()),
+                Box::new(steps::EndStep::default()),
             ],
             last_error: String::new(),
             waiting_apply: false,
@@ -76,7 +76,7 @@ impl TrtInstallerApp {
                 .style(button::primary)
                 .width(125)
         };
-        
+
         row![
             widget::image(Handle::from_bytes(actual_panel.icon()))
                 .width(75)
@@ -88,13 +88,9 @@ impl TrtInstallerApp {
                     .width(iced::Fill)
                     .align_x(iced::Alignment::Center)
                     .align_y(iced::Alignment::Center),
-                
-                
                 widget::container(actual_panel.view())
                     .width(iced::Fill)
                     .height(iced::Fill),
-                
-                
                 widget::text(&self.last_error).color(iced::Color::from_rgb8(255, 31, 31)),
                 row![
                     widget::Space::new(iced::Fill, 0),

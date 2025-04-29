@@ -5,6 +5,7 @@ use iced::widget::row;
 use iced::{Element, Task, widget};
 use std::io;
 use std::io::Write;
+use std::path::PathBuf;
 
 static COMPRESSED_FILES: &[u8] = include_bytes!("../../../resources/app-files.zip");
 
@@ -67,6 +68,9 @@ impl Step for FilesStep {
 async fn copy_files() -> io::Result<()> {
     let config = InstallationConfig::get_config();
     let installation_dir = &config.tmp_installation_dir;
+    let application_dir_name = &config.application_dir_name;
+    
+    let extract_dir = installation_dir.join(application_dir_name);
 
     let zip_file_path = installation_dir.join("app.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;
@@ -76,7 +80,12 @@ async fn copy_files() -> io::Result<()> {
     let mut archive = zip::ZipArchive::new(std::fs::File::open(&zip_file_path)?)?;
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
-        let outpath = installation_dir.join(file.mangled_name());
+        let outpath = extract_dir.join(
+            file.mangled_name()
+                .components()
+                .skip(1)
+                .collect::<PathBuf>(),
+        );
 
         if file.name().ends_with('/') {
             std::fs::create_dir_all(&outpath)?;
