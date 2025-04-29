@@ -212,7 +212,7 @@ async fn download_jdk() -> Result<(), crate::Error> {
 
     {
         let mut download_status = DOWNLOAD_STATUS.lock().await;
-        download_status.length = 1.0;
+        download_status.length = 100.0;
         download_status.progress = 0.0;
         download_status.message = "Extracting files...".to_string();
     }

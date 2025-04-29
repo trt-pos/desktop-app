@@ -1,7 +1,8 @@
 use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::{widget, Element, Task};
+use iced::widget::row;
+use iced::{Element, Task, widget};
 use std::io;
 use std::io::Write;
 
@@ -22,14 +23,32 @@ impl Step for FilesStep {
     }
 
     fn view(&self) -> Element<Message> {
-        widget::progress_bar(0f32..=1f32, self.progress).into()
+        let text = "The app files will be written to disk.";
+
+        iced::widget::column![
+            widget::Space::new(iced::Fill, iced::Fill),
+            widget::column![
+                widget::text(text),
+                row![
+                    widget::progress_bar(0f32..=1f32, self.progress),
+                    widget::text(format!("{} %", self.progress))
+                        .align_x(iced::Center)
+                        .width(60)
+                ]
+                .align_y(iced::Center),
+            ]
+            .width(550)
+            .spacing(10),
+            widget::Space::new(iced::Fill, iced::Fill),
+        ]
+        .spacing(5)
+        .align_x(iced::Center)
+        .into()
     }
 
     fn update(&mut self, message: Message) -> Task<Message> {
         Task::none()
     }
-
-
 
     fn apply(&self) -> Task<Message> {
         Task::future(async {
@@ -44,17 +63,17 @@ impl Step for FilesStep {
 // TODO: Use a tmp folder
 async fn copy_files() -> io::Result<()> {
     let installation_dir = &InstallationConfig::get_config().tmp_installation_dir;
-    
+
     let zip_file_path = installation_dir.join("theroundtable.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;
     file.write_all(COMPRESSED_FILES)?;
-    
+
     // Unzip the file
     let mut archive = zip::ZipArchive::new(std::fs::File::open(&zip_file_path)?)?;
     for i in 0..archive.len() {
         let mut file = archive.by_index(i)?;
         let outpath = installation_dir.join(file.mangled_name());
-        
+
         if file.name().ends_with('/') {
             std::fs::create_dir_all(&outpath)?;
         } else {
@@ -66,6 +85,6 @@ async fn copy_files() -> io::Result<()> {
         }
     }
     std::fs::remove_file(zip_file_path)?;
-    
+
     Ok(())
 }
