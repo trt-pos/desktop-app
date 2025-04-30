@@ -71,17 +71,17 @@ async fn move_files_to_final_dir() -> io::Result<()> {
         let shortcut_block = if config.create_shortcut {
             format!(
                 r#"
-                # Create the desktop entry
-                cat <<EOF > /usr/share/applications/the-round-table.desktop
-                [Desktop Entry]
-                Version=1.0
-                Type=Application
-                Name=The Round Table
-                Exec={final_app_dir}/start
-                Icon={final_app_dir}/images/icon.png
-                Categories=Application;
-                EOF
-                chmod +x /usr/share/applications/the-round-table.desktop
+# Create the desktop entry
+cat <<EOF > /usr/share/applications/the-round-table.desktop
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=The Round Table
+Exec={final_app_dir}/start
+Icon={final_app_dir}/images/icon.png
+Categories=Application;
+EOF
+chmod +x /usr/share/applications/the-round-table.desktop
             "#
             )
         } else {
@@ -90,16 +90,16 @@ async fn move_files_to_final_dir() -> io::Result<()> {
 
         let installation_script = format!(
             r#"
-            #!/bin/bash
-            mkdir -p {final_app_dir}
-            mkdir -p {final_jdk_dir}
-            
-            cp -r {tmp_app_dir}/* {final_app_dir}
-            cp -r {tmp_jdk_dir}/* {final_jdk_dir}
-            
-            chmod +x {final_app_dir}/start
-            
-            {shortcut_block}
+#!/bin/bash
+mkdir -p {final_app_dir}
+mkdir -p {final_jdk_dir}
+
+cp -r {tmp_app_dir}/* {final_app_dir}
+cp -r {tmp_jdk_dir}/* {final_jdk_dir}
+
+chmod +x {final_app_dir}/start
+
+{shortcut_block}
         "#
         );
 
