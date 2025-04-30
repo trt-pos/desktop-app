@@ -8,8 +8,6 @@ use std::io;
 use std::io::Write;
 use std::path::PathBuf;
 
-static COMPRESSED_FILES: &[u8] = include_bytes!("../../../resources/app-files.zip");
-
 #[derive(Default)]
 pub struct FilesStep {
     progress: f32,
@@ -78,7 +76,7 @@ async fn copy_files() -> io::Result<()> {
 
     let zip_file_path = installation_dir.join("app.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;
-    file.write_all(COMPRESSED_FILES)?;
+    file.write_all(crate::COMPRESSED_APP_FILES)?;
 
     info!(
         "Writing app zip file to {}",

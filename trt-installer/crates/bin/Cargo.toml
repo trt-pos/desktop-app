@@ -21,3 +21,5 @@ openssl = { version = '*', features = ["vendored"] }
 
 [build-dependencies]
 openssl = { version = '*', features = ["vendored"] }
+
+[dev-dependencies]

@@ -10,6 +10,8 @@ mod privileges;
 use crate::gui::TrtInstallerApp;
 pub use error::Error;
 
+static COMPRESSED_APP_FILES: &[u8] = include_bytes!(env!("APP_ZIP_PATH"));
+
 fn main() {
     env_logger::init();
     

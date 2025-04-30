@@ -4,19 +4,15 @@ set -u
 build-for-platform() {
   PLATFORM=$1
   
-  OUTPUT_DIR="output/theroundtable-$PLATFORM-x64"
-  FILES="app-files-$PLATFORM"
-  JDK="$HOME/.jdks/openjdk-22.0.2_$PLATFORM-x64_bin/"
+  BUILD_IDENTIFIER="theroundtable-$PLATFORM-x64"
+  OUTPUT_DIR="output/$BUILD_IDENTIFIER"
+  export APP_ZIP_PATH="../../../../$OUTPUT_DIR.zip"
   
-  rm -rf "OUTPUT_DIR"
   mkdir -p "$OUTPUT_DIR"
   
   cp -r "bin" "$OUTPUT_DIR"
   cp -r "styles" "$OUTPUT_DIR"
   cp -r "images" "$OUTPUT_DIR"
-  
-  cp -r "$FILES/." "$OUTPUT_DIR"
-  cp -r "$JDK" "$OUTPUT_DIR/jdk"
   
   if [ "$PLATFORM" == "linux" ]; then
       (
@@ -25,9 +21,14 @@ build-for-platform() {
           mv "target/x86_64-unknown-linux-gnu/release/app_launcher" "../$OUTPUT_DIR/start"
       )
       (
-        cd "post-install-bin" || exit
-        cross build --target x86_64-unknown-linux-gnu --release -p post_install_bin
-        mv "target/x86_64-unknown-linux-gnu/release/post_install_bin" "../$OUTPUT_DIR/post-install-bin"
+        cd "output" || exit
+        zip -r "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
+      )
+      (
+        cd "trt-installer" || exit
+        cross build --target x86_64-unknown-linux-gnu --release -p bin
+        VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
+        mv "target/x86_64-unknown-linux-gnu/release/bin" "../output/trt-installer-$VERSION"
       )
   elif [ "$PLATFORM" == "windows" ]; then
       (
@@ -36,12 +37,19 @@ build-for-platform() {
           mv "target/x86_64-pc-windows-gnu/release/app_launcher.exe" "../$OUTPUT_DIR/start.exe"
       )
       (
-        cd "post-install-bin" || exit
-        cross build --target x86_64-pc-windows-gnu --release -p post_install_bin
-        mv "target/x86_64-pc-windows-gnu/release/post_install_bin.exe" "../$OUTPUT_DIR/post-install-bin.exe"
+        cd "output" || exit
+        zip -r "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
+      )
+      (
+        cd "trt-installer" || exit
+        cross build --target x86_64-pc-windows-gnu --release -p bin
+        VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
+        mv "target/x86_64-pc-windows-gnu/release/bin.exe" "../output/trt-installer-$VERSION.exe"
       )
   fi
 }
+
+rm -rf output
 
 if [ "$#" -ne 1 ]; then
   echo "Uso: $0 <linux | windows | all> "
@@ -67,10 +75,5 @@ if [ "$PLATFORM" == "windows" ] || [ "$PLATFORM" == "all" ]; then
 fi
 
 wait
-
-# izpack
-if [ "$PLATFORM" == "all" ]; then
-    izpack -h "$IZPACK_HOME" -l 9 izpack.xml -o output/installer.jar
-fi
 
 rm -rf "bin"
