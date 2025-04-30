@@ -1,14 +1,18 @@
+#![allow(unreachable_code)]
+
 use iced::{window, Size};
-mod actions;
+pub mod config;
 mod error;
 mod gui;
 mod translations;
-pub mod config;
+mod privileges;
 
 use crate::gui::TrtInstallerApp;
 pub use error::Error;
 
 fn main() {
+    env_logger::init();
+    
     let window_settings = window::Settings {
         size: Size::new(700f32, 500f32),
         min_size: Some(Size::new(700f32, 500f32)),
@@ -26,10 +30,10 @@ fn main() {
         TrtInstallerApp::update,
         TrtInstallerApp::view,
     )
-        .theme(TrtInstallerApp::theme)
-        .window(window_settings)
-        .settings(settings)
-        .subscription(TrtInstallerApp::subscription)
-        .run()
-        .expect("Error running the application");
+    .theme(TrtInstallerApp::theme)
+    .window(window_settings)
+    .settings(settings)
+    .subscription(TrtInstallerApp::subscription)
+    .run()
+    .expect("Error running the application");
 }

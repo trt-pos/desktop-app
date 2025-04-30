@@ -1,9 +1,10 @@
 use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::{Element, Task, widget};
-use std::path::{Path, PathBuf};
-use std::{fs, io};
+use crate::privileges::execute_script_with_privileges;
+use iced::{widget, Element, Task};
+use std::io;
+use std::path::PathBuf;
 
 #[derive(Default)]
 pub struct EndStep {}
@@ -23,16 +24,19 @@ impl Step for EndStep {
 
     fn view(&self) -> Element<Message> {
         iced::widget::column![
-            widget::text("You have successfully installed The Round Table!!")
+            widget::text("The installation its almost done!")
                 .align_x(iced::Alignment::Center),
-            widget::text("You can now start the application and let your business grow with the best POS software in the market!")
+            widget::text("Pressing 'Finish' will copy the files to the final directory and you will \
+            be ready to start the application and let your business grow with the best POS software \
+            in the market!")
                 .align_x(iced::Alignment::Center),
         ]
+            .spacing(5)
         .padding(5)
         .into()
     }
 
-    fn update(&mut self, message: Message) -> Task<Message> {
+    fn update(&mut self, _: Message) -> Task<Message> {
         Task::none()
     }
 
@@ -56,78 +60,52 @@ async fn move_files_to_final_dir() -> io::Result<()> {
     let final_app_dir = PathBuf::from(&config.installation_dir).join(&config.application_dir_name);
     let final_jdk_dir = final_app_dir.join("jdk");
 
-    fs::create_dir_all(&final_app_dir)?;
-    fs::create_dir_all(&final_jdk_dir)?;
+    #[cfg(target_os = "linux")]
+    {
+        let final_app_dir = final_app_dir.to_string_lossy();
+        let final_jdk_dir = final_jdk_dir.to_string_lossy();
 
-    // Copy the app files
-    copy_dir_recursive(&tmp_app_dir, &final_app_dir)?;
-    copy_dir_recursive(&tmp_jdk_dir, &final_jdk_dir)?;
+        let tmp_app_dir = tmp_app_dir.to_string_lossy();
+        let tmp_jdk_dir = tmp_jdk_dir.to_string_lossy();
 
-    // Create the app shortcuts if needed
-    if config.create_shortcut {
-        match std::env::consts::OS {
-            "windows" => {
-                let shortcut_path =
-                    final_app_dir.join(format!("{}.lnk", config.application_dir_name));
-                let target_path = final_app_dir.join("start.exe");
-            }
-            "linux" => {
-                let global_shortcut_path = PathBuf::from(format!(
-                    "/usr/share/applications/{}.desktop",
-                    config.application_dir_name
-                ));
-                let user_shortcut_path = PathBuf::from(format!(
-                    "{}/.local/share/applications/{}.desktop",
-                    std::env::var("HOME").unwrap(),
-                    config.application_dir_name
-                ));
-                let target_path = final_app_dir.join("start");
-
-                let file_content = format!(
-                    r#"[Desktop Entry]
-Version=1.0
-Type=Application
-Name=The Round Table
-Exec="{}/start"
-Icon={}/images/icon.png
-Categories=Application;
-"#,
-                    target_path.display(),
-                    target_path.display()
-                );
-
-                if fs::write(&global_shortcut_path, &file_content).is_err() {
-                    fs::write(&user_shortcut_path, &file_content)?;
-                }
-            }
-            _ => {
-                panic!("Unsupported OS: {}", std::env::consts::OS);
-            }
-        }
-    }
-
-    Ok(())
-}
-
-fn copy_dir_recursive(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
-    let src = src.as_ref();
-    let dst = dst.as_ref();
-
-    if !dst.exists() {
-        fs::create_dir_all(dst)?;
-    }
-
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let path = entry.path();
-        let dest_path = dst.join(entry.file_name());
-
-        if path.is_dir() {
-            copy_dir_recursive(path, &dest_path)?;
+        let shortcut_block = if config.create_shortcut {
+            format!(
+                r#"
+                # Create the desktop entry
+                cat <<EOF > /usr/share/applications/the-round-table.desktop
+                [Desktop Entry]
+                Version=1.0
+                Type=Application
+                Name=The Round Table
+                Exec={final_app_dir}/start
+                Icon={final_app_dir}/images/icon.png
+                Categories=Application;
+                EOF
+                chmod +x /usr/share/applications/the-round-table.desktop
+            "#
+            )
         } else {
-            fs::copy(path, dest_path)?;
-        }
+            String::new()
+        };
+
+        let installation_script = format!(
+            r#"
+            #!/bin/bash
+            mkdir -p {final_app_dir}
+            mkdir -p {final_jdk_dir}
+            
+            cp -r {tmp_app_dir}/* {final_app_dir}
+            cp -r {tmp_jdk_dir}/* {final_jdk_dir}
+            
+            chmod +x {final_app_dir}/start
+            
+            {shortcut_block}
+        "#
+        );
+
+        execute_script_with_privileges(&installation_script)?;
+        return Ok(());
     }
 
-    Ok(())
+    panic!("Not implemented for this platform");
 }

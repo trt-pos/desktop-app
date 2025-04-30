@@ -12,11 +12,12 @@ zip = { version = "2.6.1" }
 thiserror = { version = "2.0.12" }
 rfd = { version = "0.15.3"}
 iced = { version = "0.13.1", features = ["tokio", "image"] }
+futures = "0.3.31"
+log = { version = "0.4.27" }
+env_logger = { version = "0.11.8" }
 
 # Required for building using cross
 openssl = { version = '*', features = ["vendored"] }
-futures = "0.3.31"
-time = "0.3.41"
 
 [build-dependencies]
 openssl = { version = '*', features = ["vendored"] }

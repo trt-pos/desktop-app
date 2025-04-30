@@ -1,7 +1,8 @@
 use std::path::PathBuf;
-use std::sync::OnceLock;
+use std::sync::RwLock;
+use std::sync::{Arc, OnceLock};
 
-static CONFIG: OnceLock<InstallationConfig> = OnceLock::new();
+static CONFIG: OnceLock<RwLock<Option<Arc<InstallationConfig>>>> = OnceLock::new();
 
 #[derive(Default, Debug)]
 pub struct InstallationConfig {
@@ -13,27 +14,21 @@ pub struct InstallationConfig {
 }
 
 impl InstallationConfig {
-    pub fn get_config() -> &'static InstallationConfig {
-        if CONFIG.get().is_none() {
-            #[cfg(debug_assertions)]
-            {
-                panic!("Config is not set");
-            }
-            
-            Self::set_config(InstallationConfig::default());
+    pub fn get_config() -> Arc<InstallationConfig> {
+        let lock = CONFIG.get_or_init(|| RwLock::new(None));
+
+        let read_guard = lock.read().unwrap();
+        if let Some(config) = &*read_guard {
+            Arc::clone(config)
+        } else {
+            drop(read_guard); 
+            panic!("Configuration not set. Please set the configuration before accessing it.");
         }
-        
-        CONFIG.get().expect("Config should be initialized")
     }
-    
+
     pub fn set_config(config: InstallationConfig) {
-        let result = CONFIG.set(config);
-        
-        #[cfg(debug_assertions)]
-        {
-            if result.is_err() {
-                panic!("Failed to set config: {:?}", result.err());
-            }
-        }
+        let lock = CONFIG.get_or_init(|| RwLock::new(None));
+        let mut guard = lock.write().unwrap();
+        *guard = Some(Arc::new(config));
     }
 }

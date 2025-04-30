@@ -10,6 +10,7 @@ pub struct TrtInstallerApp {
     panels: [Box<dyn Step>; 5],
     last_error: String,
     waiting_apply: bool,
+    block_back_button: bool,
 }
 
 impl Default for TrtInstallerApp {
@@ -25,6 +26,7 @@ impl Default for TrtInstallerApp {
             ],
             last_error: String::new(),
             waiting_apply: false,
+            block_back_button: false,
         }
     }
 }
@@ -41,6 +43,7 @@ pub enum Message {
     None,
     AppTick,
 
+    BlockBackButton,
     AcceptStep,
     PreviousStep,
     NextStep,
@@ -51,8 +54,7 @@ pub enum Message {
     FolderSelected(String),
     ApplicationDirNameInputText(String),
     CreateShortcutCheckbox(bool),
-    SendAnalyticsCheckbox(bool),
-
+    // SendAnalyticsCheckbox(bool),
     DownloadProgress(ProgressTaskStatus),
     DownloadStarted,
 }
@@ -77,10 +79,27 @@ impl TrtInstallerApp {
                 .width(125)
         };
 
+        let back_button = if self.block_back_button {
+            row![]
+        } else {
+            row![
+                widget::button("Back")
+                    .style(button::secondary)
+                    .on_press(Message::PreviousStep)
+                    .width(125)
+            ]
+        };
+
+        let version = env!("CARGO_PKG_VERSION");
+
         row![
-            widget::image(Handle::from_bytes(actual_panel.icon()))
-                .width(75)
-                .height(75),
+            column![
+                widget::image(Handle::from_bytes(actual_panel.icon()))
+                    .width(75)
+                    .height(75),
+                widget::Space::new(0, iced::Fill),
+                widget::text(format!("v{version}")).size(10)
+            ],
             column![
                 widget::text(actual_panel.title())
                     .size(30)
@@ -94,10 +113,7 @@ impl TrtInstallerApp {
                 widget::text(&self.last_error).color(iced::Color::from_rgb8(255, 31, 31)),
                 row![
                     widget::Space::new(iced::Fill, 0),
-                    widget::button("Back")
-                        .style(button::secondary)
-                        .on_press(Message::PreviousStep)
-                        .width(125),
+                    back_button,
                     continue_button,
                 ]
                 .spacing(5)
@@ -147,6 +163,9 @@ impl TrtInstallerApp {
             Message::PreviousStep => {
                 self.actual_panel -= 1;
             }
+            Message::BlockBackButton => {
+                self.block_back_button = true;
+            }
             Message::Error(error) => {
                 self.waiting_apply = false;
                 self.last_error = error;
@@ -165,7 +184,7 @@ impl TrtInstallerApp {
     }
 
     fn tick_subscription(&self) -> Subscription<Message> {
-        let tick_rate = Duration::from_millis(100);
+        let tick_rate = Duration::from_millis(33);
         iced::time::every(tick_rate).map(move |_| Message::AppTick)
     }
 

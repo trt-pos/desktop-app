@@ -5,6 +5,7 @@ use flate2::read::GzDecoder;
 use futures::StreamExt;
 use iced::widget::row;
 use iced::{Element, Task, widget};
+use log::info;
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::sync::{Arc, LazyLock};
@@ -191,6 +192,11 @@ async fn download_jdk() -> Result<(), crate::Error> {
     let tmp_dir = &(installation_config.tmp_installation_dir);
     let compressed_file_path = tmp_dir.join(format!("jdk.{}", *RESOURCE_EXTENSION));
 
+    info!(
+        "Downloading JDK from: {url} into {}",
+        tmp_dir.to_string_lossy()
+    );
+
     let mut file = File::create(&compressed_file_path).await?;
     let mut downloaded = 0u64;
     let mut stream = response.bytes_stream();
@@ -221,6 +227,8 @@ async fn download_jdk() -> Result<(), crate::Error> {
     let file = std::fs::File::open(&compressed_file_path)?;
     let output_path = PathBuf::from(tmp_dir).join("jdk");
 
+    info!("Unpacking JDK into {}", output_path.to_string_lossy());
+    
     // Extracting the compressed JDK folder
     match RESOURCE_EXTENSION.deref().as_str() {
         "zip" => {

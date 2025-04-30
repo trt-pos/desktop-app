@@ -1,6 +1,6 @@
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
-use iced::{Element, Task, widget};
+use iced::{widget, Element, Task};
 use widget::column;
 
 #[derive(Default)]
@@ -36,6 +36,6 @@ impl Step for WelcomeStep {
     }
 
     fn apply(&self) -> Task<Message> {
-        Task::future(async move { Message::NextStep })
+        Task::done(Message::NextStep)
     }
 }

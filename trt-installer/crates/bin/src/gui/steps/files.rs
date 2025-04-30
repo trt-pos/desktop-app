@@ -3,6 +3,7 @@ use crate::gui::app::Message;
 use crate::gui::steps::Step;
 use iced::widget::row;
 use iced::{Element, Task, widget};
+use log::info;
 use std::io;
 use std::io::Write;
 use std::path::PathBuf;
@@ -51,17 +52,20 @@ impl Step for FilesStep {
         .into()
     }
 
-    fn update(&mut self, message: Message) -> Task<Message> {
+    fn update(&mut self, _: Message) -> Task<Message> {
         Task::none()
     }
 
     fn apply(&self) -> Task<Message> {
-        Task::future(async {
-            if let Err(e) = copy_files().await {
-                return Message::Error(format!("Failed to copy files: {}", e));
-            }
-            Message::NextStep
-        })
+        Task::batch([
+            Task::future(async {
+                if let Err(e) = copy_files().await {
+                    return Message::Error(format!("Failed to copy files: {}", e));
+                }
+                Message::NextStep
+            }),
+            Task::done(Message::BlockBackButton),
+        ])
     }
 }
 
@@ -69,12 +73,21 @@ async fn copy_files() -> io::Result<()> {
     let config = InstallationConfig::get_config();
     let installation_dir = &config.tmp_installation_dir;
     let application_dir_name = &config.application_dir_name;
-    
+
     let extract_dir = installation_dir.join(application_dir_name);
 
     let zip_file_path = installation_dir.join("app.zip");
     let mut file = std::fs::File::create(&zip_file_path)?;
     file.write_all(COMPRESSED_FILES)?;
+
+    info!(
+        "Writing app zip file to {}",
+        zip_file_path.to_string_lossy()
+    );
+    info!(
+        "Extracting app zip file to {}",
+        extract_dir.to_string_lossy()
+    );
 
     // Unzip the file
     let mut archive = zip::ZipArchive::new(std::fs::File::open(&zip_file_path)?)?;

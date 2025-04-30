@@ -4,7 +4,6 @@ use crate::gui::steps::Step;
 use iced::widget::{column, image, row};
 use iced::{color, widget, Border, ContentFit, Element, Task};
 use std::fs;
-use std::fs::File;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -19,6 +18,7 @@ pub struct ConfigStep {
 
 impl Default for ConfigStep {
     fn default() -> Self {
+        #[allow(unused_assignments)]
         let mut installation_dir = None;
 
         #[cfg(target_os = "windows")]
@@ -116,8 +116,8 @@ impl Step for ConfigStep {
             widget::Space::new(0, 15),
             widget::checkbox("Create app shortcut   ", self.create_checkbox)
                 .on_toggle(|value| { Message::CreateShortcutCheckbox(value) }),
-            widget::checkbox("Send anonymous analytics   ", self.send_analytics)
-                .on_toggle(|value| { Message::SendAnalyticsCheckbox(value) }),
+            // widget::checkbox("Send anonymous analytics   ", self.send_analytics)
+            //     .on_toggle(|value| { Message::SendAnalyticsCheckbox(value) }),
         )
         .spacing(5)
         .into()
@@ -142,7 +142,7 @@ impl Step for ConfigStep {
             }
             Message::ApplicationDirNameInputText(value) => self.application_dir_name = value,
             Message::CreateShortcutCheckbox(value) => self.create_checkbox = value,
-            Message::SendAnalyticsCheckbox(value) => self.send_analytics = value,
+            // Message::SendAnalyticsCheckbox(value) => self.send_analytics = value,
             _ => {}
         }
 
@@ -153,18 +153,7 @@ impl Step for ConfigStep {
         let config = self.clone();
 
         Task::future(async move {
-            let dir = PathBuf::from(&config.installation_dir);
-
-            let _ = fs::create_dir_all(&dir);
-            let test_file_path = dir.join("trt-write-test-file");
-            if let Err(e) = File::create(&test_file_path) {
-                return Message::Error(format!("Failed to create test file: {}", e));
-            };
-
-            let _ = fs::remove_file(&test_file_path);
-
             InstallationConfig::set_config(config.into());
-
             Message::NextStep
         })
     }
