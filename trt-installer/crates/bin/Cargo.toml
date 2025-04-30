@@ -1,0 +1,25 @@
+[package]
+name = "bin"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+reqwest = { version = "0.12.15", features = ["blocking", "stream"] }
+tokio = { version = "1.44.2", features = ["rt-multi-thread", "macros", "fs"] }
+tar = { version = "0.4.44" }
+flate2 = { version = "1.1.1" }
+zip = { version = "2.6.1" }
+thiserror = { version = "2.0.12" }
+rfd = { version = "0.15.3"}
+iced = { version = "0.13.1", features = ["tokio", "image"] }
+futures = "0.3.31"
+log = { version = "0.4.27" }
+env_logger = { version = "0.11.8" }
+
+# Required for building using cross
+openssl = { version = '*', features = ["vendored"] }
+
+[build-dependencies]
+openssl = { version = '*', features = ["vendored"] }
+
+[dev-dependencies]

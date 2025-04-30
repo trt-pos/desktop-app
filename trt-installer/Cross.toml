@@ -1,0 +1,7 @@
+[build.env]
+volumes = [
+    "/project/output=../output",
+]
+passthrough = [
+    "APP_ZIP_PATH"
+]

@@ -240,47 +240,5 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>android</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.gluonhq</groupId>
-                    <artifactId>charm-down-core</artifactId>
-                    <version>${charm-down.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.gluonhq</groupId>
-                    <artifactId>charm-down-android</artifactId>
-                    <version>2.0.1</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.gluonhq</groupId>
-                    <artifactId>charm-down-plugin-storage</artifactId>
-                    <version>${charm-down.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.gluonhq</groupId>
-                    <artifactId>client-maven-plugin</artifactId>
-                    <version>0.1.42</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.gluonhq</groupId>
-                        <artifactId>gluonfx-maven-plugin</artifactId>
-                        <version>1.0.24</version>
-                        <configuration>
-                            <target>android</target>
-                            <graalvmHome>/home/borja/.jdks/graalvm-jdk-23.0.1</graalvmHome>
-                            <mainClass>
-                                org.lebastudios.theroundtable.Launcher
-                            </mainClass>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 </project>
