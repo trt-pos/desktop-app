@@ -4,7 +4,9 @@ set -u
 build-for-platform() {
   PLATFORM=$1
   
-  BUILD_IDENTIFIER="theroundtable-$PLATFORM-x64"
+  BUILD_ARCH="x64"
+  BUILD_SPECS="$PLATFORM-$BUILD_ARCH";
+  BUILD_IDENTIFIER="theroundtable-$BUILD_SPECS"
   OUTPUT_DIR="output/$BUILD_IDENTIFIER"
   export APP_ZIP_PATH="../../../../$OUTPUT_DIR.zip"
   
@@ -22,13 +24,13 @@ build-for-platform() {
       )
       (
         cd "output" || exit
-        zip -r "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
+        zip -r -9 "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
       )
       (
         cd "trt-installer" || exit
         cross build --target x86_64-unknown-linux-gnu --release -p bin
         VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
-        mv "target/x86_64-unknown-linux-gnu/release/bin" "../output/trt-installer-$VERSION"
+        mv "target/x86_64-unknown-linux-gnu/release/bin" "../output/trt-installer-$BUILD_SPECS-$VERSION"
       )
   elif [ "$PLATFORM" == "windows" ]; then
       (
@@ -38,13 +40,13 @@ build-for-platform() {
       )
       (
         cd "output" || exit
-        zip -r "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
+        zip -r -9 "$BUILD_IDENTIFIER.zip" "$BUILD_IDENTIFIER/"
       )
       (
         cd "trt-installer" || exit
         cross build --target x86_64-pc-windows-gnu --release -p bin
         VERSION=$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[0].version')
-        mv "target/x86_64-pc-windows-gnu/release/bin.exe" "../output/trt-installer-$VERSION.exe"
+        mv "target/x86_64-pc-windows-gnu/release/bin.exe" "../output/trt-installer-$BUILD_SPECS-$VERSION.exe"
       )
   fi
 }
@@ -64,7 +66,7 @@ fi
 rm -rf "output"
 
 bash build-camelot.sh &
-mvn package -P desktop &
+mvn clean package -P desktop &
 wait
 
 # Asignar variables

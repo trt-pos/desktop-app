@@ -5,9 +5,6 @@
       <sourceFolder url="file://$MODULE_DIR$/app-launcher/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/camelot/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/camelot/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/database/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/database/tests" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/server/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/trtcp/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trt-installer/crates/bin/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/app-launcher/target" />
