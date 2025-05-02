@@ -25,7 +25,7 @@ services:
       - trt-net
   
   # Needs $ xhost +local:docker to allow GUI access
-  trt-client:
+  trt-client-linux:
     build:
       context: .
       dockerfile: containers/trt-client.dockerfile
@@ -33,21 +33,20 @@ services:
       - TRT_ENV=dev
       - TRT_BACKTRACE=1
       - TRT_VERBOSE=1
-      - TRT_TEST_SERVER_URL=http://172.19.0.1:8000/api/v1/theroundtable
+      - TRT_TEST_SERVER_URL=http://trt_rest_api:8000/api/v1/theroundtable
       - DISPLAY=${DISPLAY}
     volumes:
-      - ./output/theroundtable-linux-x64:/opt/theroundtable:ro # Application portable version
-      - /tmp/.X11-unix:/tmp/.X11-unix                          # For GUI access
-      - round_table_data:/root/.round-table
-      - round_table_dev_data:/root/.round-table-dev
+      - ./output/theroundtable-linux-x64:/opt/theroundtable:ro       # Application portable version
+      - ./output/trt-installer-linux-x64-0.1.0:/opt/trt-installer:ro # TRT Installer 
+      - /tmp/.X11-unix:/tmp/.X11-unix                                # For GUI access
+      - round_table_linux_dev_data:/root/.round-table-dev
     networks:
       - trt-net
     stdin_open: true
     tty: true
     
 volumes:
-  round_table_data:
-  round_table_dev_data:
+  round_table_linux_dev_data:
     
 networks:
   trt-net:
