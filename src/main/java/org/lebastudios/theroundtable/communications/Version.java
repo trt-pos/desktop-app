@@ -96,4 +96,12 @@ public class Version implements Comparable<Version>
         if (patch != o.patch) return patch - o.patch;
         return weight.getWeight() - o.weight.getWeight();
     }
+
+    @Override
+    public String toString()
+    {
+        String numbers = major + "." + minor + "." + patch;
+        String weight = this.weight == Weight.RELEASE ? "" : "-" + this.weight.name();
+        return numbers + weight;
+    }
 }

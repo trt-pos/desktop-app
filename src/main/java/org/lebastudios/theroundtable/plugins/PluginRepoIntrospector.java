@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
 import org.lebastudios.theroundtable.communications.Version;
-import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.tasks.MoveFileTask;
@@ -55,7 +54,7 @@ public class PluginRepoIntrospector
 
     public PluginData getPluginData(String pluginId)
     {
-        String endpoint = repoUrl + "/plugins/" + pluginId + "/last/data";
+        String endpoint = repoUrl + "/plugin/" + pluginId + "/last/data";
 
         try (var client = AppHttpClient.getInstance().newClient())
         {
@@ -75,7 +74,7 @@ public class PluginRepoIntrospector
 
     public String getWebIconUrl(String pluginId, Version version)
     {
-        return repoUrl + "/plugins/" + pluginId + "/" + version.toString() + "/icon";
+        return repoUrl + "/plugin/" + pluginId + "/" + version.toString() + "/icon";
     }
 
     public boolean needsUpdate(String pluginId, Version version)
@@ -92,7 +91,7 @@ public class PluginRepoIntrospector
 
     public void install(String pluginId, Runnable aferUpdate)
     {
-        String endpoint = repoUrl + "/plugins/" + pluginId + "/last/jar";
+        String endpoint = repoUrl + "/plugin/" + pluginId + "/last/jar";
 
         new Task<Void>()
         {

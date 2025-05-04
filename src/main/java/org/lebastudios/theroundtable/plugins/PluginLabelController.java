@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
@@ -14,7 +15,6 @@ import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.communications.Version;
-import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
@@ -63,7 +63,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         PluginData pluginData = plugin.data();
         
         rootVBox = (HBox) root;
-
+        
         pluginIcon.setImage(plugin.getPluginIcon());
 
         pluginIcon.setPreserveRatio(true);
