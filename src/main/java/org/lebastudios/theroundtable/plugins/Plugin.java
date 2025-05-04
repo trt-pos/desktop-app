@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable.plugins;
 import javafx.scene.image.Image;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
-import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 
 import java.net.URI;

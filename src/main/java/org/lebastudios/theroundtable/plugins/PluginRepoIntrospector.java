@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable.plugins;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.DownloadFileTask;
 import org.lebastudios.theroundtable.tasks.MoveFileTask;

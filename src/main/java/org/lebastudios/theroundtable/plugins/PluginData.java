@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.plugins;
 
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.Arrays;
