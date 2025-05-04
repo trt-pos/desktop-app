@@ -8,13 +8,11 @@ import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
-import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.locale.LocaleManager;
@@ -23,14 +21,9 @@ import org.lebastudios.theroundtable.plugins.PluginLoader;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
-import org.lebastudios.theroundtable.updates.CheckAppUpdateTask;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 public class TheRoundTableApplication extends Application

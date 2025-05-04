@@ -48,12 +48,12 @@ public class Updates
             @Override
             protected Void call() throws Exception
             {
-                URI coreJar = new URI(Server.BASE_URL + "/resources/desktop-app.jar");
+                URI coreJar = new URI(Server.BASE_URL + "/resource/desktop-app.jar");
 
                 PlatformArch arch = Platform.getPlatformArch();
                 PlatformOS os = Platform.getPlatformOS();
                 URI startBin = new URI(Server.BASE_URL
-                        + "/resources/start-" + os.toString()
+                        + "/resource/start-" + os.toString()
                         + "-" + arch.toString() + ".bin"
                 );
                 
@@ -74,7 +74,7 @@ public class Updates
                 startBinSaveFile.getParentFile().mkdirs();
 
                 executeSubtask(new MoveFileTask(downloadedCoreJar, coreJarSaveFile));
-                executeSubtask(new MoveFileTask(downloadedStart, coreJarSaveFile));
+                executeSubtask(new MoveFileTask(downloadedStart, startBinSaveFile));
                 
                 return null;
             }

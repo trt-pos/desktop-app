@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.updates;
+package org.lebastudios.theroundtable.server;
 
 import javafx.application.Platform;
 import org.lebastudios.theroundtable.MainStageController;
