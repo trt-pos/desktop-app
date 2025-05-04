@@ -37,42 +37,7 @@ public class TheRoundTableApplication extends Application
 {
     public static String getAppVersion()
     {
-        if (Variables.isDev())
-        {
-            try
-            {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setIgnoringElementContentWhitespace(true);
-                Document document = factory.newDocumentBuilder().parse(new FileInputStream(new File(
-                        new File(CorePlugin.class.getResource("/").getFile()).getParentFile().getParentFile(),
-                        "pom.xml"
-                )));
-
-
-                for (int i = 0; i < document.getDocumentElement().getChildNodes().getLength(); i++)
-                {
-                    Node node = document.getDocumentElement().getChildNodes().item(i);
-
-                    if (node.getNodeName().equals("version")) return node.getTextContent();
-                }
-            }
-            catch (Exception _) {}
-        }
-        else
-        {
-            try (final var pomResource = CorePlugin.class.getResourceAsStream(
-                    "/META-INF/maven/org.lebastudios.theroundtable/desktop-app/pom.properties"))
-            {
-                var properties = new Properties();
-
-                properties.load(pomResource);
-
-                return properties.getProperty("version");
-            }
-            catch (Exception _) {}
-        }
-
-        return "0";
+        return CorePlugin.getInstance().getPluginData().pluginVersion;
     }
 
     public static String getUserDirectory()
