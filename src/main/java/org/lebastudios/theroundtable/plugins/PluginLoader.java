@@ -1,10 +1,11 @@
 package org.lebastudios.theroundtable.plugins;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
-import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.locale.LangLoader;
+import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -12,6 +13,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -24,26 +27,26 @@ public class PluginLoader
     public static PluginLoader getInstance()
     {
         if (instance == null) instance = new PluginLoader();
-        
+
         return instance;
     }
 
     private URLClassLoader pluginsClassLoader = new URLClassLoader(new URL[0]);
-    
+
     private PluginLoader() {}
 
     public Task<Void> loadPluginsTask()
     {
         return new LoadPluginsTask();
     }
-    
+
     private class LoadPluginsTask extends Task<Void>
     {
         @Override
         protected Void call() throws Exception
         {
             updateTitle("Loading plugins");
-            
+
             updateMessage("Validating installed plugins");
             pluginsClassLoader = new URLClassLoader(
                     getValidJars().toArray(new URL[0]),
@@ -64,7 +67,8 @@ public class PluginLoader
                     {
                         Logs.getInstance().log(
                                 Logs.LogType.WARNING,
-                                "Plugin " + pluginData.pluginName + " does not specify a required desktop app version so it will be ignored"
+                                "Plugin " + pluginData.pluginName +
+                                        " does not specify a required desktop app version so it will be ignored"
                         );
                         continue;
                     }
@@ -114,16 +118,16 @@ public class PluginLoader
                     pluginsManager.getPluginsLoaded().put(plugin.getPluginData().pluginId, plugin);
                 }
             }
-            
+
             return null;
         }
 
         private List<URL> getValidJars()
         {
-            File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
-                    .listFiles((_, name) -> name.endsWith(".jar"));
+            movePluginsWithoutRepoToCentral();
 
-            if (jars == null) return new ArrayList<>();
+            List<File> jars = new ArrayList<>();
+            getInstalledPluginsJars(new File(new PluginsConfigData().load().pluginsFolder), jars);
 
             List<URL> validJars = new ArrayList<>();
 
@@ -159,6 +163,52 @@ public class PluginLoader
             }
 
             return validJars;
+        }
+
+        @SneakyThrows
+        private void movePluginsWithoutRepoToCentral()
+        {
+            File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
+                    .listFiles((_, name) -> name.endsWith(".jar"));
+
+            if (jars == null) return;
+            if (jars.length == 0) return;
+
+            File centralRepoFolder = new File(PluginRepoData.centralRepo().getLocalRepoFolder());
+            if (centralRepoFolder.mkdirs())
+            {
+                PluginRepoData.centralRepo().save();
+            }
+
+            for (File jar : jars)
+            {
+                File finalJar = new File(centralRepoFolder, jar.getName());
+                Files.move(jar.toPath(), finalJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+
+        private void getInstalledPluginsJars(File folder, List<File> jars)
+        {
+            for (File file : folder.listFiles())
+            {
+                if (file.isDirectory())
+                {
+                    getInstalledPluginsJars(file, jars);
+                }
+                else
+                {
+                    if (!file.getName().endsWith(".jar"))
+                    {
+                        Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                "Plugin " + file.getName() + " does not specify a jar so it will be ignored"
+                        );
+                        continue;
+                    }
+
+                    jars.add(file);
+                }
+            }
         }
     }
 }

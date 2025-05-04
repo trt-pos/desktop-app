@@ -6,6 +6,8 @@ import javafx.scene.control.ListView;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
 import org.lebastudios.theroundtable.plugins.PluginRepoIntrospector;
 
+import java.net.URI;
+
 public class PluginsConfigPaneController extends ConfigPaneController<PluginsConfigData>
 {
     @FXML public ListView<String> reposList;
@@ -43,6 +45,8 @@ public class PluginsConfigPaneController extends ConfigPaneController<PluginsCon
                 {
                     try
                     {
+                        new URI(url);
+                        
                         return new PluginRepoIntrospector(url).ping();
                     }
                     catch (Exception exception)

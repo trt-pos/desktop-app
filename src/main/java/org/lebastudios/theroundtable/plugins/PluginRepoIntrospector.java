@@ -19,12 +19,12 @@ import java.util.List;
 public class PluginRepoIntrospector
 {
     private final String repoUrl;
-    
+
     public PluginRepoIntrospector(String repoUrl)
     {
         this.repoUrl = repoUrl;
     }
-    
+
     public boolean ping()
     {
         return true;
@@ -33,7 +33,7 @@ public class PluginRepoIntrospector
     public AllPluginsDataResponse getAllPluginData(String[] tags, String search)
     {
         String endpoint = repoUrl + "/data/all?tags=" + String.join(",", tags) + "&q=" + search;
-        
+
         try (var client = AppHttpClient.getInstance().newClient())
         {
             var request = HttpRequest.newBuilder()
@@ -101,9 +101,8 @@ public class PluginRepoIntrospector
             {
                 URI fileURI = new URI(endpoint);
                 File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
-
-                File saveFile = new File(new PluginsConfigData().load().pluginsFolder,
-                        pluginId + ".jar");
+                
+                File saveFile = new File(intoMetadata().getLocalRepoFolder(), pluginId + ".jar");
                 saveFile.getParentFile().mkdirs();
 
                 executeSubtask(new MoveFileTask(downloadedFile, saveFile));
@@ -112,7 +111,7 @@ public class PluginRepoIntrospector
             }
         }.executeInBackGround(true);
     }
-    
+
     public PluginRepoData intoMetadata()
     {
         return new PluginRepoData(this.repoUrl);

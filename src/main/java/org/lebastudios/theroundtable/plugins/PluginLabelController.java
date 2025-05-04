@@ -202,7 +202,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     {
         PluginData pluginData = plugin.data();
         
-        var pluginFile = new File(new PluginsConfigData().load().pluginsFolder + pluginData.pluginId + ".jar");
+        var pluginFile = new File(plugin.getLocalPath());
 
         if (!pluginFile.exists() || !pluginFile.isFile())
         {
