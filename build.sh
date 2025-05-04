@@ -54,11 +54,11 @@ build-for-platform() {
 rm -rf output
 
 if [ "$#" -ne 1 ]; then
-  echo "Uso: $0 <linux | windows | all> "
+  echo "Uso: $0 <linux | windows | dev | prod> "
   exit 1
 fi
   
-if [ "$1" != "linux" ] && [ "$1" != "windows" ] && [ "$1" != "all" ]; then
+if [ "$1" != "linux" ] && [ "$1" != "windows" ] && [ "$1" != "dev" ] && [ "$1" != "prod" ]; then
   echo "Not supported platform: $1"
       exit 1
 fi
@@ -72,11 +72,11 @@ wait
 # Asignar variables
 PLATFORM=$1
 
-if [ "$PLATFORM" == "linux" ] || [ "$PLATFORM" == "all" ]; then
+if [ "$PLATFORM" == "linux" ] || [ "$PLATFORM" == "dev" ] || [ "$PLATFORM" == "prod" ]; then
   build-for-platform "linux" &
 fi
 
-if [ "$PLATFORM" == "windows" ] || [ "$PLATFORM" == "all" ]; then
+if [ "$PLATFORM" == "windows" ] || [ "$PLATFORM" == "dev" ] || [ "$PLATFORM" == "prod" ]; then
   build-for-platform "windows" &
 fi
 
