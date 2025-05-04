@@ -10,10 +10,17 @@ public class Server
     public static final String BASE_URL = switch (Variables.getEnvironmentType()) 
     {
         case TEST, DEV -> Variables.getTestServerUrl();
-        case PROD -> "https://lebastudios.org/api/v1/theroundtable";
+        case PROD -> "https://theorundtable.org/api/v3/theroundtable";
         default -> throw new IllegalStateException("Unexpected value: " + Variables.getEnvironmentType());
     };
 
+    public static final String CENTRAL_PLUGIN_REPO_BASE_URL = switch (Variables.getEnvironmentType())
+    {
+        case TEST, DEV -> Variables.getTestCentralPluginRepoUrl();
+        case PROD -> "https://repo.theorundtable.org/plugins-repo";
+        default -> throw new IllegalStateException("Unexpected value: " + Variables.getEnvironmentType());
+    };
+    
     public static boolean isRecheable()
     {
         try

@@ -7,13 +7,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.MainStageController;
+import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
@@ -22,7 +22,6 @@ import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconTextButton;
 import org.lebastudios.theroundtable.ui.LoadingPaneController;
@@ -36,21 +35,23 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML public ImageView pluginIcon;
     @FXML public Label pluginName;
     @FXML public Label pluginDescription;
+    @FXML public Label pluginRepo;
     @FXML public IconButton unistallButton;
     @FXML public IconTextButton notInstallableButton;
     @FXML public Button installButton;
     @FXML public Button restartAppButton;
     @FXML public Button updatePlugin;
-    private final PluginData pluginData;
+    
+    private final Plugin plugin;
 
     private HBox rootVBox;
 
     private final Node loadingNode = new LoadingPaneController().getRoot();
     private final IEventMethod onReloadLabelsListener = () -> Platform.runLater(this::updateView);
 
-    public PluginLabelController(PluginData pluginData)
+    public PluginLabelController(Plugin plugin)
     {
-        this.pluginData = pluginData;
+        this.plugin = plugin;
 
         onReloadLabelsRequest.addWeakListener(onReloadLabelsListener);
     }
@@ -59,10 +60,11 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @Override
     protected void initialize()
     {
+        PluginData pluginData = plugin.data();
+        
         rootVBox = (HBox) root;
 
-        Image iconImg = pluginData.getPluginIcon();
-        pluginIcon.setImage(iconImg);
+        pluginIcon.setImage(plugin.getPluginIcon());
 
         pluginIcon.setPreserveRatio(true);
         pluginIcon.setFitHeight(35);
@@ -70,6 +72,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
         pluginName.setText(pluginData.pluginName);
         pluginDescription.setText(pluginData.pluginDescription);
+        pluginRepo.setText(plugin.repoData().url);
 
         Tooltip tooltip = new Tooltip(LangFileLoader.getTranslation("phrase.dependenciesnotsatisfied"));
         tooltip.setShowDelay(Duration.millis(100));
@@ -80,6 +83,9 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
     private void updateView()
     {
+        PluginData pluginData = plugin.data();
+        PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
+        
         rootVBox.getChildren().remove(installButton);
         rootVBox.getChildren().remove(unistallButton);
         rootVBox.getChildren().remove(restartAppButton);
@@ -102,9 +108,9 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
             new Thread(() ->
             {
-                if (Plugins.needsUpdate(pluginData))
+                if (repo.needsUpdate(pluginData.pluginId, new Version(pluginData.pluginVersion)))
                 {
-                    PluginData newVersionData = Plugins.getAvailablePluginData(pluginData.pluginId);
+                    PluginData newVersionData = repo.getPluginData(pluginData.pluginId);
 
                     if (newVersionData == null)
                     {
@@ -130,7 +136,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         }
 
         rootVBox.getChildren().add(
-                this.pluginData.areDependenciesInstalled()
+                pluginData.areDependenciesInstalled()
                         ? installButton
                         : notInstallableButton
         );
@@ -156,7 +162,10 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
     private void installPluginAsync()
     {
-        new Thread(() -> Plugins.install(pluginData, () ->
+        PluginData pluginData = plugin.data();
+        PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
+        
+        new Thread(() -> repo.install(pluginData.pluginId, () ->
         {
             PluginsManager.getInstance().getPluginsRestartPending()
                     .put(pluginData.pluginId, pluginData);
@@ -168,6 +177,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     @FXML
     public void tryUninstallPlugin(ActionEvent actionEvent)
     {
+        PluginData pluginData = plugin.data();
+        
         if (!pluginData.isDependencyOfOther())
         {
             new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.pluginsuninstall"), result ->
@@ -189,6 +200,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
     private void unistallPlugin()
     {
+        PluginData pluginData = plugin.data();
+        
         var pluginFile = new File(new PluginsConfigData().load().pluginsFolder + pluginData.pluginId + ".jar");
 
         if (!pluginFile.exists() || !pluginFile.isFile())

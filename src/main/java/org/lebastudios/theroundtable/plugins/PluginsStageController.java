@@ -9,8 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.CorePlugin;
+import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.server.requests.Plugins;
 import org.lebastudios.theroundtable.ui.IconTextButton;
 import org.lebastudios.theroundtable.ui.LazyTab;
 import org.lebastudios.theroundtable.ui.StageBuilder;
@@ -31,7 +31,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
         this.instantiateInstalledPlugins();
         this.instantiateAvailablePlugins();
 
-        showPluginViewer(CorePlugin.getInstance().getPluginData());
+        showPluginViewer(CorePlugin.getInstance().intoPluginObject());
     }
 
     private void instantiateInstalledPlugins()
@@ -44,8 +44,8 @@ public class PluginsStageController extends StageController<PluginsStageControll
                     Collections.reverse(installed);
                     
                     return installed.stream()
-                            .map(IPlugin::getPluginData)
-                            .toArray(PluginData[]::new);
+                            .map(IPlugin::intoPluginObject)
+                            .toList();
                 }
         );
 
@@ -56,19 +56,38 @@ public class PluginsStageController extends StageController<PluginsStageControll
     {
         Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab(
                 "Search",
-                Plugins::getAllAvailablePluginsData
+                () ->
+                {
+                    List<Plugin> pluginDataList = new ArrayList<>();
+                    
+                    for (String repo : new PluginsConfigData().repos)
+                    {
+                        PluginRepoIntrospector introspector = new PluginRepoIntrospector(repo);
+                        PluginRepoData metadata = introspector.intoMetadata();
+                        
+                        List<PluginData> pluginsData = introspector.getAllPluginData(new String[]{}, "").pluginsData;
+
+                        List<Plugin> plugins = pluginsData.stream()
+                                .map(data ->new Plugin(data, metadata, null))
+                                .toList();
+                        
+                        pluginDataList.addAll(plugins);
+                    }
+                    
+                    return pluginDataList;
+                }
         );
 
         tabPane.getTabs().add(pluginTab);
     }
 
-    private void showPluginViewer(PluginData pluginData)
+    private void showPluginViewer(Plugin plugin)
     {
         final var root = (HBox) getRoot();
 
         if (root.getChildren().size() > 1) root.getChildren().removeLast();
 
-        root.getChildren().add(new PluginViewerPaneController(pluginData).getRoot());
+        root.getChildren().add(new PluginViewerPaneController(plugin).getRoot());
     }
 
     @Override
@@ -85,11 +104,11 @@ public class PluginsStageController extends StageController<PluginsStageControll
 
     private class PluginTabGenerator
     {
-        public Tab generatePluginLazyTab(String title, Supplier<PluginData[]> pluginsSupplier)
+        public Tab generatePluginLazyTab(String title, Supplier<List<Plugin>> pluginsSupplier)
         {
             LazyTab lazyTab = new LazyTab(title, () ->
             {
-                PluginData[] plugins = pluginsSupplier.get();
+                List<Plugin> plugins = pluginsSupplier.get();
 
                 if (plugins == null)
                 {
@@ -105,7 +124,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
                     reloadButton.setText("Reload");
                     reloadButton.setOnAction(event ->
                     {
-                        PluginData[] pluginsReloaded = pluginsSupplier.get();
+                        List<Plugin> pluginsReloaded = pluginsSupplier.get();
 
                         if (pluginsReloaded == null) return;
 
@@ -125,7 +144,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
             return lazyTab;
         }
 
-        private Node generatePluginTabContent(PluginData[] plugins)
+        private Node generatePluginTabContent(List<Plugin> plugins)
         {
             ScrollPane content = new ScrollPane();
             content.setPannable(true);
@@ -136,10 +155,10 @@ public class PluginsStageController extends StageController<PluginsStageControll
             list.setSpacing(5);
             list.setPadding(new Insets(15, 0, 0, 0));
 
-            for (var pluginData : plugins)
+            for (var plugin : plugins)
             {
-                Node pluginLabel = new PluginLabelController(pluginData).getRoot();
-                pluginLabel.setOnMouseClicked(_ -> PluginsStageController.this.showPluginViewer(pluginData));
+                Node pluginLabel = new PluginLabelController(plugin).getRoot();
+                pluginLabel.setOnMouseClicked(_ -> PluginsStageController.this.showPluginViewer(plugin));
                 list.getChildren().add(pluginLabel);
             }
 

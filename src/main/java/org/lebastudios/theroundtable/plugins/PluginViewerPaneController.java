@@ -12,7 +12,7 @@ import org.lebastudios.theroundtable.controllers.PaneController;
 
 public class PluginViewerPaneController extends PaneController<PluginViewerPaneController>
 {
-    private final PluginData pluginData;
+    private final Plugin plugin;
     @FXML public Label pluginVersionLabel;
     @FXML public Label pluginVendorLabel;
     @FXML public Label pluginVendorUrlLabel;
@@ -24,15 +24,17 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
     @FXML public Label pluginDescriptionLabel;
     @FXML public TitledPane dependenciesPaneContainer;
 
-    public PluginViewerPaneController(PluginData pluginData)
+    public PluginViewerPaneController(Plugin plugin)
     {
-        this.pluginData = pluginData;
+        this.plugin = plugin;
     }
 
     @Override
     protected void initialize()
     {
-        ImageView iconView = new ImageView(pluginData.getPluginIcon());
+        PluginData pluginData  = plugin.data();
+        
+        ImageView iconView = new ImageView(plugin.getPluginIcon());
         iconView.setPreserveRatio(true);
         iconView.setFitHeight(100);
         iconView.setFitWidth(100);

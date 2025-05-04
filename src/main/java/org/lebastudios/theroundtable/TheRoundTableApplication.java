@@ -126,7 +126,7 @@ public class TheRoundTableApplication extends Application
         new AccountStageController().instantiate(true);
 
         stage.setTitle("The Round Table - " + AccountManager.getInstance().getCurrentLoggedAccountName());
-        stage.getIcons().add(CorePlugin.getInstance().getPluginData().getPluginIcon());
+        stage.getIcons().add(CorePlugin.getInstance().getPluginIcon());
 
         Scene mainScene = new SceneBuilder(new MainStageController().getParent()).build();
         stage.setScene(mainScene);

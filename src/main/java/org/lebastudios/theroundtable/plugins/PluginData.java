@@ -1,14 +1,9 @@
 package org.lebastudios.theroundtable.plugins;
 
-import javafx.scene.image.Image;
-import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.communications.Version;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.server.requests.Plugins;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -22,29 +17,8 @@ public class PluginData
     public String pluginVersion;
     public String pluginVendor;
     public String pluginVendorUrl;
+    public String[] tags;
     public PluginDependencyData[] pluginDependencies;
-
-    @SneakyThrows
-    public Image getPluginIcon()
-    {
-        IPlugin installedPlugin = PluginsManager.getInstance().getPluginsInstalled().get(pluginId);
-        
-        if (installedPlugin != null)
-        {
-            InputStream inputStream = installedPlugin.getClass().getResourceAsStream("plugin-icon.png");
-            
-            if (inputStream == null) 
-            {
-                return ImageLoader.getIcon("plugins.png");
-            }
-            
-            return new Image(inputStream);
-        }
-        
-        return ImageLoader.getWebImage(
-                Plugins.getWebIconUrl(this)
-        );
-    }
     
     public boolean areDependenciesInstalled()
     {

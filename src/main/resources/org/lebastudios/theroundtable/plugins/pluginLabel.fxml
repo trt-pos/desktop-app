@@ -16,17 +16,18 @@
     </padding>
     <ImageView mouseTransparent="true" fx:id="pluginIcon"/>
 
-    <VBox HBox.hgrow="ALWAYS" mouseTransparent="true">
+    <VBox HBox.hgrow="ALWAYS" mouseTransparent="true" spacing="5">
         <Label fx:id="pluginName" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
         <Label wrapText="true" fx:id="pluginDescription"/>
+        <Label wrapText="true" style="-fx-font-size: 8;" fx:id="pluginRepo"/>
     </VBox>
 
     <IconButton onAction="#tryUninstallPlugin" fx:id="unistallButton" iconName="delete.png"/>
     <Button minWidth="150" onAction="#installPlugin" fx:id="installButton" text="%word.install"/>
     <Button minWidth="150" onAction="#updatePlugin" fx:id="updatePlugin" text="%word.update"/>
     <Button minWidth="150" onAction="#restartApp" fx:id="restartAppButton" text="%word.restart"
-        style="-fx-background-color: #17cc17; -fx-border-color: #1e1e1e; -fx-border-radius: 5"/>
-    <IconTextButton minWidth="150" iconName="unavailable.png" iconSize="24" 
-                    text="%phrase.notavailable" fx:id="notInstallableButton" 
+            style="-fx-background-color: #17cc17; -fx-border-color: #1e1e1e; -fx-border-radius: 5"/>
+    <IconTextButton minWidth="150" iconName="unavailable.png" iconSize="24"
+                    text="%phrase.notavailable" fx:id="notInstallableButton"
                     style="-fx-background-color: rgba(255,0,0,0.18); -fx-border-color: rgba(30,30,30,0.18); -fx-border-radius: 5"/>
-    </HBox>
+</HBox>
