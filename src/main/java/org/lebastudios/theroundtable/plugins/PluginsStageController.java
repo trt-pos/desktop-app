@@ -60,7 +60,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
                 {
                     List<Plugin> pluginDataList = new ArrayList<>();
                     
-                    for (String repo : new PluginsConfigData().repos)
+                    for (String repo : new PluginsConfigData().getAllRepos())
                     {
                         PluginRepoIntrospector introspector = new PluginRepoIntrospector(repo);
                         PluginRepoData metadata = introspector.intoMetadata();

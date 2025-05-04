@@ -18,14 +18,14 @@ public class PluginsConfigPaneController extends ConfigPaneController<PluginsCon
     @Override
     public void updateConfigData(PluginsConfigData configData)
     {
-        configData.repos.clear();
-        configData.repos.addAll(reposList.getItems());
+        configData.customRepos.clear();
+        configData.customRepos.addAll(reposList.getItems());
     }
 
     @Override
     public void updateUI(PluginsConfigData configData)
     {
-        reposList.getItems().setAll(configData.repos);
+        reposList.getItems().setAll(configData.customRepos);
     }
 
     @Override
