@@ -16,7 +16,7 @@ public class Licenses
         try (var client = AppHttpClient.getInstance().newClient())
         {
             var request = HttpRequest.newBuilder()
-                    .uri(URI.create(Server.BASE_URL + "/licenses/validate?license_id=" + license))
+                    .uri(URI.create(Server.BASE_URL + "/account/validate?license_id=" + license))
                     .header("Content-Type", "application/json")
                     .GET()
                     .build();

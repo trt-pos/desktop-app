@@ -18,6 +18,7 @@ public class PluginData
     public String pluginVendor;
     public String pluginVendorUrl;
     public String[] tags;
+    public String category;
     public PluginDependencyData[] pluginDependencies;
     
     public boolean areDependenciesInstalled()

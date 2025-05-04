@@ -48,12 +48,12 @@ public class Updates
             @Override
             protected Void call() throws Exception
             {
-                URI coreJar = new URI(Server.BASE_URL + "/update/desktop-app.jar");
+                URI coreJar = new URI(Server.BASE_URL + "/resources/desktop-app.jar");
 
                 PlatformArch arch = Platform.getPlatformArch();
                 PlatformOS os = Platform.getPlatformOS();
                 URI startBin = new URI(Server.BASE_URL
-                        + "/downloads/start-" + os.toString()
+                        + "/resources/start-" + os.toString()
                         + "-" + arch.toString() + ".bin"
                 );
                 

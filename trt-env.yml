@@ -33,7 +33,8 @@ services:
       - TRT_ENV=dev
       - TRT_BACKTRACE=1
       - TRT_VERBOSE=1
-      - TRT_TEST_SERVER_URL=http://trt_rest_api:8000/api/v1/theroundtable
+      - TRT_TEST_SERVER_URL=http://trt_rest_api:8000/api/v3/theroundtable
+      - TRT_TEST_CENTRAL_PLUGIN_REPO_URL=http://localhost:9502
       - DISPLAY=${DISPLAY}
     volumes:
       - ./output/theroundtable-linux-x64:/opt/theroundtable:ro       # Application portable version
