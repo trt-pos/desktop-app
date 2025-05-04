@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" prefWidth="300.0" spacing="5" fx:id="root"
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefWidth="350.0" spacing="5" fx:id="root"
       fx:controller="org.lebastudios.theroundtable.dialogs.RequestTextDialogController"
       xmlns="http://javafx.com/javafx/17.0.2-ea">
     <padding>
