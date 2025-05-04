@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.config.SettingsItem;
@@ -91,6 +92,11 @@ public interface IPlugin extends IDatabaseUpdater
     
     default PluginRepoData getPluginRepoMetadata()
     {
+        if (this.getPluginData().pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) 
+        {
+            return null;
+        }
+        
         String jarPath = this.getClass()
                 .getProtectionDomain()
                 .getCodeSource()
@@ -107,7 +113,7 @@ public interface IPlugin extends IDatabaseUpdater
         }
         catch (IOException e)
         {
-            return PluginRepoData.centralRepo();
+            throw new RuntimeException("Failed to load plugin repo metadata", e);
         }
     }
     

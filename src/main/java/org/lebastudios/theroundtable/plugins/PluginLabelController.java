@@ -61,6 +61,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     protected void initialize()
     {
         PluginData pluginData = plugin.data();
+        PluginRepoData data = plugin.repoData();
         
         rootVBox = (HBox) root;
         
@@ -72,7 +73,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
         pluginName.setText(pluginData.pluginName);
         pluginDescription.setText(pluginData.pluginDescription);
-        pluginRepo.setText(plugin.repoData().url);
+        pluginRepo.setText(data == null ? "Built-in" : data.url);
 
         Tooltip tooltip = new Tooltip(LangFileLoader.getTranslation("phrase.dependenciesnotsatisfied"));
         tooltip.setShowDelay(Duration.millis(100));
@@ -84,7 +85,6 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     private void updateView()
     {
         PluginData pluginData = plugin.data();
-        PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
         
         rootVBox.getChildren().remove(installButton);
         rootVBox.getChildren().remove(unistallButton);
@@ -94,6 +94,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         rootVBox.getChildren().remove(loadingNode);
 
         if (pluginData.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) return;
+        
+        PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
 
         if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.pluginId))
         {

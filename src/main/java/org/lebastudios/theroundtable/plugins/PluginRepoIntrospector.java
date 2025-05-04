@@ -102,9 +102,13 @@ public class PluginRepoIntrospector
                 File downloadedFile = executeSubtask(new DownloadFileTask(fileURI));
                 
                 File saveFile = new File(intoMetadata().getLocalRepoFolder(), pluginId + ".jar");
-                saveFile.getParentFile().mkdirs();
+                if (saveFile.getParentFile().mkdirs()) 
+                {
+                    PluginRepoIntrospector.this.intoMetadata().save();
+                }
 
                 executeSubtask(new MoveFileTask(downloadedFile, saveFile));
+                aferUpdate.run();
 
                 return null;
             }
