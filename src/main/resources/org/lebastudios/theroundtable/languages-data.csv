@@ -50,3 +50,4 @@ phrase.pluginsuninstall,You are about to uninstall a plugin. Are you sure about 
 phrase.dependenciesnotsatisfied,Dependencies requirements not satisfied.,Las dependencias requeridas no están instaladas.
 word.updates,Updates,Actualizaciones
 word.license,License,Licencia
+core.config.globalpref,Global preferences,Preferencias globales

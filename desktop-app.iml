@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/trt-camelot/crates/trtcp/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trt-installer/crates/bin/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/app-launcher/target" />
+      <excludeFolder url="file://$MODULE_DIR$/output" />
       <excludeFolder url="file://$MODULE_DIR$/trt-camelot/target" />
       <excludeFolder url="file://$MODULE_DIR$/trt-installer/target" />
     </content>

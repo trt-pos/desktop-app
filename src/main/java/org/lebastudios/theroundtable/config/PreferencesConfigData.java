@@ -6,7 +6,6 @@ import java.util.Locale;
 public class PreferencesConfigData extends ConfigData<PreferencesConfigData>
 {
     public String theme = "cupertino-light";
-    public String language = Locale.getDefault().getLanguage();
 
     @Override
     public File getFile()

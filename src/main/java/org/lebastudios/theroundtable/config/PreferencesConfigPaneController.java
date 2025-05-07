@@ -10,7 +10,6 @@ import java.util.Objects;
 public class PreferencesConfigPaneController extends ConfigPaneController<PreferencesConfigData>
 {
     @FXML public ChoiceBox<String> themeChoiceBox;
-    @FXML public ChoiceBox<String> languageChoiceBox;
 
     public PreferencesConfigPaneController()
     {
@@ -20,7 +19,6 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     @Override
     public void updateConfigData(PreferencesConfigData configData)
     {
-        configData.language = transformLanguageToInternalText(languageChoiceBox.getValue());
         configData.theme = transformThemeToInternalText(themeChoiceBox.getValue());
     }
 
@@ -39,16 +37,7 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
             }
         }
 
-        if (languageChoiceBox.getItems().isEmpty())
-        {
-            languageChoiceBox.getItems().addAll(
-                    transformLanguageToDisplayableText("es"),
-                    transformLanguageToDisplayableText("en")
-            );
-        }
-
         themeChoiceBox.setValue(transformThemeToDisplayableText(configData.theme));
-        languageChoiceBox.setValue(transformLanguageToDisplayableText(configData.language));
     }
 
     @Override
@@ -79,25 +68,5 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     private String transformThemeToInternalText(String theme)
     {
         return theme.toLowerCase().replace(" ", "-");
-    }
-
-    private String transformLanguageToDisplayableText(String language)
-    {
-        return switch (language)
-        {
-            case "es" -> "Español";
-            case "en" -> "English";
-            default -> language;
-        };
-    }
-
-    private String transformLanguageToInternalText(String language)
-    {
-        return switch (language)
-        {
-            case "Español" -> "es";
-            case "English" -> "en";
-            default -> language;
-        };
     }
 }

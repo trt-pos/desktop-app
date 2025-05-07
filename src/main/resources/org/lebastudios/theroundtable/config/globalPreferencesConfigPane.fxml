@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.lebastudios.theroundtable.config.GlobalPreferencesConfigPaneController"
+      spacing="5">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" text="%word.language"/>
+        <ChoiceBox fx:id="languageChoiceBox" prefWidth="200" prefHeight="30"/>
+    </HBox>
+    
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" text="%core.config.currency"/>
+        <ChoiceBox  fx:id="currencyChoiceBox" prefWidth="200" prefHeight="30"/>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" text="%core.config.datetimeformatter"/>
+        <TextField fx:id="dateTimeFormatterTextField" prefWidth="200" prefHeight="30"/>
+    </HBox>
+    
+    <TitledPane text="%core.config.advanced" expanded="false">
+        <content>
+            <HBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets right="10" bottom="10" left="10"/>
+                    </padding>
+                    <Label text="%core.config.proxy" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                    <HBox>
+                        <CheckBox text="%core.word.enabled" fx:id="proxyEnabledCheckBox"/>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <CheckBox text="%core.word.authentication" fx:id="proxyAuthenticationCheckBox"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="proxyHostTextField" prefWidth="125" />
+                        <Label text=":"/>
+                        <TextField fx:id="proxyPortTextField" prefWidth="75" />
+                    </HBox>
+                    <VBox fx:id="proxyAuthenticationContainer" spacing="5" HBox.hgrow="ALWAYS">
+                        <HBox spacing="5" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <Label maxWidth="Infinity" text="%core.word.username" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="proxyUsernameTextField" prefWidth="150"/>
+                        </HBox>
+                        <HBox spacing="5" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <Label maxWidth="Infinity" text="%core.word.password" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="proxyPasswordTextField" prefWidth="150"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+                <Separator orientation="VERTICAL" />
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets right="10" bottom="10" left="10"/>
+                    </padding>
+                    <Label text="%core.config.intranetproxy" style="-fx-font-size: 16; -fx-font-weight: bold;" />
+                    <HBox>
+                        <CheckBox text="%core.word.enabled" fx:id="intraProxyEnabledCheckBox"/>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <CheckBox text="%core.word.authentication" fx:id="intraProxyAuthenticationCheckBox"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                        <TextField fx:id="intraProxyHostTextField" prefWidth="125" />
+                        <Label text=":"/>
+                        <TextField fx:id="intraProxyPortTextField" prefWidth="75" />
+                    </HBox>
+                    <VBox fx:id="intraProxyAuthenticationContainer" spacing="5" HBox.hgrow="ALWAYS">
+                        <HBox spacing="5" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <Label maxWidth="Infinity" text="%core.word.username" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="intraProxyUsernameTextField" prefWidth="150"/>
+                        </HBox>
+                        <HBox spacing="5" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <Label maxWidth="Infinity" text="%core.word.password" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="intraProxyPasswordTextField" prefWidth="150"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </HBox>
+        </content>
+    </TitledPane>
+</VBox>

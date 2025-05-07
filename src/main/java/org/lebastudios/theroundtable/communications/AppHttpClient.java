@@ -1,12 +1,9 @@
 package org.lebastudios.theroundtable.communications;
 
-import org.lebastudios.theroundtable.config.GeneralConfigData;
+import org.lebastudios.theroundtable.config.GlobalPreferencesConfigData;
 import org.lebastudios.theroundtable.logs.Logs;
 
-import java.io.IOException;
-import java.net.*;
 import java.net.http.HttpClient;
-import java.util.List;
 
 public class AppHttpClient
 {
@@ -40,27 +37,13 @@ public class AppHttpClient
     {
         HttpClient.Builder client = HttpClient.newBuilder();
 
-        var proxy = new GeneralConfigData().load().proxyData;
+        var proxy = new GlobalPreferencesConfigData().load().proxyData;
 
-        if (proxy == null || !proxy.usingProxy) {
+        if (proxy == null || !proxy.enabled) {
             return client.build();
         }
 
-        client.proxy(new ProxySelector() {
-            @Override
-            public List<Proxy> select(URI uri) {
-                String proxyAddress = proxy.proxyAddress;
-                int proxyPort = proxy.proxyPort;
-
-                SocketAddress socketAddress = new InetSocketAddress(proxyAddress, proxyPort);
-
-                return List.of(new Proxy(Proxy.Type.HTTP, socketAddress));
-            }
-
-            @Override
-            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-            }
-        });
+        client.proxy(proxy.intoProxySelector());
 
         return client.build();
     }

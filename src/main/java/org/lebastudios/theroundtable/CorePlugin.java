@@ -62,6 +62,10 @@ public class CorePlugin implements IPlugin
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new UsersConfigPaneController()))
             );
+            
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem(new GlobalPreferencesConfigPaneController()))
+            );
         }
 
         generalConfigSection.getChildren().add(

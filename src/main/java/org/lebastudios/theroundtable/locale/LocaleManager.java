@@ -1,47 +1,45 @@
 package org.lebastudios.theroundtable.locale;
 
 import org.lebastudios.theroundtable.accounts.AccountManager;
-import org.lebastudios.theroundtable.config.PreferencesConfigData;
+import org.lebastudios.theroundtable.config.GlobalPreferencesConfigData;
 
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Locale;
 
 public class LocaleManager
 {
     private static LocaleManager instance;
-    
+
     public static LocaleManager getInstance()
     {
         if (instance == null) instance = new LocaleManager();
-        
+
         return instance;
     }
-    
+
     private LocaleManager() {}
-    
+
     public Locale getActualLocale()
     {
-        if (AccountManager.getInstance().getCurrentLogged() == null) 
+        if (AccountManager.getInstance().getCurrentLogged() == null)
         {
             return Locale.getDefault();
         }
-        
-        return Locale.of(
-                new PreferencesConfigData().load().language,
-                System.getProperty("user.country")
-        );
+
+        Language language = new GlobalPreferencesConfigData().load().language;
+
+        return Locale.of(language.language(), language.country());
     }
-    
+
     public DateTimeFormatter getActualDateTimeFormatter()
     {
-        return DateTimeFormatter
-                .ofLocalizedDateTime(FormatStyle.SHORT)
-                .withLocale(getActualLocale());
+        return DateTimeFormatter.ofPattern(
+            new GlobalPreferencesConfigData().load().dateTimeFormatter
+        );
     }
-    
+
     public Currency getActualCurrency()
     {
-        return Currency.EUR;
+        return new GlobalPreferencesConfigData().load().currency;
     }
 }
