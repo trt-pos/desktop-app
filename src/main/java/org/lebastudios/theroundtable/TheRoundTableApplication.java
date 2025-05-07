@@ -79,7 +79,7 @@ public class TheRoundTableApplication extends Application
             System.exit(-1);
         }).execute(true);
 
-        if (SetupStageController.checkIfStart()) new SetupStageController().instantiate(true);
+        if (!SetupStageController.isSetupDone()) new SetupStageController().instantiate(true);
         
         new AccountStageController().instantiate(true);
 

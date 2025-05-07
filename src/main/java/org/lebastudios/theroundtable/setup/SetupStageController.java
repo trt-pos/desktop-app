@@ -6,9 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
-import org.lebastudios.theroundtable.config.GeneralConfigData;
 import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
 import org.lebastudios.theroundtable.controllers.StageController;
+import org.lebastudios.theroundtable.database.Database;
+import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
@@ -31,9 +32,13 @@ public class SetupStageController extends StageController<SetupStageController>
     @FXML public Button nextButton;
     @FXML public ScrollPane mainPane;
 
-    public static boolean checkIfStart()
+    public static boolean isSetupDone()
     {
-        return !new GeneralConfigData().load().setupComplete;
+        return Database.getInstance().connectQuery(session -> {
+            return session.createQuery("select count(*) from Account a where a.type=:type", Long.class)
+                    .setParameter("type", Account.AccountType.ROOT)
+                    .getSingleResult();
+        }) > 0;
     }
 
     @FXML
@@ -146,10 +151,6 @@ public class SetupStageController extends StageController<SetupStageController>
                 }
                 updateProgress(i + 1, setupPanes.length);
             }
-
-            final var settingsData = new GeneralConfigData().load();
-            settingsData.setupComplete = true;
-            settingsData.save();
 
             return null;
         }
