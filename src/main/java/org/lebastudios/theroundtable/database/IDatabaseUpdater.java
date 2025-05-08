@@ -9,7 +9,9 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -172,36 +174,132 @@ public interface IDatabaseUpdater
         {
             if (sql.trim().isBlank()) return;
 
-            if (sql.contains("CREATE TABLE") || sql.contains("create table"))
+            List<String> sqlList = List.of(sql);
+
+            for (ISQLTransformer transformer : ISQLTransformer.transformers)
             {
-                String replacement = switch (dbms)
+                List<String> newSqlList = new ArrayList<>();
+
+                for (String sqlStr : sqlList)
                 {
-                    case SQLITE -> "autoincrement";
-                    case MARIADB -> "auto_increment";
-                };
-                
-                sql = replaceFirstGroup(" ((?i)AUTOINCREMENT)[ ,;]", replacement, sql);
+                    newSqlList.addAll(transformer.transform(sqlStr, dbms));
+                }
+
+                sqlList = newSqlList;
             }
 
-            statement.execute(sql);
-        }
-        
-        private String replaceFirstGroup(String regex, String replacement, String text)
-        {
-            StringBuilder modifiedSql = new StringBuilder();
-            
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(text);
-            int lastMatchEnd = 0;
-            while (matcher.find())
+            for (String sqlStr : sqlList)
             {
-                modifiedSql.append(text, lastMatchEnd, matcher.start(1));
-                modifiedSql.append(replacement);
-                lastMatchEnd = matcher.end(1);
+                statement.execute(sqlStr);
+            }
+        }
+
+        private interface ISQLTransformer
+        {
+            ISQLTransformer[] transformers = new ISQLTransformer[]{
+                    new AutoincrementTransformer(),
+                    new TableMigratorTransformer()
+            };
+
+            List<String> transform(String sql, Dbms dbms);
+
+            default String replaceFirstGroup(String regex, String replacement, String text)
+            {
+                StringBuilder modifiedSql = new StringBuilder();
+
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(text);
+                int lastMatchEnd = 0;
+                while (matcher.find())
+                {
+                    modifiedSql.append(text, lastMatchEnd, matcher.start(1));
+                    modifiedSql.append(replacement);
+                    lastMatchEnd = matcher.end(1);
+                }
+
+                modifiedSql.append(text, lastMatchEnd, text.length());
+                return modifiedSql.toString();
+            }
+        }
+
+        private static class AutoincrementTransformer implements ISQLTransformer
+        {
+            @Override
+            public List<String> transform(String sql, Dbms dbms)
+            {
+                if (sql.contains("CREATE TABLE") || sql.contains("create table"))
+                {
+                    String replacement = switch (dbms)
+                    {
+                        case SQLITE -> "autoincrement";
+                        case MARIADB -> "auto_increment";
+                    };
+
+                    sql = this.replaceFirstGroup(" ((?i)AUTOINCREMENT)[ ,;]", replacement, sql);
+                }
+
+                return List.of(sql);
+            }
+        }
+
+        private static class TableMigratorTransformer implements ISQLTransformer
+        {
+            private final static String regex =
+                    "[ \n]*(?:(?i)create table) (\\w*)[^(]*\\([ \n]*((?:\\w* [^,].*\n)+)[ \n]*-- NEW";
+            private static final Pattern pattern = Pattern.compile(regex);
+
+
+            @Override
+            public List<String> transform(String sql, Dbms dbms)
+            {
+                List<String> sqlList = new ArrayList<>();
+
+                if (sql.trim().startsWith("-- MIGRATE"))
+                {
+                    Matcher matcher = pattern.matcher(sql);
+
+                    while (matcher.find())
+                    {
+                        String tableName = matcher.group(1);
+                        String oldColDef = matcher.group(2);
+
+                        String tmpTableName = tableName + "_tmp";
+                        List<String> colsNames = extractColsNames(oldColDef);
+
+                        // Creating the tmp table
+                        sqlList.add(this.replaceFirstGroup(regex, tmpTableName, sql));
+
+                        // Copy data if exists
+                        sqlList.add("insert into " + tmpTableName + " (" + String.join(",", colsNames) +
+                                ") " + "select " + String.join(",", colsNames) + " from " + tableName);
+                        
+                        // Drop the old table and renaming the new one
+                        sqlList.add("drop table " + tableName);
+                        sqlList.add("alter table " + tmpTableName + " rename to " + tableName);
+                    }
+                }
+                else
+                {
+                    sqlList.add(sql);
+                }
+
+                return sqlList;
             }
 
-            modifiedSql.append(text, lastMatchEnd, text.length());
-            return modifiedSql.toString();
+            private List<String> extractColsNames(String createTableBody)
+            {
+                List<String> colsNames = new ArrayList<>();
+
+                for (String line : createTableBody.split(","))
+                {
+                    String trimmedLine = line.trim();
+                    if (trimmedLine.isEmpty()) continue;
+
+                    colsNames.add(trimmedLine.substring(0, trimmedLine.indexOf(" ")));
+                }
+
+                return colsNames;
+            }
         }
     }
 }
