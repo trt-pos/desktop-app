@@ -13,6 +13,7 @@ import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
+import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.locale.LocaleManager;
@@ -48,6 +49,11 @@ public class TheRoundTableApplication extends Application
     @Override
     public void start(Stage stage)
     {
+        Logs.getInstance().log(
+                Logs.LogType.INFO,
+                "Starting aplication with identifier: " + new TrtUUIDReader().getTrtUUID()
+        );
+        
         Class.forName("org.mariadb.jdbc.Driver");
 
         // Would like to differenciate between CorePlugin translations and basic app translations
