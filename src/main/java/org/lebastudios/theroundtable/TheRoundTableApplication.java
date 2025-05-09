@@ -17,6 +17,7 @@ import org.lebastudios.theroundtable.database.entities.AppInstallation;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.fxml2java.Main;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -183,5 +184,15 @@ public class TheRoundTableApplication extends Application
         });
 
         future.join();
+    }
+
+    public static void exitAplication(int code)
+    {
+        AppLifeCicleEvents.OnAppClose.invoke(
+                new WindowEvent(MainStageController.getInstance().getStage(), 
+                WindowEvent.WINDOW_CLOSE_REQUEST)
+        );
+        Platform.exit();
+        System.exit(code);
     }
 }
