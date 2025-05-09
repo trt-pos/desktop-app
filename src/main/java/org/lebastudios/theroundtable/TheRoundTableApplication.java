@@ -10,6 +10,7 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.accounts.PrivilegeScalationStageController;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
+import org.lebastudios.theroundtable.communications.FileTransferServiceManager;
 import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
@@ -64,6 +65,9 @@ public class TheRoundTableApplication extends Application
         // module for the core plugin and use TRT as a framework
         LangLoader.loadLang(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
 
+        // Starting Camelot Service -> Plugins -> Database
+        // This order cannot be changed, loading the plugins updates the database so hibernate
+        // needs to wait for the plugins to do their thing
         new Task<Void>()
         {
             @Override
@@ -88,6 +92,8 @@ public class TheRoundTableApplication extends Application
             System.exit(1);
         }).execute(true);
 
+        // Checking if the app installation is registered, checking if 
+        // the app is disabled and, if not, updating the state of the installation
         Database.getInstance().connectTransaction(session ->
         {
             if (AppInstallation.thisInstalation(session) == null)
@@ -128,6 +134,9 @@ public class TheRoundTableApplication extends Application
             session.merge(thisInstalation);
         });
 
+        // Starting the file transfer service
+        FileTransferServiceManager.getInstance().initTask().executeInBackGround();
+        
         if (!SetupStageController.isSetupDone()) new SetupStageController().instantiate(true);
 
         new AccountStageController().instantiate(true);

@@ -111,10 +111,8 @@ public class CamelotServiceManager
 
         if (client != null)
         {
-            client.setOnErrorHandler(_ ->
-            {});
-            client.setCallbacksHandler(_ ->
-            {});
+            client.setOnErrorHandler(_ -> {});
+            client.setCallbacksHandler(_ -> {});
             try
             {
                 client.close();

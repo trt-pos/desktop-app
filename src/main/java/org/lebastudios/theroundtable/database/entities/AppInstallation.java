@@ -65,6 +65,12 @@ public class AppInstallation
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "ip")
+    private String ip;
+    
+    @Column(name = "is_master")
+    private boolean is_master;
+    
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_account_id")
     private Account lastAccount;
