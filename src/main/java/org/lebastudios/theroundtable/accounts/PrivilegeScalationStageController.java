@@ -104,7 +104,9 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     @Override
     public void instantiate(Consumer<PrivilegeScalationStageController> acceptController, boolean shouldWait)
     {
-        if (AccountManager.getInstance().getCurrentLogged().getType().hasEnoughAccessLevelAs(accountType))
+        Account currentLogged = AccountManager.getInstance().getCurrentLogged();
+        
+        if (currentLogged != null && currentLogged.getType().hasEnoughAccessLevelAs(accountType))
         {
             callback.accept(true);
             return;

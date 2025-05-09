@@ -40,6 +40,9 @@ public class Account
     @Column(name = "changue_password_on_next_login", nullable = false)
     private boolean changePasswordOnNextLogin = false;
 
+    @OneToOne(mappedBy = "lastAccount")
+    private AppInstallation appInstallation;
+    
     public boolean hasAuthorityOver(Account account)
     {
         if (Objects.equals(this.id, account.id)) return true;

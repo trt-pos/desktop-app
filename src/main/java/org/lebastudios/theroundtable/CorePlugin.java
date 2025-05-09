@@ -5,6 +5,7 @@ import javafx.scene.control.TreeItem;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.database.entities.Account;
+import org.lebastudios.theroundtable.database.entities.AppInstallation;
 import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
 import org.lebastudios.theroundtable.fxml2java.CompileFxml;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
@@ -37,7 +38,7 @@ public class CorePlugin implements IPlugin
         return instance;
     }
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     
     private CorePlugin() {}
 
@@ -135,6 +136,7 @@ public class CorePlugin implements IPlugin
         
         entities.add(Account.class);
         entities.add(DatabaseVersion.class);
+        entities.add(AppInstallation.class);
         
         return entities;
     }

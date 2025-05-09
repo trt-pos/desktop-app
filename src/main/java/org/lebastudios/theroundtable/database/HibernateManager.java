@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.database;
 
-import javafx.application.Platform;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,7 +10,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
-import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
+import org.lebastudios.theroundtable.database.entities.AppInstallation;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -22,6 +21,7 @@ import org.lebastudios.theroundtable.tasks.Task;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -35,6 +35,20 @@ class HibernateManager
         {
             if (instance.sessionFactory == null) return;
 
+            Database.getInstance().connectTransaction(session ->
+            {
+                AppInstallation appInstallation = AppInstallation.thisInstalation(session);
+                appInstallation.setLastAccount(null);
+                
+                if (appInstallation.getStatus() != AppInstallation.Status.DISABLED)
+                {
+                    appInstallation.setStatus(AppInstallation.Status.INACTIVE);
+                }
+                
+                appInstallation.setUpdatedAt(LocalDateTime.now());
+                session.merge(appInstallation);
+            });
+            
             DatabaseEvents.onDatabaseClose.invoke();
             instance.sessionFactory.close();
         });
