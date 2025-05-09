@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Session;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
+import org.lebastudios.theroundtable.communications.LocalIpFinder;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AccountEvents;
@@ -27,7 +28,6 @@ public class AppInstallation
             {
                 var appInstalation = AppInstallation.thisInstalation(session);
                 appInstalation.setLastAccount(account);
-                appInstalation.setUpdatedAt(LocalDateTime.now());
                 session.merge(appInstalation);
             });
         });
@@ -38,7 +38,6 @@ public class AppInstallation
             {
                 var appInstalation = AppInstallation.thisInstalation(session);
                 appInstalation.setLastAccount(null);
-                appInstalation.setUpdatedAt(LocalDateTime.now());
                 session.merge(appInstalation);
             });
         });
@@ -83,6 +82,23 @@ public class AppInstallation
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.status = status;
+    }
+
+    public void setStatus(Status status)
+    {
+        this.status = status;
+        this.updatedAt = LocalDateTime.now();
+        
+        if (status == Status.ACTIVE)
+        {
+            this.setIp(new LocalIpFinder().find());
+        }
+    }
+
+    public void setLastAccount(Account lastAccount)
+    {
+        this.lastAccount = lastAccount;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public enum Status

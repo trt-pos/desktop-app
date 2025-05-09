@@ -11,10 +11,12 @@ create table core_app_installation
     is_master       boolean      not null default false,
     constraint PK_CORE_APP_INSTALLATION primary key (uuid),
     constraint CK_CORE_APP_INSTALLATION_STATUS check (status in ('ACTIVE', 'INACTIVE', 'DISABLED', 'STANDBY')),
-    constraint CK_CORE_APP_INSTALLATION_IP check (ip like '___.___.___.___'),
+    constraint CK_CORE_APP_INSTALLATION_IP check (ip glob '[0-9]*.[0-9]*.[0-9]*.[0-9]*'),
     constraint FK_CORE_APP_INSTALLATION_CORE_ACCOUNT foreign key (last_account_id) references core_account (id)
         on delete set null
 );
+-- DELIMITER
+
 -- DELIMITER
 create trigger core_app_installation_set_master_if_none_after_insert
     after insert

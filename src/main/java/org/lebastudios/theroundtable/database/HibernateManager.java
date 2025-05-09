@@ -45,7 +45,6 @@ class HibernateManager
                     appInstallation.setStatus(AppInstallation.Status.INACTIVE);
                 }
                 
-                appInstallation.setUpdatedAt(LocalDateTime.now());
                 session.merge(appInstallation);
             });
             
