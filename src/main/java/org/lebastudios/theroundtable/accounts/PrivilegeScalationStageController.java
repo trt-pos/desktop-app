@@ -2,6 +2,7 @@ package org.lebastudios.theroundtable.accounts;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -13,12 +14,13 @@ import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.ui.IconView;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class PrivilegeScalationStageController extends StageController<PrivilegeScalationStageController>
 {
     @FXML public IconView iconView;
-    @FXML public TextField accountNameField;
+    @FXML public ChoiceBox<Account> accountChoiceBox;
     @FXML public PasswordField accountPasswordField;
 
     private final Consumer<Boolean> callback;
@@ -34,7 +36,18 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     @FXML
     protected void initialize()
     {
-        iconView.setIconName(accountType.getIconName());
+        List<Account> accounts = Database.getInstance().connectQuery(session ->
+        {
+            return session.createQuery("from Account", Account.class)
+                    .getResultList()
+                    .stream().filter(account -> account.getType().hasEnoughAccessLevelAs(accountType))
+                    .toList();
+        });
+        
+        accountChoiceBox.getItems().setAll(accounts);
+        accountChoiceBox.getSelectionModel().selectFirst();
+        
+        accountChoiceBox.setConverter(Account.STRING_CONVERTER);
     }
 
     @FXML
@@ -47,26 +60,9 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     @FXML
     public void accept(ActionEvent actionEvent)
     {
-        Account account = Database.getInstance().connectQuery(session ->
-        {
-            Account foundAcc = session.createQuery("from Account a where a.name = :name", Account.class)
-                    .setParameter("name", accountNameField.getText())
-                    .getSingleResultOrNull();
-
-            if (foundAcc == null)
-            {
-                return null;
-            }
-            
-            if (!LocalPasswordValidator.validatePassword(accountPasswordField.getText(), foundAcc.getPassword()))
-            {
-                return null;
-            }
-
-            return foundAcc;
-        });
-
-        if (account == null)
+        if (!LocalPasswordValidator.validatePassword(
+                accountPasswordField.getText(),
+                accountChoiceBox.getValue().getPassword()))
         {
             loginErrorAnimation();
             return;
@@ -80,7 +76,6 @@ public class PrivilegeScalationStageController extends StageController<Privilege
     {
         accountPasswordField.setText("");
         
-        UIEffects.shakeNode(accountNameField);
         UIEffects.shakeNode(accountPasswordField);
     }
 

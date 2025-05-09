@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.database.entities;
 
 import jakarta.persistence.*;
+import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,21 @@ import java.util.Objects;
 @Table(name = "core_account")
 public class Account
 {
+    public static final StringConverter<Account> STRING_CONVERTER = new StringConverter<>()
+    {
+        @Override
+        public String toString(Account account)
+        {
+            return account.getName();
+        }
+
+        @Override
+        public Account fromString(String string)
+        {
+            return null;
+        }
+    };
+    
     public Account(String name, String password, AccountType type)
     {
         this.name = name;
@@ -59,16 +75,7 @@ public class Account
 
     public String getIconName()
     {
-        return getIconName(type);
-    }
-
-    public static String getIconName(AccountType type)
-    {
-        return switch (type)
-        {
-            case ROOT, ADMIN -> "admin-user.png";
-            default -> "user.png";
-        };
+        return type.getIconName();
     }
 
     public enum AccountType
@@ -104,10 +111,8 @@ public class Account
         {
             return switch (this)
             {
-                case ROOT -> "root-user.png";
-                case ADMIN -> "admin-user.png";
-                case MANAGER -> "manager-user.png";
-                default -> "account.png";
+                case ROOT, ADMIN -> "admin-user.png";
+                default -> "user.png";
             };
         }
 
