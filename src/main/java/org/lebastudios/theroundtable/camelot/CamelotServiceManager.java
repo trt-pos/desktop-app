@@ -9,6 +9,7 @@ import org.lebastudios.theroundtable.config.CamelotServerConfigData;
 import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.env.EmbeddedBinExecutor;
+import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -56,7 +57,7 @@ public class CamelotServiceManager
 
                     // Create the client object to be connected to the server
                     CamelotClient tmpClient =
-                            new CamelotClient(configData.clientName, configData.host, configData.port);
+                            new CamelotClient(new TrtUUIDReader().getTrtUUID(), configData.host, configData.port);
                     // Asigning the callback handler to the client to handle the events callbacks
                     tmpClient.setCallbacksHandler(CamelotEventsManager.getInstance().callbacksHandler);
                     // Assigning the error handler to the client to handle the errors

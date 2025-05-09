@@ -13,7 +13,6 @@ import java.net.Socket;
 
 public class CamelotServerConfigPaneController extends ConfigPaneController<CamelotServerConfigData>
 {
-    @FXML public TextField clientName;
     @FXML public TextField serverAddress;
     @FXML public TextField serverPort;
     @FXML public CheckBox defaultConfigCheckbox;
@@ -30,7 +29,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     {
         defaultConfigCheckbox.selectedProperty().addListener((_, _, newValue) ->
         {
-            clientName.setDisable(newValue);
             serverAddress.setDisable(newValue);
             serverPort.setDisable(newValue);
 
@@ -54,7 +52,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     public void updateConfigData(CamelotServerConfigData configData)
     {
         configData.defaultConfig = defaultConfigCheckbox.isSelected();
-        configData.clientName = clientName.getText();
         configData.host = serverAddress.getText();
         configData.port = Integer.parseInt(serverPort.getText());
     }
@@ -63,7 +60,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     public void updateUI(CamelotServerConfigData configData)
     {
         defaultConfigCheckbox.setSelected(configData.defaultConfig);
-        clientName.setText(configData.clientName);
         serverAddress.setText(configData.host);
         serverPort.setText(Integer.toString(configData.port));
 
@@ -91,7 +87,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
     @Override
     public ValidationResult validate()
     {
-        clientName.setText(clientName.getText().trim());
         serverAddress.setText(serverAddress.getText().trim());
         serverPort.setText(serverPort.getText().trim());
 
@@ -103,12 +98,6 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
         if (serverPort.getText().isBlank())
         {
             serverPort.setText("1237");
-        }
-
-        if (!clientName.getText().matches("[a-zA-Z0-9_.]*"))
-        {
-            UIEffects.shakeNode(clientName);
-            return ValidationResult.invalid("Client name must be alphanumeric (a-zA-Z0-9_. only)");
         }
 
         if (!serverPort.getText().matches("[0-9]+"))

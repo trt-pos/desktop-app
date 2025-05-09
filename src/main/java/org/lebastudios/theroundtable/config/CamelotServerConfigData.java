@@ -5,7 +5,6 @@ import java.io.File;
 public class CamelotServerConfigData extends ConfigData<CamelotServerConfigData>
 {
     public boolean defaultConfig = true;
-    public String clientName = "Arthur";
     public String host = "localhost";
     public int port = 1237;
     
