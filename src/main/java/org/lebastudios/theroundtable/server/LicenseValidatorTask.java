@@ -69,7 +69,6 @@ public class LicenseValidatorTask extends Task<Void>
                                     "Check your internet connection and try again."
                     ).instantiate(true);
 
-                    AppLifeCicleEvents.OnAppClose.invoke(null);
                     Platform.exit();
                 });
 
@@ -84,7 +83,6 @@ public class LicenseValidatorTask extends Task<Void>
     {
         if (tries >= 3)
         {
-            AppLifeCicleEvents.OnAppClose.invoke(null);
             Platform.exit();
             return;
         }

@@ -60,8 +60,7 @@ public class SetupStageController extends StageController<SetupStageController>
                             {
                                 if (response)
                                 {
-                                    AppLifeCicleEvents.OnAppClose.invoke(e);
-                                    System.exit(0);
+                                    Platform.exit();
                                 }
                             }
                     ).instantiate();

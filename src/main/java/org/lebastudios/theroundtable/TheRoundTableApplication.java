@@ -258,8 +258,7 @@ public class TheRoundTableApplication extends Application
 
             if (!e.isConsumed())
             {
-                AppLifeCicleEvents.OnAppClose.invoke(e);
-                Platform.exit();
+                TheRoundTableApplication.exitAplication(0);
             }
         });
 
@@ -305,10 +304,6 @@ public class TheRoundTableApplication extends Application
 
     public static void exitAplication(int code)
     {
-        AppLifeCicleEvents.OnAppClose.invoke(
-                new WindowEvent(MainStageController.getInstance().getStage(),
-                        WindowEvent.WINDOW_CLOSE_REQUEST)
-        );
         Platform.exit();
         System.exit(code);
     }

@@ -21,7 +21,6 @@ import org.lebastudios.theroundtable.tasks.Task;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -31,7 +30,7 @@ class HibernateManager
 
     static
     {
-        AppLifeCicleEvents.OnAppClose.addListener((_) ->
+        AppLifeCicleEvents.OnAppShutdown.addListener(() ->
         {
             if (instance.sessionFactory == null) return;
 

@@ -32,7 +32,7 @@ public class CamelotServiceManager
 
     private CamelotServiceManager()
     {
-        AppLifeCicleEvents.OnAppClose.addListener(_ -> stop());
+        AppLifeCicleEvents.OnAppShutdown.addListener(this::stop);
     }
 
     public Task<Void> initTask()

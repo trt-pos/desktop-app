@@ -32,7 +32,7 @@ class BackupDB
 
     private BackupDB() 
     {
-        AppLifeCicleEvents.OnAppClose.addListener((_) ->
+        AppLifeCicleEvents.OnAppShutdown.addListener(() ->
         {
             stop();
             realizeBackup();

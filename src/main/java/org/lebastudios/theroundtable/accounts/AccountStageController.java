@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.SneakyThrows;
+import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
@@ -105,8 +106,7 @@ public class AccountStageController extends StageController<AccountStageControll
 
             if (!e.isConsumed())
             {
-                AppLifeCicleEvents.OnAppClose.invoke(e);
-                System.exit(0);
+                TheRoundTableApplication.exitAplication(0);
             }
         })).setModality(Modality.APPLICATION_MODAL);
     }

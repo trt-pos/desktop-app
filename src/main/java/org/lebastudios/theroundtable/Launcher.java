@@ -11,6 +11,9 @@ public class Launcher
 {
     public static void main(String[] args)
     {
+        // Capturing the shutdown event to release resources
+        Runtime.getRuntime().addShutdownHook(new Thread(AppLifeCicleEvents.OnAppShutdown::invoke));
+
         Application.launch(TheRoundTableApplication.class);
     }
 
