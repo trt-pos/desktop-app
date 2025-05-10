@@ -1,19 +1,16 @@
 package org.lebastudios.theroundtable.env;
 
+import com.github.javakeyring.PasswordAccessException;
 import lombok.SneakyThrows;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.security.EncryptorStrategy;
+import org.lebastudios.theroundtable.security.KeyringManager;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.Locale;
 import java.util.UUID;
 
 public class TrtUUIDReader
 {
-    private static final File uuidFile = new File(Directories.internalDir(), "trt-uuid");
     private static String uuid = null;
 
     public String getTrtUUID()
@@ -29,32 +26,34 @@ public class TrtUUIDReader
     @SneakyThrows
     private String loadTrtUUID()
     {
-        EncryptorStrategy encryptor = EncryptorStrategy.SYSTEM;
-        
-        if (!uuidFile.exists())
+        String trtUuid = KeyringManager.getInstance().getSecret(CorePlugin.getInstance(), "TRT_UUID").orElseGet(() ->
         {
-            String uuid = generateTrtUUID();
-            Files.write(
-                    uuidFile.toPath(), 
-                    encryptor.encrypt(uuid.getBytes(StandardCharsets.UTF_8)), 
-                    StandardOpenOption.CREATE_NEW
-            );
+            String newUuid = generateTrtUUID();
+            try
+            {
+                KeyringManager.getInstance().setSecret(CorePlugin.getInstance(), "TRT_UUID", newUuid);
+            }
+            catch (PasswordAccessException e)
+            {
+                Logs.getInstance().log(
+                        "Failed to set the new UUID in the keyring",
+                        e
+                );
+                return  null;
+            }
+            return newUuid;
+        });
+
+        assert trtUuid != null;
+        
+        if (!validateTrtUUID(trtUuid))
+        {
+            trtUuid = generateTrtUUID();
+            KeyringManager.getInstance().deleteSecret(CorePlugin.getInstance(), "TRT_UUID");
+            KeyringManager.getInstance().setSecret(CorePlugin.getInstance(), "TRT_UUID", trtUuid);
         }
         
-        byte[] encrypted = Files.readAllBytes(uuidFile.toPath());
-        String decrypted = new String(encryptor.decrypt(encrypted), StandardCharsets.UTF_8);
-        
-        if (!validateTrtUUID(decrypted))
-        {
-            Logs.getInstance().log(
-                    Logs.LogType.WARNING,
-                    "The UUID file is corrupted. Generating a new one."
-            );
-            uuidFile.delete();
-            return loadTrtUUID();
-        }
-        
-        return decrypted;
+        return trtUuid;
     }
 
     private boolean validateTrtUUID(String uuid)
