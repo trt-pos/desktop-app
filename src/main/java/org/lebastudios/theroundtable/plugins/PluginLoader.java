@@ -191,6 +191,12 @@ public class PluginLoader
                 }
                 else
                 {
+                    if (file.getName().equals("metadata.json"))
+                    {
+                        // Ignore the repo metadata file
+                        continue;
+                    }
+                    
                     if (!file.getName().endsWith(".jar"))
                     {
                         Logs.getInstance().log(
