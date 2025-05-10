@@ -17,6 +17,16 @@ public class Logs
         {
             return this == ERROR || this == EXCEPTION;
         }
+        
+        public String getAnsiColor()
+        {
+            return switch (this)
+            {
+                case INFO -> "\u001B[32m";
+                case WARNING -> "\u001B[33m";
+                case ERROR, EXCEPTION -> "\u001B[31m";
+            };
+        }
     }
 
     public static Logs getInstance()
@@ -35,7 +45,7 @@ public class Logs
         final String date = getDateString();
         final String thread = Thread.currentThread().getName();
 
-        out.printf("%s [%s] [%s] %s%n", date, thread, type, message);
+        out.printf("%s [%s] %s[%s]\u001B[0m %s%n", date, thread, type.getAnsiColor(), type, message);
     }
 
     public void log(String message, Throwable e)
