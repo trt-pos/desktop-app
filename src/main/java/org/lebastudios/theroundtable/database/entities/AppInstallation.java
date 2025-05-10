@@ -67,6 +67,9 @@ public class AppInstallation
     @Column(name = "ip")
     private String ip;
     
+    @Column(name = "subnet")
+    private String subnet = "192.168.1.0/24";
+    
     @Column(name = "is_master")
     private boolean isMaster;
     
@@ -128,7 +131,6 @@ public class AppInstallation
     @Converter
     private static class VersionConverter implements AttributeConverter<Version, String>
     {
-        
         @Override
         public String convertToDatabaseColumn(Version version) {
             return version != null ? version.toString() : null;

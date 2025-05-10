@@ -8,10 +8,12 @@ create table core_app_installation
     status          varchar(11)  not null,
     last_account_id integer null,
     ip              varchar(15) null,
+    subnet          varchar(18)  not null null default '192.168.1.0/24',
     is_master       boolean      not null default false,
     constraint PK_CORE_APP_INSTALLATION primary key (uuid),
     constraint CK_CORE_APP_INSTALLATION_STATUS check (status in ('ACTIVE', 'INACTIVE', 'DISABLED', 'STANDBY')),
     constraint CK_CORE_APP_INSTALLATION_IP check (ip like '%.%.%.%'),
+    constraint CK_CORE_APP_INSTALLATION_IP_SUBNET check (subnet like '%.%.%.%/%'),
     constraint FK_CORE_APP_INSTALLATION_CORE_ACCOUNT foreign key (last_account_id) references core_account (id)
         on delete set null
 );
