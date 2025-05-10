@@ -183,6 +183,11 @@ public class PluginLoader
 
         private void getInstalledPluginsJars(File folder, List<File> jars)
         {
+            if (!folder.exists())
+            {
+                return;
+            }
+            
             for (File file : folder.listFiles())
             {
                 if (file.isDirectory())
