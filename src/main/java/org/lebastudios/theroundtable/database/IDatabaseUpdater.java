@@ -63,9 +63,12 @@ import java.util.regex.Pattern;
 /// );
 /// ```
 /// 
-/// The macro creates a table as the deifned one in the exmaple above with the
+/// The macro creates a table as the defined one in the example above with the
 /// name ended with `_tmp`. Then copies the columns that are above the `-- NEW`,
-/// drops the old table and renames the new one.
+/// renames the old table to `my_table_old` and renames the new one to `my_table`.
+/// 
+/// Due to limitations of SQLite, the tabled marked as old must be dropped
+/// on another transaction (SQL file)
 /// 
 /// Note: This macro doesn't rename existing columns and cannot convert 
 /// beetwen types. It only copies the columns that are above the `-- NEW`
@@ -108,66 +111,84 @@ public interface IDatabaseUpdater
 {
     default int getDatabaseVersion() {return 0;}
 
-    default void updateDatabase(Connection conn, int oldVersion, int newVersion, Dbms dbms) throws Exception
+    default void upgradeDatabaseTo(Connection conn, int version, Dbms dbms) throws Exception
     {
-        if (oldVersion == newVersion) return;
-
         Class<? extends IPlugin> clazz =
                 PluginsManager.getInstance().getPluginOf(this.getClass()).orElseThrow().getClass();
+        IPlugin plugin = PluginsManager.getInstance().getPluginOf(clazz).orElseThrow();
 
-        if (new MethodUpdateStrategy().updateDatabase(conn, oldVersion, newVersion, clazz, dbms)) return;
-        if (new SQLFileUpdateStrategy().updateDatabase(conn, oldVersion, newVersion, clazz, dbms)) return;
+        for (IUpdateStrategy strategy : IUpdateStrategy.STRATEGIES)
+        {
+            if (strategy.upgradeTo(conn, version, plugin, dbms))
+            {
+                return;
+            }
+        }
 
-        throw new Exception("No update strategy found when updating from version " + oldVersion + " to " + newVersion);
+        throw new Exception("No update strategy found when upgrading db to version " + version);
+    }
+    
+    default void downgradeDatabaseTo(Connection conn, int version, Dbms dbms) throws Exception
+    {
+        Class<? extends IPlugin> clazz =
+                PluginsManager.getInstance().getPluginOf(this.getClass()).orElseThrow().getClass();
+        IPlugin plugin = PluginsManager.getInstance().getPluginOf(clazz).orElseThrow();
+
+        for (IUpdateStrategy strategy : IUpdateStrategy.STRATEGIES)
+        {
+            if (strategy.downgradeTo(conn, version, plugin, dbms)) 
+            {
+                return;
+            }
+        }
+        
+        throw new Exception("No update strategy found when downgrading db to version " + version);
     }
 
     interface IUpdateStrategy
     {
-        boolean updateDatabase(Connection conn, int oldVersion, int newVersion,
-                Class<? extends IPlugin> clazz, Dbms dbms) throws Exception;
+        IUpdateStrategy[] STRATEGIES = new IUpdateStrategy[]{
+                new MethodUpdateStrategy(),
+                new SQLFileUpdateStrategy()
+        };
+        
+        boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms);
+        boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms);
     }
 
     class MethodUpdateStrategy implements IUpdateStrategy
     {
         @Override
-        public boolean updateDatabase(Connection conn, int oldVersion, int newVersion, Class<? extends IPlugin> clazz,
-                Dbms dbms)
-                throws Exception
+        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
         {
-            IPlugin plugin = PluginsManager.getInstance().getPluginOf(clazz).orElseThrow();
-            Method[] methods = clazz.getDeclaredMethods();
-            Optional<Method> someMethod = Arrays.stream(methods)
-                    .filter(method -> method.getName().startsWith("downgradeTo") ||
-                            method.getName().startsWith("upgradeTo"))
-                    .findFirst();
+            return executeMethod("upgradeTo" + version, conn, plugin, dbms);
+        }
 
-            if (someMethod.isEmpty()) return false;
-
-            for (int i = oldVersion - 1; i >= newVersion; i--)
+        @Override
+        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        {
+            return executeMethod("downgradeTo" + version, conn, plugin, dbms);
+        }
+        
+        private boolean executeMethod(String name, Connection conn, IPlugin plugin, Dbms dbms)
+        {
+            try
             {
-                var methodName = "downgradeTo" + i;
+                Method[] methods = plugin.getClass().getDeclaredMethods();
+
                 var updateMethod = Arrays.stream(methods)
-                        .filter(method -> method.getName().equals(methodName))
+                        .filter(method -> method.getName().equals(name))
                         .findFirst();
 
-                if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
-
+                if (updateMethod.isEmpty()) return false;
+                
                 updateMethod.get().invoke(plugin, conn, dbms);
+                
+                return true;
             }
+            catch (Exception _) {}
 
-            for (int i = oldVersion + 1; i <= newVersion; i++)
-            {
-                var methodName = "upgradeTo" + i;
-                var updateMethod = Arrays.stream(methods)
-                        .filter(method -> method.getName().equals(methodName))
-                        .findFirst();
-
-                if (updateMethod.isEmpty()) throw new NoSuchMethodException(methodName);
-
-                updateMethod.get().invoke(plugin, conn, dbms);
-            }
-
-            return true;
+            return false;
         }
     }
 
@@ -182,32 +203,31 @@ public interface IDatabaseUpdater
         }
 
         @Override
-        public boolean updateDatabase(Connection conn, int oldVersion, int newVersion, Class<? extends IPlugin> clazz,
-                Dbms dbms)
-                throws Exception
+        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
         {
-            URL upgradeURL = clazz.getResource("sql/" + UpdateType.UPGRADE.name().toLowerCase());
-            URL downgradeURL = clazz.getResource("sql/" + UpdateType.DOWNGRADE.name().toLowerCase());
+            return executeMethod(UpdateType.UPGRADE, conn, version, plugin, dbms);
+        }
 
-            if (upgradeURL == null || downgradeURL == null) return false;
-
-            for (int i = oldVersion - 1; i >= newVersion; i--)
+        @Override
+        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        {
+            return executeMethod(UpdateType.DOWNGRADE, conn, version, plugin, dbms);
+        }
+        
+        private boolean executeMethod(UpdateType updateType, Connection conn, int version, IPlugin plugin, Dbms dbms)
+        {
+            try
             {
-                try (InputStream is = getSQLFile(dbms, UpdateType.DOWNGRADE, i, clazz))
+                try (InputStream is = getSQLFile(dbms, updateType, version, plugin.getClass()))
                 {
                     executeSQL(conn, is, dbms);
                 }
+                
+                return true;
             }
+            catch (Exception ignore) {}
 
-            for (int i = oldVersion + 1; i <= newVersion; i++)
-            {
-                try (InputStream is = getSQLFile(dbms, UpdateType.UPGRADE, i, clazz))
-                {
-                    executeSQL(conn, is, dbms);
-                }
-            }
-
-            return true;
+            return false;
         }
 
         private InputStream getSQLFile(Dbms dbms, UpdateType updateType, int version, Class<? extends IPlugin> clazz)
@@ -357,6 +377,7 @@ public interface IDatabaseUpdater
                         String oldColDef = matcher.group(2);
 
                         String tmpTableName = tableName + "_tmp";
+                        String deletedTableName = tableName + "_old";
                         List<String> colsNames = extractColsNames(oldColDef);
 
                         // Creating the tmp table
@@ -364,11 +385,11 @@ public interface IDatabaseUpdater
 
                         // Copy data if exists
                         sqlList.add("insert into " + tmpTableName + " (" + String.join(",", colsNames) +
-                                ") " + "select " + String.join(",", colsNames) + " from " + tableName);
+                                ") " + "select " + String.join(",", colsNames) + " from " + tableName + ";");
                         
-                        // Drop the old table and renaming the new one
-                        sqlList.add("drop table " + tableName);
-                        sqlList.add("alter table " + tmpTableName + " rename to " + tableName);
+                        // renaming the old table and the new one
+                        sqlList.add("alter table " + tableName + " rename to " + deletedTableName + ";");
+                        sqlList.add("alter table " + tmpTableName + " rename to " + tableName + ";");
                     }
                 }
                 else
@@ -383,7 +404,7 @@ public interface IDatabaseUpdater
             {
                 List<String> colsNames = new ArrayList<>();
 
-                for (String line : createTableBody.split(","))
+                for (String line : createTableBody.split(", *\\R"))
                 {
                     String trimmedLine = line.trim();
                     if (trimmedLine.isEmpty()) continue;
