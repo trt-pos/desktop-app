@@ -40,7 +40,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     @FXML public TextField remoteDbUser;
     @FXML public PasswordField remoteDbPassword;
     @FXML public TextField remoteDbName;
-    
+
 
     private DatabaseConfigData oldConfig;
 
@@ -56,24 +56,24 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     {
         ((Pane) remoteDbSection.getParent()).getChildren().remove(remoteDbSection);
         ((Pane) localDbSection.getParent()).getChildren().remove(localDbSection);
-        
+
         enableRemoteDb.selectedProperty().addListener((_, _, newValue) ->
         {
             formContainer.switchContent(newValue ? remoteDbSection : localDbSection);
         });
-        
+
         formContainer.switchContent(localDbSection);
-        
+
         backupSection.disableProperty().bind(enableBackups.selectedProperty().not());
-        
+
         super.initialize();
     }
-    
+
     @Override
     public void updateUI(DatabaseConfigData configData)
     {
         enableRemoteDb.setSelected(configData.enableRemoteDb);
-        
+
         databasesDirectory.setText(configData.databaseFolder);
         enableBackups.setSelected(configData.enableBackups);
         databasesBackupDirectory.setText(configData.backupFolder);
@@ -86,7 +86,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             remoteDbHost.setText(remoteDbData.host);
             remoteDbPort.setText(remoteDbData.port);
             remoteDbUser.setText(remoteDbData.user);
-            remoteDbPassword.setText(remoteDbData.password);
+            remoteDbPassword.setText(remoteDbData.passUuid);
             remoteDbName.setText(remoteDbData.database);
         }
     }
@@ -103,8 +103,8 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
             remoteDbData.host = remoteDbHost.getText();
             remoteDbData.port = remoteDbPort.getText();
             remoteDbData.user = remoteDbUser.getText();
-            remoteDbData.password = remoteDbPassword.getText();
             remoteDbData.database = remoteDbName.getText();
+            remoteDbData.passUuid = remoteDbPassword.getText();
 
             configData.remoteDbData = remoteDbData;
         }
@@ -164,13 +164,15 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
                     : localDbSection);
             return ValidationResult.invalid(e.getMessage());
         }
-        
+
         return ValidationResult.valid();
     }
 
     @Override
     public void onSave(DatabaseConfigData configData)
     {
+        remoteDbPassword.setText(configData.remoteDbData.passUuid);
+        
         if (configData.enableBackups && !configData.enableRemoteDb)
         {
             Database.getInstance().initBackup();
@@ -194,9 +196,9 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
                 if (configData.isSameDatabase(oldConfig)) return null;
 
                 // If the old configuration can't connect to a database we skip the migration
-                try (Connection oldDbConnection = oldConfig.getConnection()) {} 
-                catch (Exception ignore) { return null; }
-                
+                try (Connection oldDbConnection = oldConfig.getConnection()) {}
+                catch (Exception ignore) {return null;}
+
                 updateMessage("Migrating accounts");
                 try (Connection newDbConnection = configData.getConnection();
                      Connection oldDbConnection = oldConfig.getConnection())

@@ -29,23 +29,10 @@ public class TrtUUIDReader
         String trtUuid = KeyringManager.getInstance().getSecret(CorePlugin.getInstance(), "TRT_UUID").orElseGet(() ->
         {
             String newUuid = generateTrtUUID();
-            try
-            {
-                KeyringManager.getInstance().setSecret(CorePlugin.getInstance(), "TRT_UUID", newUuid);
-            }
-            catch (PasswordAccessException e)
-            {
-                Logs.getInstance().log(
-                        "Failed to set the new UUID in the keyring",
-                        e
-                );
-                return  null;
-            }
+            KeyringManager.getInstance().setSecret(CorePlugin.getInstance(), "TRT_UUID", newUuid);
             return newUuid;
         });
 
-        assert trtUuid != null;
-        
         if (!validateTrtUUID(trtUuid))
         {
             trtUuid = generateTrtUUID();

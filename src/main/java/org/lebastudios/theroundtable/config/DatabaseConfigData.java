@@ -1,13 +1,17 @@
 package org.lebastudios.theroundtable.config;
 
+import lombok.SneakyThrows;
 import org.hibernate.cfg.Configuration;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.database.Dbms;
+import org.lebastudios.theroundtable.security.KeyringManager;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
 {
@@ -23,19 +27,41 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
 
     public static class RemoteDbData
     {
-
         public Dbms dbms = Dbms.MARIADB;
         public String host;
         public String port;
         public String user;
-        public String password;
+        public String passUuid;
         public String database;
+        
+        @SneakyThrows
+        public String getPassword()
+        {
+            return KeyringManager.getInstance()
+                    .getSecret(CorePlugin.getInstance(), "REMOTE_DB::" + passUuid)
+                    .orElse(passUuid);
+        }
+        
+        public static boolean passUuidExists(String passUuid)
+        {
+            return KeyringManager.getInstance()
+                    .getSecret(CorePlugin.getInstance(), "REMOTE_DB::" + passUuid)
+                    .isPresent();
+        }
+        
+        public static String savePassword(String password)
+        {
+            String passUuid = UUID.randomUUID().toString();
+            KeyringManager.getInstance().setSecret(CorePlugin.getInstance(), "REMOTE_DB::" + passUuid, password);
+            return passUuid;
+        }
+        
         public Connection getConnection() throws SQLException
         {
             return DriverManager.getConnection(
                     getJdbcUrl(),
                     user,
-                    password
+                    getPassword()
             );
         }
 
@@ -65,7 +91,7 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
                     "hibernate.connection.username", remoteDbData.user
             );
             config.setProperty(
-                    "hibernate.connection.password", remoteDbData.password
+                    "hibernate.connection.password", remoteDbData.getPassword()
             );
         }
         
@@ -125,7 +151,20 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
         return databaseFolder.equals(other.databaseFolder) && 
                 establishmentDatabaseName.equals(other.establishmentDatabaseName);
     }
-    
+
+    @Override
+    public void save()
+    {
+        if (enableRemoteDb)
+        {
+            remoteDbData.passUuid = DatabaseConfigData.RemoteDbData.passUuidExists(remoteDbData.passUuid)
+                    ? remoteDbData.passUuid
+                    : DatabaseConfigData.RemoteDbData.savePassword(remoteDbData.passUuid);
+        }
+        
+        super.save();
+    }
+
     @Override
     public File getFile()
     {
