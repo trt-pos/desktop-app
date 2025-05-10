@@ -1,6 +1,6 @@
 create table core_app_installation
 (
-    uuid            char(45)     not null,
+    uuid            varchar(45)  not null,
     name            varchar(255) not null default 'Unknown',
     version         varchar(255) not null,
     created_at      timestamp    not null,
