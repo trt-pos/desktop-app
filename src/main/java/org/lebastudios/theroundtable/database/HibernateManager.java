@@ -38,15 +38,15 @@ class HibernateManager
             {
                 AppInstallation appInstallation = AppInstallation.thisInstalation(session);
                 appInstallation.setLastAccount(null);
-                
+
                 if (appInstallation.getStatus() != AppInstallation.Status.DISABLED)
                 {
                     appInstallation.setStatus(AppInstallation.Status.INACTIVE);
                 }
-                
+
                 session.merge(appInstallation);
             });
-            
+
             DatabaseEvents.onDatabaseClose.invoke();
             instance.sessionFactory.close();
         });
@@ -77,7 +77,7 @@ class HibernateManager
     public Session getSession()
     {
         if (sessionFactory == null) throw new IllegalStateException("Database not initialized");
-        
+
         try
         {
             connection.createStatement().execute("SELECT 1");
@@ -95,13 +95,13 @@ class HibernateManager
                         .setTitle("Connection with the database lost")
                         .instantiate(true);
             });
-            
+
             return getSession();
         }
 
         return sessionFactory.openSession();
     }
-    
+
     public boolean connectTransaction(Consumer<Session> action)
     {
         Session session = getSession();
@@ -345,50 +345,65 @@ class HibernateManager
 
             statement.close();
 
-            if (oldVersion != newVersion)
+            if (oldVersion == newVersion) return;
+
+            Dbms dbms = new DatabaseConfigData().load().getDbms();
+            
+            try
             {
-                try
+                conn.setAutoCommit(false);
+
+                conn.createStatement().execute(
+                        switch (dbms)
+                        {
+                            case MARIADB -> "set foreign_key_checks = 0";
+                            case SQLITE -> "PRAGMA foreign_keys = OFF";
+                            default -> "select 1";
+                        }
+                );
+
+                String formattedSql = exists
+                        ? "update core_database_version set version = %d where plugin_identifier = '%s'"
+                        : "insert into core_database_version (version, plugin_identifier) values (%d, '%s')";
+                
+                if (oldVersion < newVersion)
                 {
-                    conn.setAutoCommit(false);
-
-                    Dbms dbms = new DatabaseConfigData().load().getDbms();
-
-                    conn.createStatement().execute(
-                            switch (dbms)
-                            {
-                                case MARIADB -> "set foreign_key_checks = 0";
-                                case SQLITE -> "PRAGMA foreign_keys = OFF";
-                                default -> "select 1";
-                            }
-                    );
-                    
-                    updater.updateDatabase(conn, oldVersion, newVersion, dbms);
-
-                    conn.createStatement().execute(
-                            switch (dbms)
-                            {
-                                case MARIADB -> "set foreign_key_checks = 1";
-                                case SQLITE -> "PRAGMA foreign_keys = ON";
-                                default -> "select 1";
-                            }
-                    );
-                    
-                    sql = String.format(
-                            exists
-                                    ? "update core_database_version set version = %d where plugin_identifier = '%s'"
-                                    :
-                                    "insert into core_database_version (version, plugin_identifier) values (%d, '%s')",
-                            newVersion, identifier);
-
-                    conn.createStatement().executeUpdate(sql);
-                    conn.commit();
+                    for (int i = oldVersion + 1; i <= newVersion; i++)
+                    {
+                        updater.upgradeDatabaseTo(conn, i, dbms);
+                        conn.createStatement().executeUpdate(String.format(formattedSql, i, identifier));
+                        conn.commit();
+                    }
                 }
-                catch (SQLException e)
+                else
                 {
-                    Logs.getInstance().log("Error updating database for " + identifier, e);
-                    conn.rollback();
-                    throw new Exception("Error updating the database");
+                    for (int i = oldVersion - 1; i >= newVersion; i--)
+                    {
+                        updater.downgradeDatabaseTo(conn, i, dbms);
+                        conn.createStatement().executeUpdate(String.format(formattedSql, i, identifier));
+                        conn.commit();
+                    }
                 }
+            }
+            catch (SQLException e)
+            {
+                Logs.getInstance().log("Error updating database for " + identifier, e);
+                conn.rollback();
+                throw new Exception("Error updating the database");
+            } 
+            finally
+            {
+                // This is executted even if the update fails
+                conn.createStatement().execute(
+                        switch (dbms)
+                        {
+                            case MARIADB -> "set foreign_key_checks = 1";
+                            case SQLITE -> "PRAGMA foreign_keys = ON";
+                            default -> "select 1";
+                        }
+                );
+
+                conn.commit();
             }
         }
     }
