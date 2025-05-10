@@ -7,6 +7,7 @@ import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.AppInstallation;
 import org.lebastudios.theroundtable.database.entities.Plugin;
+import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.fxml2java.CompileFxml;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.IPlugin;
@@ -39,11 +40,11 @@ public class CorePlugin implements IPlugin
     }
 
     private static final int DB_VERSION = 2;
-    
+
     private CorePlugin() {}
 
     @Override
-    public void initialize() 
+    public void initialize()
     {
     }
 
@@ -59,13 +60,17 @@ public class CorePlugin implements IPlugin
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new LicenseConfigPaneController()))
             );
-
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new UsersConfigPaneController()))
             );
-            
             generalConfigSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new GlobalPreferencesConfigPaneController()))
+            );
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem(new EstablishmentConfigPaneController()))
+            );
+            generalConfigSection.getChildren().add(
+                    new TreeItem<>(new SettingsItem(new PrintersConfigPaneController()))
             );
         }
 
@@ -75,26 +80,41 @@ public class CorePlugin implements IPlugin
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(new EstablishmentConfigPaneController()))
+            var administrationSection = new TreeItem<>(
+                    new SettingsItem(
+                            LangFileLoader.getTranslation("core.settings.section.administration"),
+                            "admin-user.png")
             );
-            generalConfigSection.getChildren().add(
-                    new TreeItem<>(new SettingsItem(new PrintersConfigPaneController()))
-            );
-            generalConfigSection.getChildren().add(
+
+            administrationSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new DatabaseConfigPaneController()))
             );
-            generalConfigSection.getChildren().add(
+            administrationSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new CamelotServerConfigPaneController()))
             );
-            generalConfigSection.getChildren().add(
+            administrationSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new PluginsConfigPaneController()))
             );
-            generalConfigSection.getChildren().add(
+            administrationSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new UpdatesConfigPaneController()))
             );
+            
+            // TODO: Panel to manage other installations in the network and controll 
+            //  them using camelot events.
+            //  Change table values, sync plugins, deactivate, shutdown, etc...
+            
+            generalConfigSection.getChildren().add(administrationSection);
         }
-
+        
+        if (Variables.isDev()) 
+        {
+            var developerSection = new TreeItem<>(new SettingsItem("Developer", "settings.png"));
+            
+            
+            
+            generalConfigSection.getChildren().add(developerSection);
+        }
+        
         return generalConfigSection;
     }
 
@@ -112,7 +132,7 @@ public class CorePlugin implements IPlugin
         buttons.add(
                 settingsButton
         );
-        
+
         if (AccountManager.getInstance().isAccountAdmin())
         {
             IconButton pluginsButton = new IconButton("plugins.png");
@@ -120,12 +140,12 @@ public class CorePlugin implements IPlugin
                     .setOwner(MainStageController.getInstance().getStage())
                     .instantiate()
             );
-            
+
             buttons.add(
                     pluginsButton
             );
         }
-        
+
         return buttons;
     }
 
@@ -133,11 +153,11 @@ public class CorePlugin implements IPlugin
     public List<Class<?>> getPluginEntities()
     {
         List<Class<?>> entities = new ArrayList<>();
-        
+
         entities.add(Account.class);
         entities.add(Plugin.class);
         entities.add(AppInstallation.class);
-        
+
         return entities;
     }
 
