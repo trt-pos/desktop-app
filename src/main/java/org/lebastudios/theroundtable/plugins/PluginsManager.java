@@ -3,6 +3,7 @@ package org.lebastudios.theroundtable.plugins;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import lombok.Getter;
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
@@ -14,6 +15,19 @@ import java.util.*;
 public class PluginsManager
 {
     private static PluginsManager instance;
+
+    static {
+        getInstance().getPluginsInstalled().put(
+                CorePlugin.getInstance().getPluginData().pluginId,
+                CorePlugin.getInstance()
+        );
+
+        CorePlugin.getInstance().initialize();
+        getInstance().getPluginsLoaded().put(
+                CorePlugin.getInstance().getPluginData().pluginId,
+                CorePlugin.getInstance()
+        );
+    }
     
     public static PluginsManager getInstance()
     {

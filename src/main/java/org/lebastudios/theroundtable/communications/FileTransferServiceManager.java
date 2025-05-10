@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.communications;
 
+import org.hibernate.Session;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
@@ -55,13 +56,18 @@ public class FileTransferServiceManager
 
     public InputStream getNetFileInputStream(String filePath)
     {
-        String masterIp = Database.getInstance().connectQuery(session ->
+        return Database.getInstance().connectQuery(session ->
         {
-            return session.createQuery(
-                    "select i.ip from AppInstallation i where i.is_master = true",
-                    String.class
-            ).getSingleResult();
+            return this.getNetFileInputStream(filePath, session);
         });
+    }
+
+    public InputStream getNetFileInputStream(String filePath, Session session)
+    {
+        String masterIp = session.createQuery(
+                "select i.ip from AppInstallation i where i.is_master = true",
+                String.class
+        ).getSingleResult();
 
         try
         {
@@ -85,7 +91,6 @@ public class FileTransferServiceManager
             return null;
         }
     }
-
 
     private void startServer()
     {

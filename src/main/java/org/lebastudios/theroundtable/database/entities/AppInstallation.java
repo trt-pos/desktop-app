@@ -68,7 +68,7 @@ public class AppInstallation
     private String ip;
     
     @Column(name = "is_master")
-    private boolean is_master;
+    private boolean isMaster;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_account_id")

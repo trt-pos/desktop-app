@@ -6,7 +6,7 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.AppInstallation;
-import org.lebastudios.theroundtable.database.entities.DatabaseVersion;
+import org.lebastudios.theroundtable.database.entities.Plugin;
 import org.lebastudios.theroundtable.fxml2java.CompileFxml;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.IPlugin;
@@ -135,7 +135,7 @@ public class CorePlugin implements IPlugin
         List<Class<?>> entities = new ArrayList<>();
         
         entities.add(Account.class);
-        entities.add(DatabaseVersion.class);
+        entities.add(Plugin.class);
         entities.add(AppInstallation.class);
         
         return entities;

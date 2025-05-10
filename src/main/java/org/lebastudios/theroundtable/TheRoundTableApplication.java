@@ -15,14 +15,18 @@ import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.Account;
 import org.lebastudios.theroundtable.database.entities.AppInstallation;
+import org.lebastudios.theroundtable.database.entities.Plugin;
+import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
+import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.fxml2java.Main;
 import org.lebastudios.theroundtable.locale.LangLoader;
 import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
+import org.lebastudios.theroundtable.plugins.PluginSyncronizer;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.plugins.Version;
 import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
@@ -31,6 +35,7 @@ import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.SceneBuilder;
 
 import java.io.File;
+import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -75,14 +80,162 @@ public class TheRoundTableApplication extends Application
             {
                 updateTitle("Starting The Round Table");
 
+                updateMessage("Starting database");
+                executeSubtask(Database.getInstance().initTask());
+
+                updateMessage("Starting file transfer service");
+                executeSubtask(FileTransferServiceManager.getInstance().initTask());
+
+                // Checking if the app installation is registered, checking if 
+                // the app is disabled and, if not, updating the state of the installation
+                updateMessage("Checking for the installation state");
+                Database.getInstance().connectTransaction(session ->
+                {
+                    if (AppInstallation.thisInstalation(session) == null)
+                    {
+                        AppInstallation appInstallation = AppInstallation.defaultInstalation();
+                        appInstallation.setMaster(
+                                session.createQuery("select count(*) " +
+                                                "from AppInstallation i " +
+                                                "where i.isMaster = true",
+                                        Long.class).getSingleResult() == 0);
+                        session.persist(appInstallation);
+                    }
+                });
+                boolean result = Database.getInstance().connectQuery(session ->
+                {
+                    AppInstallation thisInstalation = AppInstallation.thisInstalation(session);
+
+                    if (thisInstalation.getStatus() == AppInstallation.Status.DISABLED)
+                    {
+                        AtomicBoolean isAdmin = new AtomicBoolean(false);
+
+                        new PrivilegeScalationStageController(Account.AccountType.ADMIN, isAdmin::set)
+                                .setOwner(stage)
+                                .instantiate(true);
+
+                        return isAdmin.get();
+                    }
+
+                    return true;
+                });
+
+                if (!result)
+                {
+                    TheRoundTableApplication.exitAplication(0);
+                    return null;
+                }
+
+                updateMessage("Sync plugins");
+                result = Database.getInstance().connectQuery(session ->
+                {
+                    AppInstallation master = session.createQuery(
+                                    "from AppInstallation i where i.isMaster = true",
+                                    AppInstallation.class)
+                            .getSingleResult();
+
+                    if (master.getTrtUuid().equals(new TrtUUIDReader().getTrtUUID()))
+                    {
+                        return true;
+                    }
+
+                    if (master.getStatus() != AppInstallation.Status.ACTIVE)
+                    {
+                        AtomicBoolean response = new AtomicBoolean(false);
+                        new ConfirmationTextDialogController(
+                                "The master installation isn't active, continue?",
+                                response::set
+                        ).instantiate(true);
+
+                        if (response.get())
+                        {
+                            new PrivilegeScalationStageController(
+                                    Account.AccountType.ADMIN,
+                                    response::set
+                            ).instantiate(true);
+
+                            return response.get();
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    try
+                    {
+                        new PluginSyncronizer().syncWithMaster(session);
+                    }
+                    catch (Exception e)
+                    {
+                        new ExceptionDialogController(e).instantiate(true);
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (!result)
+                {
+                    TheRoundTableApplication.exitAplication(0);
+                    return null;
+                }
+
                 updateMessage("Starting Camelot");
                 executeSubtask(CamelotServiceManager.getInstance().initTask());
 
                 updateMessage("Loading plugins");
                 executeSubtask(PluginLoader.getInstance().loadPluginsTask());
 
-                updateMessage("Starting database");
-                executeSubtask(Database.getInstance().initTask());
+                updateMessage("Reloading database");
+                executeSubtask(Database.getInstance().reloadTask());
+
+                updateMessage("Updating state");
+                Database.getInstance().connectTransaction(session ->
+                {
+                    AppInstallation thisInstalation = AppInstallation.thisInstalation(session);
+                    thisInstalation.setStatus(AppInstallation.Status.ACTIVE);
+
+                    Version actualVersion = new Version(TheRoundTableApplication.getAppVersion());
+                    Version lastVersion = thisInstalation.getVersion();
+
+                    if (lastVersion.isLessThan(actualVersion))
+                    {
+                        new MajorVersionMigratorTask(lastVersion.getMajor(), actualVersion.getMajor()).execute(true);
+                    }
+
+                    thisInstalation.setVersion(actualVersion);
+                    session.merge(thisInstalation);
+
+                    if (!thisInstalation.isMaster()) return;
+
+                    PluginsManager.getInstance().getInstalledPlugins()
+                            .stream().filter(plugin ->
+                            {
+                                // We ignore the Core plugin bcs its version represents the installation
+                                // version and cannot be syncing the same way a regular plugin does
+                                return !plugin.getPluginData().pluginId.equals(
+                                        CorePlugin.getInstance().getPluginData().pluginId);
+                            })
+                            .forEach(pluign ->
+                            {
+                                Plugin plugin = session.get(Plugin.class, pluign.getPluginData().pluginId);
+
+                                if (plugin == null)
+                                {
+                                    plugin = new Plugin();
+                                    plugin.setId(pluign.getPluginData().pluginId);
+                                    plugin.setRepo(URI.create(pluign.getPluginRepoMetadata().url));
+                                    plugin.setVersion(new Version(pluign.getPluginData().pluginVersion));
+                                    session.persist(plugin);
+                                }
+                                else
+                                {
+                                    plugin.setVersion(new Version(pluign.getPluginData().pluginVersion));
+                                    session.merge(plugin);
+                                }
+                            });
+                });
 
                 return null;
             }
@@ -92,51 +245,6 @@ public class TheRoundTableApplication extends Application
             System.exit(1);
         }).execute(true);
 
-        // Checking if the app installation is registered, checking if 
-        // the app is disabled and, if not, updating the state of the installation
-        Database.getInstance().connectTransaction(session ->
-        {
-            if (AppInstallation.thisInstalation(session) == null)
-            {
-                session.persist(AppInstallation.defaultInstalation());
-            }
-
-            AppInstallation thisInstalation = AppInstallation.thisInstalation(session);
-
-            if (thisInstalation.getStatus() == AppInstallation.Status.DISABLED)
-            {
-                AtomicBoolean isAdmin = new AtomicBoolean(false);
-                
-                new PrivilegeScalationStageController(Account.AccountType.ADMIN, isAdmin::set)
-                        .setOwner(stage)
-                        .instantiate(true);
-                
-                if (!isAdmin.get())
-                {
-                    session.getTransaction().rollback();
-                    AppLifeCicleEvents.OnAppClose.invoke(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                    System.exit(0);
-                    return;
-                }
-            }
-
-            thisInstalation.setStatus(AppInstallation.Status.ACTIVE);
-
-            Version actualVersion = new Version(TheRoundTableApplication.getAppVersion());
-            Version lastVersion = thisInstalation.getVersion();
-
-            if (lastVersion.isLessThan(actualVersion))
-            {
-                new MajorVersionMigratorTask(lastVersion.getMajor(), actualVersion.getMajor()).execute(true);
-            }
-
-            thisInstalation.setVersion(actualVersion);
-            session.merge(thisInstalation);
-        });
-
-        // Starting the file transfer service
-        FileTransferServiceManager.getInstance().initTask().executeInBackGround();
-        
         if (!SetupStageController.isSetupDone()) new SetupStageController().instantiate(true);
 
         new AccountStageController().instantiate(true);
@@ -198,8 +306,8 @@ public class TheRoundTableApplication extends Application
     public static void exitAplication(int code)
     {
         AppLifeCicleEvents.OnAppClose.invoke(
-                new WindowEvent(MainStageController.getInstance().getStage(), 
-                WindowEvent.WINDOW_CLOSE_REQUEST)
+                new WindowEvent(MainStageController.getInstance().getStage(),
+                        WindowEvent.WINDOW_CLOSE_REQUEST)
         );
         Platform.exit();
         System.exit(code);

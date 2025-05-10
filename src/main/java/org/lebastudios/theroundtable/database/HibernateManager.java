@@ -116,6 +116,7 @@ class HibernateManager
             if (session.getTransaction().isActive())
             {
                 session.getTransaction().commit();
+                return true;
             }
         }
         catch (Exception e)
@@ -128,14 +129,13 @@ class HibernateManager
             {
                 session.getTransaction().rollback();
             }
-            return false;
         }
         finally
         {
             session.close();
         }
 
-        return true;
+        return false;
     }
 
     public <R> R connectQuery(Function<Session, R> action)

@@ -86,12 +86,6 @@ public class PluginLoader
             }
 
             updateMessage("Loading validated plugins");
-            pluginsManager.getPluginsInstalled().put(
-                    CorePlugin.getInstance().getPluginData().pluginId,
-                    CorePlugin.getInstance()
-            );
-
-            // Load all plugins that can be loaded
             boolean keepTryingToLoad = true;
 
             while (keepTryingToLoad)
