@@ -68,6 +68,11 @@ public class ConfigStageController extends StageController<ConfigStageController
         {
             if (newValue == null || newValue.getValue() == null) return;
 
+            if (!newValue.getChildren().isEmpty()) 
+            {
+                newValue.setExpanded(!newValue.isExpanded());
+            }
+            
             ConfigPaneController<?> controller = newValue.getValue().settingPane();
             
             if (controller == null) return;
@@ -83,6 +88,16 @@ public class ConfigStageController extends StageController<ConfigStageController
         
         configSectionsTreeView.setCellFactory(_ -> new TreeCell<>()
         {
+            {
+                setOnMouseClicked(_ ->
+                {
+                    if (!isEmpty())
+                    {
+                        getTreeItem().setExpanded(!getTreeItem().isExpanded());
+                    }
+                });
+            }
+            
             @Override
             protected void updateItem(SettingsItem item, boolean empty)
             {
