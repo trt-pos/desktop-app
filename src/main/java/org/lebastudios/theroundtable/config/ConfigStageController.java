@@ -105,7 +105,6 @@ public class ConfigStageController extends StageController<ConfigStageController
         });
 
         List<TreeItem<SettingsItem>> rootTrees =  PluginsManager.getInstance().getSettingsTreeViews();
-        Collections.reverse(rootTrees);
         
         configSectionsTreeView.getRoot().getChildren().addAll(rootTrees);
         

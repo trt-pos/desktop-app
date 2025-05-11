@@ -16,7 +16,6 @@ import org.lebastudios.theroundtable.ui.LazyTab;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -38,15 +37,9 @@ public class PluginsStageController extends StageController<PluginsStageControll
     {
         Tab pluginTab = new PluginTabGenerator().generatePluginLazyTab(
                 "Installed",
-                () ->
-                {
-                    List<IPlugin> installed = new ArrayList<>(PluginsManager.getInstance().getInstalledPlugins());
-                    Collections.reverse(installed);
-                    
-                    return installed.stream()
-                            .map(IPlugin::intoPluginObject)
-                            .toList();
-                }
+                () -> PluginsManager.getInstance().getInstalledPlugins().stream()
+                        .map(IPlugin::intoPluginObject)
+                        .toList()
         );
 
         tabPane.getTabs().addFirst(pluginTab);
@@ -59,21 +52,21 @@ public class PluginsStageController extends StageController<PluginsStageControll
                 () ->
                 {
                     List<Plugin> pluginDataList = new ArrayList<>();
-                    
+
                     for (String repo : new PluginsConfigData().getAllRepos())
                     {
                         PluginRepoIntrospector introspector = new PluginRepoIntrospector(repo);
                         PluginRepoData metadata = introspector.intoMetadata();
-                        
+
                         List<PluginData> pluginsData = introspector.getAllPluginData(new String[]{}, "").pluginsData;
 
                         List<Plugin> plugins = pluginsData.stream()
-                                .map(data ->new Plugin(data, metadata, null))
+                                .map(data -> new Plugin(data, metadata, null))
                                 .toList();
-                        
+
                         pluginDataList.addAll(plugins);
                     }
-                    
+
                     return pluginDataList;
                 }
         );
