@@ -45,7 +45,7 @@ public class AppInstallation
     
     @Id
     @Column(name = "uuid", nullable = false)
-    private String trtUuid;
+    private String uuid;
     
     @Column(name = "name", nullable = false)
     private String name = "Unknown";
@@ -77,10 +77,10 @@ public class AppInstallation
     @JoinColumn(name = "last_account_id")
     private Account lastAccount;
 
-    public AppInstallation(String trtUuid, Version version, LocalDateTime createdAt, LocalDateTime updatedAt,
+    public AppInstallation(String uuid, Version version, LocalDateTime createdAt, LocalDateTime updatedAt,
             Status status)
     {
-        this.trtUuid = trtUuid;
+        this.uuid = uuid;
         Version = version;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

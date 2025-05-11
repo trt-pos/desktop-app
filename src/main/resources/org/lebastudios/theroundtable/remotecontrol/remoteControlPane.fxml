@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.tableview2.TableView2?>
+<?import org.controlsfx.control.tableview2.TableColumn2?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController">
+    <padding>
+        <Insets top="5" right="5" bottom="5" left="5"/>
+    </padding>
+    <TableView2 fx:id="installationsTableView" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn2 fx:id="uuidColumn" text="%core.remotecontrol.installation.status"/>
+            <TableColumn2 fx:id="nameColumn" text="%core.remotecontrol.installation.name"/>
+            <TableColumn2 fx:id="statusColumn" text="%core.remotecontrol.installation.status"/>
+            <TableColumn2 fx:id="versionColumn" text="%core.remotecontrol.installation.port"/>
+            <TableColumn2 fx:id="ipColumn" text="%core.remotecontrol.installation.ipaddress"/>
+            <TableColumn2 fx:id="subnetColumn" text="%core.remotecontrol.installation.status"/>
+            <TableColumn2 fx:id="isMasterColumn" text="%core.remotecontrol.installation.status"/>
+            <TableColumn2 fx:id="menuColumn" />
+        </columns>
+    </TableView2>
+</VBox>

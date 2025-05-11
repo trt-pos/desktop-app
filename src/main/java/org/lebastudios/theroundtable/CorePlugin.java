@@ -12,7 +12,10 @@ import org.lebastudios.theroundtable.fxml2java.CompileFxml;
 import org.lebastudios.theroundtable.locale.LangFileLoader;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
+import org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController;
 import org.lebastudios.theroundtable.ui.IconButton;
+import org.lebastudios.theroundtable.ui.IconView;
+import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.List;
                 "org/lebastudios/theroundtable/plugins",
                 "org/lebastudios/theroundtable/setup",
                 "org/lebastudios/theroundtable/tasks",
+                "org/lebastudios/theroundtable/remotecontrol",
                 "org/lebastudios/theroundtable/ui",
                 "org/lebastudios/theroundtable",
         }
@@ -98,23 +102,22 @@ public class CorePlugin implements IPlugin
             administrationSection.getChildren().add(
                     new TreeItem<>(new SettingsItem(new UpdatesConfigPaneController()))
             );
-            
+
             // TODO: Panel to manage other installations in the network and controll 
             //  them using camelot events.
             //  Change table values, sync plugins, deactivate, shutdown, etc...
-            
+
             generalConfigSection.getChildren().add(administrationSection);
         }
-        
-        if (Variables.isDev()) 
+
+        if (Variables.isDev())
         {
             var developerSection = new TreeItem<>(new SettingsItem("Developer", "settings.png"));
-            
-            
-            
+
+
             generalConfigSection.getChildren().add(developerSection);
         }
-        
+
         return generalConfigSection;
     }
 
@@ -144,6 +147,23 @@ public class CorePlugin implements IPlugin
             buttons.add(
                     pluginsButton
             );
+        }
+
+        return buttons;
+    }
+
+    @Override
+    public List<LabeledIconButton> getHomeButtons()
+    {
+        List<LabeledIconButton> buttons = new ArrayList<>();
+
+        if (AccountManager.getInstance().isAccountAdmin())
+        {
+            buttons.add(new LabeledIconButton(
+                    LangFileLoader.getTranslation("core.homebuttons.remotecontrol"),
+                    new IconView("control-pane.png"),
+                    _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
+            ));
         }
 
         return buttons;

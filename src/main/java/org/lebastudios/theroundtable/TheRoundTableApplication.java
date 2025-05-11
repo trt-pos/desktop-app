@@ -134,7 +134,7 @@ public class TheRoundTableApplication extends Application
                                     AppInstallation.class)
                             .getSingleResult();
 
-                    if (master.getTrtUuid().equals(new TrtUUIDReader().getTrtUUID()))
+                    if (master.getUuid().equals(new TrtUUIDReader().getTrtUUID()))
                     {
                         return true;
                     }
