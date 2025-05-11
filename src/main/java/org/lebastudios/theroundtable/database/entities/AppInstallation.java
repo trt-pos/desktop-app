@@ -111,6 +111,14 @@ public class AppInstallation
         DISABLED,
         STANBY
     }
+
+    public static AppInstallation thisInstalation()
+    {
+        return Database.getInstance().connectQuery(session ->
+        {
+            return session.get(AppInstallation.class, new TrtUUIDReader().getTrtUUID());
+        });
+    }
     
     public static AppInstallation thisInstalation(Session session)
     {
