@@ -63,14 +63,7 @@ public class Account
     {
         if (Objects.equals(this.id, account.id)) return true;
 
-        return switch (type)
-        {
-            case ROOT -> true;
-            case ADMIN -> account.getType() != AccountType.ROOT && account.getType() != AccountType.ADMIN;
-            case MANAGER -> account.getType() != AccountType.ROOT
-                    && account.getType() != AccountType.ADMIN && account.getType() != AccountType.MANAGER;
-            case CASHIER, ACCOUNTANT -> false;
-        };
+        return this.type.accessLevel() < account.type.accessLevel();
     }
 
     public String getIconName()
