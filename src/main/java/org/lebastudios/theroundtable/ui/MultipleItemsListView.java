@@ -268,6 +268,7 @@ public class MultipleItemsListView<T> extends VBox
         long count();
     }
 
+    @Deprecated
     public static class HQLItemsGenerator<T, Q> implements ItemsGenerator<T>
     {
         private final String hql;
