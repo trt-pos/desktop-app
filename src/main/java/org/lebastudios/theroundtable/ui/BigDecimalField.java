@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import lombok.Getter;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.events.Event1;
@@ -36,6 +37,8 @@ public class BigDecimalField extends HBox
         textField.setPromptText("0.00");
 
         textField.textProperty().addListener((_, oldValue, newValue) -> onValueChange(oldValue, newValue));
+        
+        HBox.setHgrow(textField, Priority.ALWAYS);
         
         getChildren().addAll(textField, label);
     }

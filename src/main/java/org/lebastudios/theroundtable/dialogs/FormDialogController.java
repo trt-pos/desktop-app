@@ -75,7 +75,7 @@ public class FormDialogController<T> extends StageController<FormDialogControlle
     protected void customizeStageBuilder(StageBuilder stageBuilder)
     {
         stageBuilder.setModality(Modality.WINDOW_MODAL)
-                .setResizeable(true);
+                .setResizeable(false);
     }
 
     @Override
