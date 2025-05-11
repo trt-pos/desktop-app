@@ -11,6 +11,7 @@ public abstract class PrintTask extends Task<Void>
     private final EscPos escpos;
     @Setter private int feed = 5;
     @Setter private EscPos.CutMode cutMode = EscPos.CutMode.PART;
+    @Setter private boolean cut = true;
 
     public PrintTask(EscPos escPos)
     {
@@ -27,7 +28,7 @@ public abstract class PrintTask extends Task<Void>
         {
             print(escpos);
 
-            escpos.feed(feed).cut(cutMode);
+            if (cut) escpos.feed(feed).cut(cutMode);
         }
         return null;
     }
