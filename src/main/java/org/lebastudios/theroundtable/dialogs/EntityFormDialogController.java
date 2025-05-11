@@ -63,4 +63,11 @@ public class EntityFormDialogController<T> extends FormDialogController<T>
         
         deleteButton.setVisible(persisted);
     }
+
+    @Override
+    protected void loadFXML()
+    {
+        this.root = new org.lebastudios.theroundtable.dialogs.FormDialog$View(this);
+        this.initialize();
+    }
 }
