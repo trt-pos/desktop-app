@@ -1,6 +1,7 @@
 package org.lebastudios.theroundtable.database;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
@@ -23,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 class HibernateManager
 {
@@ -256,26 +258,34 @@ class HibernateManager
     private static class PrepareDatabaseTask extends Task<Void>
     {
         private final DatabaseConfigData databaseConfigData;
-
+        
         @Override
         protected Void call() throws Exception
         {
             updateTitle("Preparing database");
-            try (Connection conn = databaseConfigData.getConnection())
+
+            updateMessage("Updating database");
+            updateProgress(0, 1);
+            executeSubtask(new DatabaseUpdateTask(() ->
             {
-                updateMessage("Updating database");
-                updateProgress(0, 1);
-                executeSubtask(new DatabaseUpdateTask(conn));
-                updateProgress(1, 1);
-                return null;
-            }
+                try
+                {
+                    return databaseConfigData.getConnection();
+                }
+                catch (SQLException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }));
+            updateProgress(1, 1);
+            return null;
         }
     }
 
     @AllArgsConstructor
     private static class DatabaseUpdateTask extends Task<Void>
     {
-        private final Connection conn;
+        private final Supplier<Connection> connFactory;
 
         @Override
         protected Void call() throws Exception
@@ -283,26 +293,27 @@ class HibernateManager
             updateTitle("Updating database structure");
             updateMessage("Reading loaded plugins");
             updateProgress(0, 1);
-            conn.setAutoCommit(false);
 
             // Create the database version table if it doesn't exist
-
-            if (!conn.getMetaData().getTables(
-                    null,
-                    null,
-                    "core_database_version",
-                    new String[]{"TABLE"}).next()
-            )
+            try (Connection conn = connFactory.get())
             {
-                updateMessage("Creating version managment table");
-                String sql = """
+                if (!conn.getMetaData().getTables(
+                        null,
+                        null,
+                        "core_database_version",
+                        new String[]{"TABLE"}).next()
+                )
+                {
+                    updateMessage("Creating version managment table");
+                    String sql = """
                         create table core_database_version
                         (
                             plugin_identifier varchar(255) not null primary key,
                             version           integer
                         );
                         """;
-                conn.createStatement().execute(sql);
+                    conn.createStatement().execute(sql);
+                }
             }
 
             updateMessage("Ask each plugin to update");
@@ -312,7 +323,7 @@ class HibernateManager
             int i = 0;
             for (var plugin : plugins)
             {
-                updateDatabaseFor(conn, plugin.getPluginData().pluginId, plugin);
+                updateDatabaseFor(connFactory, plugin.getPluginData().pluginId, plugin);
                 i++;
                 updateProgress(i, plugins.size());
             }
@@ -320,39 +331,37 @@ class HibernateManager
             return null;
         }
 
-        private void updateDatabaseFor(Connection conn, String identifier, IDatabaseUpdater updater) throws Exception
+        private void updateDatabaseFor(Supplier<Connection> connFactory, String identifier, IDatabaseUpdater updater) throws Exception
         {
             var newVersion = updater.getDatabaseVersion();
 
-            String sql = """
+            int oldVersion = 0;
+            boolean exists = false;
+            
+            try (Connection conn = connFactory.get())
+            {
+                String sql = """
                     select version from core_database_version where plugin_identifier = ?
                     """;
 
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, identifier);
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, identifier);
 
+                var result = statement.executeQuery();
 
-            int oldVersion = 0;
-            boolean exists = false;
-
-            var result = statement.executeQuery();
-
-            if (result.next())
-            {
-                oldVersion = result.getInt(1);
-                exists = true;
+                if (result.next())
+                {
+                    oldVersion = result.getInt(1);
+                    exists = true;
+                }
             }
-
-            statement.close();
 
             if (oldVersion == newVersion) return;
 
             Dbms dbms = new DatabaseConfigData().load().getDbms();
-            
-            try
-            {
-                conn.setAutoCommit(false);
 
+            try (Connection conn = connFactory.get())
+            {
                 conn.createStatement().execute(
                         switch (dbms)
                         {
@@ -361,39 +370,72 @@ class HibernateManager
                             default -> "select 1";
                         }
                 );
+            }
 
-                String formattedSql = exists
-                        ? "update core_database_version set version = %d where plugin_identifier = '%s'"
-                        : "insert into core_database_version (version, plugin_identifier) values (%d, '%s')";
-                
-                if (oldVersion < newVersion)
+            String formattedSql = exists
+                    ? "update core_database_version set version = %d where plugin_identifier = '%s'"
+                    : "insert into core_database_version (version, plugin_identifier) values (%d, '%s')";
+
+            if (oldVersion < newVersion)
+            {
+                for (int i = oldVersion + 1; i <= newVersion; i++)
                 {
-                    for (int i = oldVersion + 1; i <= newVersion; i++)
+                    Connection conn = connFactory.get();
+                    conn.setAutoCommit(false);
+                    
+                    try
                     {
                         updater.upgradeDatabaseTo(conn, i, dbms);
                         conn.createStatement().executeUpdate(String.format(formattedSql, i, identifier));
                         conn.commit();
                     }
+                    catch (SQLException ex)
+                    {
+                        Logs.getInstance().log(
+                                "Error upgrading database to version " + i + " for " + identifier,
+                                ex
+                        );
+                        conn.rollback();
+                        throw new Exception("Error updating the database");
+                    }
+                    finally
+                    {
+                        conn.close();
+                    }
                 }
-                else
+            }
+            else
+            {
+                for (int i = oldVersion - 1; i >= newVersion; i--)
                 {
-                    for (int i = oldVersion - 1; i >= newVersion; i--)
+                    Connection conn = connFactory.get();
+                    conn.setAutoCommit(false);
+                    
+                    try
                     {
                         updater.downgradeDatabaseTo(conn, i, dbms);
                         conn.createStatement().executeUpdate(String.format(formattedSql, i, identifier));
                         conn.commit();
                     }
+                    catch (SQLException ex)
+                    {
+                        Logs.getInstance().log(
+                                "Error downgrading database to version " + i + " for " + identifier,
+                                ex
+                        );
+                        conn.rollback();
+                        throw new Exception("Error downgrading the database");
+                    }
+                    finally
+                    {
+                        conn.close();
+                    }
                 }
             }
-            catch (SQLException e)
+
+            // This is executted even if the update fails
+            try (Connection conn = connFactory.get())
             {
-                Logs.getInstance().log("Error updating database for " + identifier, e);
-                conn.rollback();
-                throw new Exception("Error updating the database");
-            } 
-            finally
-            {
-                // This is executted even if the update fails
                 conn.createStatement().execute(
                         switch (dbms)
                         {
@@ -402,8 +444,6 @@ class HibernateManager
                             default -> "select 1";
                         }
                 );
-
-                conn.commit();
             }
         }
     }

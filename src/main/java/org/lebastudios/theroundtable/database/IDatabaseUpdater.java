@@ -5,51 +5,46 @@ import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /// # Database Updater
-/// The Database Updater interface is a piece of software that allows the 
-/// maintainance of a multi dbms sytem with ease.
-/// It provides a way to update the database schema and data using a set of
-/// strategies and macros that we will explain as we go along.
-/// 
+/// The Database Updater interface is a piece of software that allows the maintainance of a multi dbms sytem with ease.
+/// It provides a way to update the database schema and data using a set of strategies and macros that we will explain
+/// as we go along.
+///
 /// ## Supported ways to update the database
-/// 
+///
 /// ## SQL Files Macros
-/// When writting the SQL files, you can use the following macros to apply
-/// transformations to the SQL that make it compatible with all the supported
-/// DBMS.
-/// 
+/// When writting the SQL files, you can use the following macros to apply transformations to the SQL that make it
+/// compatible with all the supported DBMS.
+///
 /// ### Autoincrement
-/// When creating a table, you can use the `AUTOINCREMENT|autoincrement` keyword
-/// to define a column as autoincrement. The keyword will be replaced by the
-/// correct keyword for the DBMS. 
-/// 
-/// Note that for sqlite, the column must be the primary key and the constraint
-/// should be defined inline. For example:
+/// When creating a table, you can use the `AUTOINCREMENT|autoincrement` keyword to define a column as autoincrement.
+/// The keyword will be replaced by the correct keyword for the DBMS.
+///
+/// Note that for sqlite, the column must be the primary key and the constraint should be defined inline. For example:
 /// ```sql
 /// create table my_table (
 ///    id integer primary key autoincrement,
 ///    name varchar(255)
-/// );
-/// ```
-/// 
+///);
+///```
+///
 /// ### Migrator
 /// As many people know, SQLite does not support the `ALTER TABLE` statement as
 /// other DBMS do. So, in order to alter a table that SQLITE does not support, we
 /// need to create a new table and copy the data from the old table to the new
 /// table, then drop the old and rename the new one.
-/// 
+///
 /// This is too much boilerplate code, so we created a macro that will do this for you.
 /// ```sql
 /// -- MIGRATE
@@ -60,25 +55,22 @@ import java.util.regex.Pattern;
 ///     -- NEW
 ///     new_column varchar(255),
 ///     constraint unique_name unique(name)
-/// );
-/// ```
-/// 
+///);
+///```
+///
 /// The macro creates a table as the defined one in the example above with the
 /// name ended with `_tmp`. Then copies the columns that are above the `-- NEW`,
-/// renames the old table to `my_table_old` and renames the new one to `my_table`.
-/// 
-/// Due to limitations of SQLite, the tabled marked as old must be dropped
-/// on another transaction (SQL file)
-/// 
-/// Note: This macro doesn't rename existing columns and cannot convert 
+/// drops the old table and renames the new one to `my_table`.
+///
+/// Note: This macro doesn't rename existing columns and cannot convert
 /// beetwen types. It only copies the columns that are above the `-- NEW`
-/// flag.
-/// 
+/// flag. Note that you can delete one column just by ignoring it.
+///
 /// ### Conditional DBMS
 /// Sometimes we need to execute a SQL statement only for a specific DBMS but
 /// the rest of the SQL is compatible with all the DBMS. For this, we can use the
-/// `-- IF <DBMS>` macro. 
-/// 
+/// `-- IF <DBMS>` macro.
+///
 /// ```sql
 /// -- IF SQLITE
 /// create trigger core_app_installation_ensure_single_master_before_update
@@ -106,7 +98,7 @@ import java.util.regex.Pattern;
 ///     end if;
 /// end;
 /// -- ENDIF
-/// ```
+///```
 public interface IDatabaseUpdater
 {
     default int getDatabaseVersion() {return 0;}
@@ -127,7 +119,7 @@ public interface IDatabaseUpdater
 
         throw new Exception("No update strategy found when upgrading db to version " + version);
     }
-    
+
     default void downgradeDatabaseTo(Connection conn, int version, Dbms dbms) throws Exception
     {
         Class<? extends IPlugin> clazz =
@@ -136,12 +128,12 @@ public interface IDatabaseUpdater
 
         for (IUpdateStrategy strategy : IUpdateStrategy.STRATEGIES)
         {
-            if (strategy.downgradeTo(conn, version, plugin, dbms)) 
+            if (strategy.downgradeTo(conn, version, plugin, dbms))
             {
                 return;
             }
         }
-        
+
         throw new Exception("No update strategy found when downgrading db to version " + version);
     }
 
@@ -151,44 +143,40 @@ public interface IDatabaseUpdater
                 new MethodUpdateStrategy(),
                 new SQLFileUpdateStrategy()
         };
-        
-        boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms);
-        boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms);
+
+        boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception;
+
+        boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception;
     }
 
     class MethodUpdateStrategy implements IUpdateStrategy
     {
         @Override
-        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception
         {
             return executeMethod("upgradeTo" + version, conn, plugin, dbms);
         }
 
         @Override
-        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception
         {
             return executeMethod("downgradeTo" + version, conn, plugin, dbms);
         }
-        
+
         private boolean executeMethod(String name, Connection conn, IPlugin plugin, Dbms dbms)
+                throws InvocationTargetException, IllegalAccessException
         {
-            try
-            {
-                Method[] methods = plugin.getClass().getDeclaredMethods();
+            Method[] methods = plugin.getClass().getDeclaredMethods();
 
-                var updateMethod = Arrays.stream(methods)
-                        .filter(method -> method.getName().equals(name))
-                        .findFirst();
+            var updateMethod = Arrays.stream(methods)
+                    .filter(method -> method.getName().equals(name))
+                    .findFirst();
 
-                if (updateMethod.isEmpty()) return false;
-                
-                updateMethod.get().invoke(plugin, conn, dbms);
-                
-                return true;
-            }
-            catch (Exception _) {}
+            if (updateMethod.isEmpty()) return false;
 
-            return false;
+            updateMethod.get().invoke(plugin, conn, dbms);
+
+            return true;
         }
     }
 
@@ -203,31 +191,26 @@ public interface IDatabaseUpdater
         }
 
         @Override
-        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        public boolean upgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception
         {
             return executeMethod(UpdateType.UPGRADE, conn, version, plugin, dbms);
         }
 
         @Override
-        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms)
+        public boolean downgradeTo(Connection conn, int version, IPlugin plugin, Dbms dbms) throws Exception
         {
             return executeMethod(UpdateType.DOWNGRADE, conn, version, plugin, dbms);
         }
-        
-        private boolean executeMethod(UpdateType updateType, Connection conn, int version, IPlugin plugin, Dbms dbms)
-        {
-            try
-            {
-                try (InputStream is = getSQLFile(dbms, updateType, version, plugin.getClass()))
-                {
-                    executeSQL(conn, is, dbms);
-                }
-                
-                return true;
-            }
-            catch (Exception ignore) {}
 
-            return false;
+        private boolean executeMethod(UpdateType updateType, Connection conn, int version, IPlugin plugin, Dbms dbms)
+                throws Exception
+        {
+            try (InputStream is = getSQLFile(dbms, updateType, version, plugin.getClass()))
+            {
+                executeSQL(conn, is, dbms);
+            }
+
+            return true;
         }
 
         private InputStream getSQLFile(Dbms dbms, UpdateType updateType, int version, Class<? extends IPlugin> clazz)
@@ -386,9 +369,9 @@ public interface IDatabaseUpdater
                         // Copy data if exists
                         sqlList.add("insert into " + tmpTableName + " (" + String.join(",", colsNames) +
                                 ") " + "select " + String.join(",", colsNames) + " from " + tableName + ";");
-                        
-                        // renaming the old table and the new one
-                        sqlList.add("alter table " + tableName + " rename to " + deletedTableName + ";");
+
+                        // dropping the old table and renaming the new one
+                        sqlList.add("drop table if exists " + tableName + ";");
                         sqlList.add("alter table " + tmpTableName + " rename to " + tableName + ";");
                     }
                 }
@@ -423,18 +406,18 @@ public interface IDatabaseUpdater
             {
                 Pattern pattern = Pattern.compile("(?si)-- IF " + dbms.name() + " *\\R(.*?)-- ENDIF");
                 List<String> sqlList = new ArrayList<>();
-                
+
                 Matcher matcher = pattern.matcher(sql);
                 if (matcher.find())
                 {
                     String conditionBody = matcher.group(1);
                     sqlList.add(conditionBody);
                 }
-                else 
+                else
                 {
                     sqlList.add(sql);
                 }
-                
+
                 return sqlList;
             }
         }
