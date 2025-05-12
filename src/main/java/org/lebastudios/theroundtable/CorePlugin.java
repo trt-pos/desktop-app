@@ -103,10 +103,6 @@ public class CorePlugin implements IPlugin
                     new TreeItem<>(new SettingsItem(new UpdatesConfigPaneController()))
             );
 
-            // TODO: Panel to manage other installations in the network and controll 
-            //  them using camelot events.
-            //  Change table values, sync plugins, deactivate, shutdown, etc...
-
             generalConfigSection.getChildren().add(administrationSection);
         }
 

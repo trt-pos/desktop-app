@@ -39,7 +39,6 @@ class HibernateManager
             Database.getInstance().connectTransaction(session ->
             {
                 AppInstallation appInstallation = AppInstallation.thisInstalation(session);
-                appInstallation.setLastAccount(null);
 
                 if (appInstallation.getStatus() != AppInstallation.Status.DISABLED)
                 {

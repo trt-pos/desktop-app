@@ -1,10 +1,12 @@
 package org.lebastudios.theroundtable.ui;
 
+import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.lebastudios.theroundtable.apparience.LabelAutoSize;
 
 public class LabeledIconButton extends VBox
 {
@@ -19,6 +21,8 @@ public class LabeledIconButton extends VBox
         this.label = new Label(text);
         this.icon = icon;
         this.handler = handler;
+
+        LabelAutoSize.apply(label);
         
         label.setWrapText(true);
         

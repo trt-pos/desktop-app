@@ -110,9 +110,12 @@ public class TheRoundTableApplication extends Application
                     {
                         AtomicBoolean isAdmin = new AtomicBoolean(false);
 
-                        new PrivilegeScalationStageController(Account.AccountType.ADMIN, isAdmin::set)
-                                .setOwner(stage)
-                                .instantiate(true);
+                        TheRoundTableApplication.executeInFxThreadAndWait(() ->
+                        {
+                            new PrivilegeScalationStageController(Account.AccountType.ADMIN, isAdmin::set)
+                                    .setOwner(stage)
+                                    .instantiate(true);
+                        });
 
                         return isAdmin.get();
                     }

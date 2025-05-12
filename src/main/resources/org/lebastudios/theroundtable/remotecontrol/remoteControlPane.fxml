@@ -12,14 +12,14 @@
     </padding>
     <TableView2 fx:id="installationsTableView" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn2 fx:id="uuidColumn" text="%core.remotecontrol.installation.status"/>
-            <TableColumn2 fx:id="nameColumn" text="%core.remotecontrol.installation.name"/>
-            <TableColumn2 fx:id="statusColumn" text="%core.remotecontrol.installation.status"/>
-            <TableColumn2 fx:id="versionColumn" text="%core.remotecontrol.installation.port"/>
-            <TableColumn2 fx:id="ipColumn" text="%core.remotecontrol.installation.ipaddress"/>
-            <TableColumn2 fx:id="subnetColumn" text="%core.remotecontrol.installation.status"/>
-            <TableColumn2 fx:id="isMasterColumn" text="%core.remotecontrol.installation.status"/>
-            <TableColumn2 fx:id="menuColumn" />
+            <TableColumn2 fx:id="uuidColumn" text="%core.remotecontrol.uuid"/>
+            <TableColumn2 fx:id="nameColumn" text="%core.remotecontrol.name"/>
+            <TableColumn2 fx:id="statusColumn" text="%core.remotecontrol.status"/>
+            <TableColumn2 fx:id="versionColumn" text="%core.remotecontrol.version"/>
+            <TableColumn2 fx:id="ipColumn" text="%core.remotecontrol.ip"/>
+            <TableColumn2 fx:id="subnetColumn" text="%core.remotecontrol.subnet"/>
+            <TableColumn2 fx:id="isMasterColumn" text="%core.remotecontrol.master"/>
+            <TableColumn2 fx:id="menuColumn"/>
         </columns>
     </TableView2>
 </VBox>

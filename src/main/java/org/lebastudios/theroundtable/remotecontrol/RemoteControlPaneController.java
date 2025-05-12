@@ -9,13 +9,9 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import org.controlsfx.control.tableview2.TableColumn2;
 import org.controlsfx.control.tableview2.TableView2;
-import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.camelot.converters.StringConverter;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.entities.AppInstallation;
-import org.lebastudios.theroundtable.env.TrtUUIDReader;
-import org.lebastudios.theroundtable.events.CamelotEvent;
 import org.lebastudios.theroundtable.plugins.Version;
 import org.lebastudios.theroundtable.ui.IconButton;
 
@@ -51,6 +47,9 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
         subnetColumn.setCellValueFactory(cellData -> cellData.getValue().subnet);
         isMasterColumn.setCellValueFactory(cellData -> cellData.getValue().isMaster);
 
+        menuColumn.setMinWidth(50);
+        menuColumn.setMaxWidth(50);
+
         menuColumn.setCellFactory(new Callback<>()
         {
             @Override
@@ -59,23 +58,32 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
             {
                 return new TableCell<>()
                 {
-                    // TODO: The button should show a menu with options or a new page to manage the
-                    //  selected installation
-                    private final IconButton iconButton = new IconButton("remote-control.png");
+                    private final IconButton iconButton = new IconButton("control-pane.png");
 
                     {
                         iconButton.setOnAction(event ->
                         {
-                            AppInstallationTableItem installation = getTableView().getItems().get(getIndex());
-                            SHUTDOWN_APP_EVENT.invoke(new StringConverter(installation.uuid.get()));
+                            AppInstallation appInstallation = Database.getInstance().connectQuery(session ->
+                            {
+                                return session.createQuery(
+                                                "from AppInstallation i where i.uuid = :uuid",
+                                                AppInstallation.class
+                                        ).setParameter("uuid", getTableView().getItems().get(getIndex()).uuid.get())
+                                        .uniqueResult();
+                            });
+
+
+                            new InstallationControlStageController(appInstallation)
+                                    .setOwner(RemoteControlPaneController.this.getStage())
+                                    .instantiate();
                         });
                     }
-                    
+
                     @Override
                     protected void updateItem(Void item, boolean empty)
                     {
                         super.updateItem(item, empty);
-                        
+
                         if (empty)
                         {
                             setGraphic(null);
@@ -90,7 +98,7 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
         });
 
         populateTable();
-
+        
         // Starting job that will update the table every 5 seconds
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -102,12 +110,12 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
             }
 
             populateTable();
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     private void populateTable()
     {
-        installationsTableView.getItems().clear();
+        int selected = installationsTableView.getSelectionModel().getSelectedIndex();
 
         List<AppInstallationTableItem> installations = Database.getInstance().connectQuery(session ->
         {
@@ -120,22 +128,11 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
         });
 
         installationsTableView.getItems().setAll(installations);
+        installationsTableView.getSelectionModel().select(selected > installations.size() 
+                ? installations.size() - 1 
+                : selected
+        );
     }
-
-    private static final CamelotEvent<StringConverter> SHUTDOWN_APP_EVENT = new CamelotEvent<>(
-            "core-plugin:shutdown",
-            new StringConverter()
-    )
-    {
-        {
-            this.addListener(converter ->
-            {
-                if (!converter.getString().equals(new TrtUUIDReader().getTrtUUID())) return;
-
-                TheRoundTableApplication.exitAplication(0);
-            });
-        }
-    };
 
     public record AppInstallationTableItem(
             SimpleStringProperty uuid,
