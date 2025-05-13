@@ -1,9 +1,7 @@
 package org.lebastudios.theroundtable.env;
 
-import com.github.javakeyring.PasswordAccessException;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.security.KeyringManager;
 
 import java.util.Locale;

@@ -8,7 +8,6 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.ui.LabeledIconButton;
 
-import java.net.URL;
 import java.util.*;
 
 @Getter

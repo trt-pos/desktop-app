@@ -1,7 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
 import java.io.File;
-import java.util.Locale;
 
 public class PreferencesConfigData extends ConfigData<PreferencesConfigData>
 {

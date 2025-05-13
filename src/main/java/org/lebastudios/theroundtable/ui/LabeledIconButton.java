@@ -1,6 +1,5 @@
 package org.lebastudios.theroundtable.ui;
 
-import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

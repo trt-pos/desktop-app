@@ -3,8 +3,8 @@ package org.lebastudios.theroundtable.plugins;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
-import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.locale.LocaleManager;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 

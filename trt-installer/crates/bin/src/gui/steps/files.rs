@@ -2,7 +2,7 @@ use crate::config::InstallationConfig;
 use crate::gui::app::Message;
 use crate::gui::steps::Step;
 use iced::widget::row;
-use iced::{Element, Task, widget};
+use iced::{widget, Element, Task};
 use log::info;
 use std::io;
 use std::io::Write;

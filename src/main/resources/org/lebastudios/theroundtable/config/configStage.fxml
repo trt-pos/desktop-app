@@ -2,11 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <SplitPane xmlns:fx="http://javafx.com/fxml/1"
-      prefWidth="800.0" maxHeight="600" fx:id="root"
-      xmlns="http://javafx.com/javafx/17.0.2-ea" dividerPositions="0.25"
-      fx:controller="org.lebastudios.theroundtable.config.ConfigStageController">
+           prefWidth="800.0" maxHeight="600" fx:id="root"
+           xmlns="http://javafx.com/javafx/17.0.2-ea" dividerPositions="0.25"
+           fx:controller="org.lebastudios.theroundtable.config.ConfigStageController">
     <TreeView style="-fx-background-color: transparent; -fx-border-color: transparent;"
               showRoot="false" prefWidth="200" fx:id="configSectionsTreeView">
         <root>

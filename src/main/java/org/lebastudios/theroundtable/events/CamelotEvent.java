@@ -1,7 +1,10 @@
 package org.lebastudios.theroundtable.events;
 
 import com.google.gson.GsonBuilder;
-import org.lebastudios.theroundtable.camelot.*;
+import org.lebastudios.theroundtable.camelot.CamelotEventListener;
+import org.lebastudios.theroundtable.camelot.CamelotEventsManager;
+import org.lebastudios.theroundtable.camelot.FromBytes;
+import org.lebastudios.theroundtable.camelot.IntoBytes;
 import org.lebastudios.theroundtable.env.Variables;
 
 import java.util.function.Consumer;

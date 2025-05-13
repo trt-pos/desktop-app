@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import org.lebastudios.theroundtable.config.LicenseConfigData;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.RequestTextDialogController;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.server.requests.Licenses;
 import org.lebastudios.theroundtable.tasks.Task;
 

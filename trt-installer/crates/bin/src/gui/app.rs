@@ -2,7 +2,7 @@ use crate::gui::steps;
 use crate::gui::steps::Step;
 use iced::widget::image::Handle;
 use iced::widget::{button, column, row};
-use iced::{Subscription, Task, Theme, widget};
+use iced::{widget, Subscription, Task, Theme};
 use std::time::Duration;
 
 pub struct TrtInstallerApp {

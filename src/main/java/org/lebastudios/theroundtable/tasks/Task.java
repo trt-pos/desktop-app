@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import lombok.Getter;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.events.Event1;
-import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

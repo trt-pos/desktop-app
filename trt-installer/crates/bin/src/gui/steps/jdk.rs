@@ -4,7 +4,7 @@ use crate::gui::steps::Step;
 use flate2::read::GzDecoder;
 use futures::StreamExt;
 use iced::widget::row;
-use iced::{Element, Task, widget};
+use iced::{widget, Element, Task};
 use log::info;
 use std::ops::Deref;
 use std::path::PathBuf;

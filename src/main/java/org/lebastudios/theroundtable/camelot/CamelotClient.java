@@ -18,8 +18,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-import static org.lebastudios.theroundtable.camelot.trtcp.StatusCode.ALREADY_CONNECTED;
-
 public class CamelotClient implements AutoCloseable
 {
     @Getter private final String name;
