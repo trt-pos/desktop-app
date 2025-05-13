@@ -16,7 +16,7 @@ import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.controllers.Controller;
 import org.lebastudios.theroundtable.controllers.PaneController;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.tasks.TaskManager;
 import org.lebastudios.theroundtable.ui.IconButton;
@@ -88,8 +88,8 @@ public class MainStageController extends PaneController<MainStageController>
 
     public void requestRestart()
     {
-        showNotification(LangFileLoader.getTranslation("textblock.infrestartneeded"),
-                new Action(LangFileLoader.getTranslation("word.restart"), _ ->
+        showNotification(Translator.getInstance().t("textblock.infrestartneeded"),
+                new Action(Translator.getInstance().t("word.restart"), _ ->
                         Launcher.restartAplication()));
     }
 

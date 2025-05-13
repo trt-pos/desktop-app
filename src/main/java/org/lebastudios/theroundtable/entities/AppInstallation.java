@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.database.entities;
+package org.lebastudios.theroundtable.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;

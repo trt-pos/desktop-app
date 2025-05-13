@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.config;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.lebastudios.theroundtable.apparience.ThemeLoader;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
 
     public PreferencesConfigPaneController()
     {
-        super(new PreferencesConfigData(), LangFileLoader.getTranslation("word.preferences"), "preferences.png");
+        super(new PreferencesConfigData(), Translator.getInstance().t("word.preferences"), "preferences.png");
     }
 
     @Override

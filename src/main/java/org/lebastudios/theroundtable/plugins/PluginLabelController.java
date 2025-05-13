@@ -18,7 +18,7 @@ import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconTextButton;
@@ -73,7 +73,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         pluginDescription.setText(pluginData.pluginDescription);
         pluginRepo.setText(data == null ? "Built-in" : data.url);
 
-        Tooltip tooltip = new Tooltip(LangFileLoader.getTranslation("phrase.dependenciesnotsatisfied"));
+        Tooltip tooltip = new Tooltip(Translator.getInstance().t("phrase.dependenciesnotsatisfied"));
         tooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(notInstallableButton, tooltip);
 
@@ -181,7 +181,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         
         if (!pluginData.isDependencyOfOther())
         {
-            new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.pluginsuninstall"), result ->
+            new ConfirmationTextDialogController(Translator.getInstance().t("phrase.pluginsuninstall"), result ->
             {
                 if (!result) return;
 
@@ -190,7 +190,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
             return;
         }
 
-        new ConfirmationTextDialogController(LangFileLoader.getTranslation("phrase.otherplugindepends"), result ->
+        new ConfirmationTextDialogController(Translator.getInstance().t("phrase.otherplugindepends"), result ->
         {
             if (!result) return;
 

@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.communications;
 
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.AppInstallation;
+import org.lebastudios.theroundtable.entities.AppInstallation;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.net.Inet4Address;

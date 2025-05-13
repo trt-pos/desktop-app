@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.locale.Currency;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.locale.Language;
 
 import java.time.format.DateTimeFormatter;
@@ -36,7 +36,7 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
 
     public GlobalPreferencesConfigPaneController()
     {
-        super(new GlobalPreferencesConfigData(), LangFileLoader.getTranslation("core.config.globalpref"), "preferences.png");
+        super(new GlobalPreferencesConfigData(), Translator.getInstance().t("core.config.globalpref"), "preferences.png");
     }
 
     @Override

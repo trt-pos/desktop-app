@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.lebastudios.theroundtable.locale.LangBundleLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
@@ -67,7 +67,7 @@ public abstract class Controller<T extends Controller<T>>
         try
         {
             FXMLLoader fxmlLoader = getFXMLLoader();
-            LangBundleLoader.loadLang(fxmlLoader, getBundleClass());
+            Translator.getInstance().injectT(fxmlLoader, getBundleClass());
             
             fxmlLoader.setController(injectController ? this : null);
             this.root = fxmlLoader.load();

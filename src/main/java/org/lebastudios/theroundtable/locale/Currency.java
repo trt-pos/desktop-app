@@ -6,7 +6,8 @@ import java.util.Locale;
 
 public record Currency(char symbol, String abbreviation)
 {
-    public static final StringConverter<Currency> CONVERTER = new StringConverter<Currency>() {
+    public static final StringConverter<Currency> CONVERTER = new StringConverter<>()
+    {
 
         @Override
         public String toString(Currency object)

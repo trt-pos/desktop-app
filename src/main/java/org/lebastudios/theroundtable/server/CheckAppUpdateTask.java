@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.server;
 import javafx.application.Platform;
 import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.server.requests.Updates;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -15,7 +15,7 @@ public class CheckAppUpdateTask extends Task<Void>
         if (Updates.isUpdateAvailable())
         {
             Platform.runLater(() -> new ConfirmationTextDialogController(
-                    LangFileLoader.getTranslation("textblock.confupdate"),
+                    Translator.getInstance().t("textblock.confupdate"),
                     response ->
                     {
                         if (!response) return;

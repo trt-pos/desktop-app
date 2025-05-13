@@ -7,8 +7,8 @@ import javafx.scene.layout.BorderPane;
 import org.lebastudios.theroundtable.accounts.LocalPasswordValidator;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.Account;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.entities.Account;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.ui.TitleBuilder;
 
 import java.net.URL;
@@ -26,7 +26,7 @@ public class AccountSetupPaneController extends SetupPaneController
     {
         ((BorderPane) getRoot()).setTop(
                 new TitleBuilder(
-                        LangFileLoader.getTranslation("setup.title.adminconfig"),
+                        Translator.getInstance().t("setup.title.adminconfig"),
                         "admin-user.png"
                 ).build()
         );
@@ -54,21 +54,21 @@ public class AccountSetupPaneController extends SetupPaneController
     {
         if (usernameField.getText().isBlank() || usernameField.getText().length() < 3)
         {
-            errorLabel.setText(LangFileLoader.getTranslation("setup.error.invalidname"));
+            errorLabel.setText(Translator.getInstance().t("setup.error.invalidname"));
             UIEffects.shakeNode(usernameField);
             return false;
         }
 
         if (!LocalPasswordValidator.isValidFormat(passwordField.getText()))
         {
-            errorLabel.setText(LangFileLoader.getTranslation("setup.error.invalidpassword"));
+            errorLabel.setText(Translator.getInstance().t("setup.error.invalidpassword"));
             UIEffects.shakeNode(passwordField);
             return false;
         }
 
         if (!passwordField.getText().equals(confirmPasswordField.getText()))
         {
-            errorLabel.setText(LangFileLoader.getTranslation("setup.error.passwordmatch"));
+            errorLabel.setText(Translator.getInstance().t("setup.error.passwordmatch"));
             UIEffects.shakeNode(confirmPasswordField);
             return false;
         }

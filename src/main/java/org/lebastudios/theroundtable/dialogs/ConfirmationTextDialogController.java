@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.net.URL;
@@ -58,6 +58,6 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
     @Override
     public String getTitle()
     {
-        return LangFileLoader.getTranslation("title.confirmdialog");
+        return Translator.getInstance().t("title.confirmdialog");
     }
 }

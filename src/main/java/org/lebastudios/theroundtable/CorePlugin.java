@@ -4,12 +4,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.config.*;
-import org.lebastudios.theroundtable.database.entities.Account;
-import org.lebastudios.theroundtable.database.entities.AppInstallation;
-import org.lebastudios.theroundtable.database.entities.Plugin;
+import org.lebastudios.theroundtable.entities.Account;
+import org.lebastudios.theroundtable.entities.AppInstallation;
+import org.lebastudios.theroundtable.entities.Plugin;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.fxml2java.CompileFxml;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController;
@@ -55,7 +55,7 @@ public class CorePlugin implements IPlugin
     @Override
     public TreeItem<SettingsItem> getSettingsRootTreeItem()
     {
-        var generalConfigSection = new TreeItem<>(new SettingsItem(LangFileLoader.getTranslation("word.general"),
+        var generalConfigSection = new TreeItem<>(new SettingsItem(Translator.getInstance().t("word.general"),
                 "settings.png"));
         generalConfigSection.setExpanded(true);
 
@@ -86,7 +86,7 @@ public class CorePlugin implements IPlugin
         {
             var administrationSection = new TreeItem<>(
                     new SettingsItem(
-                            LangFileLoader.getTranslation("core.settings.section.administration"),
+                            Translator.getInstance().t("core.settings.section.administration"),
                             "admin-user.png")
             );
 
@@ -156,7 +156,7 @@ public class CorePlugin implements IPlugin
         if (AccountManager.getInstance().isAccountAdmin())
         {
             buttons.add(new LabeledIconButton(
-                    LangFileLoader.getTranslation("core.homebuttons.remotecontrol"),
+                    Translator.getInstance().t("core.homebuttons.remotecontrol"),
                     new IconView("control-pane.png"),
                     _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
             ));

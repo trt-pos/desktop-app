@@ -1,11 +1,11 @@
-package org.lebastudios.theroundtable.database.entities;
+package org.lebastudios.theroundtable.entities;
 
 import jakarta.persistence.*;
 import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 
 import java.util.Objects;
 
@@ -112,7 +112,7 @@ public class Account
         @Override
         public String toString()
         {
-            return LangFileLoader.getTranslation("enum.accounttype." + this.name().toLowerCase());
+            return Translator.getInstance().t("enum.accounttype." + this.name().toLowerCase());
         }
     }
 

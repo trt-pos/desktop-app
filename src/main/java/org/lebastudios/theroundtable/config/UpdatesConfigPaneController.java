@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 
 public class UpdatesConfigPaneController extends ConfigPaneController<UpdatesConfigData>
 {
@@ -12,7 +12,7 @@ public class UpdatesConfigPaneController extends ConfigPaneController<UpdatesCon
     {
         super(
                 new UpdatesConfigData(),
-                LangFileLoader.getTranslation("word.updates"), 
+                Translator.getInstance().t("word.updates"), 
                 "reload.png"
         );
     }

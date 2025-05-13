@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
 import java.net.URL;
@@ -46,6 +46,6 @@ public class InformationTextDialogController extends StageController<Information
     @Override
     public String getTitle()
     {
-        return LangFileLoader.getTranslation("title.infodialog");
+        return Translator.getInstance().t("title.infodialog");
     }
 }

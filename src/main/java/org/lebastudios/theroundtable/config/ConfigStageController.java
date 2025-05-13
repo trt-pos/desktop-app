@@ -12,12 +12,11 @@ import org.lebastudios.theroundtable.LogoPaneController;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -185,7 +184,7 @@ public class ConfigStageController extends StageController<ConfigStageController
     @Override
     public String getTitle()
     {
-        return LangFileLoader.getTranslation("title.settingsstage");
+        return Translator.getInstance().t("title.settingsstage");
     }
 
     @Override

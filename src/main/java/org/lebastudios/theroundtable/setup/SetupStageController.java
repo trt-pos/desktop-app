@@ -9,10 +9,9 @@ import org.lebastudios.theroundtable.config.EstablishmentConfigPaneController;
 import org.lebastudios.theroundtable.config.PrintersConfigPaneController;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.Account;
+import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.ui.StageBuilder;
 
@@ -55,7 +54,7 @@ public class SetupStageController extends StageController<SetupStageController>
                 .setStageConsumer(s -> s.setOnCloseRequest(e ->
                 {
                     new ConfirmationTextDialogController(
-                            LangFileLoader.getTranslation("textblock.closingsetup"),
+                            Translator.getInstance().t("textblock.closingsetup"),
                             response ->
                             {
                                 if (response)

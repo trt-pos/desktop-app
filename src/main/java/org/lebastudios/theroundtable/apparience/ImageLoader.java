@@ -6,7 +6,7 @@ import javafx.stage.Window;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.AppHttpClient;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 
@@ -209,7 +209,7 @@ public class ImageLoader
         
         var fileChooser = new FileChooser();
 
-        fileChooser.setTitle(LangFileLoader.getTranslation("title.imagechooser"));
+        fileChooser.setTitle(Translator.getInstance().t("title.imagechooser"));
         fileChooser.setInitialDirectory(new File(ImageLoader.SavedImagesDirectory()));
         fileChooser.setSelectedExtensionFilter(
                 new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpg", "*.jpeg")

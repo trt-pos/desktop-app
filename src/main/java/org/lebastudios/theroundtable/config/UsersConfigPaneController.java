@@ -15,9 +15,9 @@ import org.lebastudios.theroundtable.accounts.AccountCreatorStageController;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.ChangePasswordStageController;
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.Account;
+import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.ui.IconButton;
 import org.lebastudios.theroundtable.ui.IconView;
 
@@ -45,7 +45,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
     public UsersConfigPaneController()
     {
-        super(new NoConfigFile(), LangFileLoader.getTranslation("word.users"), "users.png");
+        super(new NoConfigFile(), Translator.getInstance().t("word.users"), "users.png");
     }
 
     @Override

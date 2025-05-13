@@ -4,7 +4,7 @@ import org.hibernate.Session;
 import org.lebastudios.theroundtable.communications.FileTransferServiceManager;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.Plugin;
+import org.lebastudios.theroundtable.entities.Plugin;
 
 import java.io.*;
 import java.util.List;
@@ -36,8 +36,8 @@ public class PluginSyncronizer
     
     public void syncWithMaster(Session session) throws IOException
     {
-        List<org.lebastudios.theroundtable.database.entities.Plugin>
-                plugins = session.createQuery("from Plugin", org.lebastudios.theroundtable.database.entities.Plugin.class)
+        List<Plugin>
+                plugins = session.createQuery("from Plugin", Plugin.class)
                 .getResultList();
 
         for (Plugin plugin : plugins)

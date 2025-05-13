@@ -6,7 +6,8 @@ import java.util.Locale;
 
 public record Language(String language, String country, String displayName)
 {
-    public static final StringConverter<Language> CONVERTER = new StringConverter<Language>() {
+    public static final StringConverter<Language> CONVERTER = new StringConverter<>()
+    {
 
         @Override
         public String toString(Language object)

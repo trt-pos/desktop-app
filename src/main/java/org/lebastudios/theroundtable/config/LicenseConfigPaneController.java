@@ -2,7 +2,7 @@ package org.lebastudios.theroundtable.config;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import org.lebastudios.theroundtable.locale.LangFileLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.server.LicenseValidatorTask;
 
 public class LicenseConfigPaneController extends ConfigPaneController<LicenseConfigData>
@@ -11,7 +11,7 @@ public class LicenseConfigPaneController extends ConfigPaneController<LicenseCon
 
     public LicenseConfigPaneController()
     {
-        super(new LicenseConfigData(), LangFileLoader.getTranslation("word.license"), "user.png");
+        super(new LicenseConfigData(), Translator.getInstance().t("word.license"), "user.png");
     }
 
     @Override

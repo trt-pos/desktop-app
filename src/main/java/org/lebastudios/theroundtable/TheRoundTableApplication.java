@@ -13,21 +13,18 @@ import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.communications.FileTransferServiceManager;
 import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.database.entities.Account;
-import org.lebastudios.theroundtable.database.entities.AppInstallation;
-import org.lebastudios.theroundtable.database.entities.Plugin;
+import org.lebastudios.theroundtable.entities.Account;
+import org.lebastudios.theroundtable.entities.AppInstallation;
+import org.lebastudios.theroundtable.entities.Plugin;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
-import org.lebastudios.theroundtable.locale.LangLoader;
+import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.plugins.PluginLoader;
-import org.lebastudios.theroundtable.plugins.PluginSyncronizer;
-import org.lebastudios.theroundtable.plugins.PluginsManager;
-import org.lebastudios.theroundtable.plugins.Version;
+import org.lebastudios.theroundtable.plugins.*;
 import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.MajorVersionMigratorTask;
@@ -68,7 +65,7 @@ public class TheRoundTableApplication extends Application
         // one here and another when loading the plugins.
         // Maybe the solution is to create a separated
         // module for the core plugin and use TRT as a framework
-        LangLoader.loadLang(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
+        Translator.getInstance().loadT(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
 
         // Starting Camelot Service -> Plugins -> Database
         // This order cannot be changed, loading the plugins updates the database so hibernate
@@ -129,7 +126,7 @@ public class TheRoundTableApplication extends Application
                     return null;
                 }
 
-                updateMessage("Sync plugins");
+                updateMessage("Checking master state");
                 result = Database.getInstance().connectQuery(session ->
                 {
                     AppInstallation master = session.createQuery(
@@ -165,16 +162,6 @@ public class TheRoundTableApplication extends Application
                         }
                     }
 
-                    try
-                    {
-                        new PluginSyncronizer().syncWithMaster(session);
-                    }
-                    catch (Exception e)
-                    {
-                        new ExceptionDialogController(e).instantiate(true);
-                        return false;
-                    }
-
                     return true;
                 });
 
@@ -184,6 +171,9 @@ public class TheRoundTableApplication extends Application
                     return null;
                 }
 
+                updateMessage("Sync plugins");
+                new PluginSyncronizer().syncWithMaster();
+                
                 updateMessage("Starting Camelot");
                 executeSubtask(CamelotServiceManager.getInstance().initTask());
 
@@ -192,7 +182,13 @@ public class TheRoundTableApplication extends Application
 
                 updateMessage("Reloading database");
                 executeSubtask(Database.getInstance().reloadTask());
-
+                
+                updateMessage("Initializing plugins");
+                for (IPlugin plugin : PluginsManager.getInstance().getLoadedPlugins())
+                {
+                    plugin.initialize();
+                }
+                
                 updateMessage("Updating state");
                 Database.getInstance().connectTransaction(session ->
                 {
@@ -245,7 +241,7 @@ public class TheRoundTableApplication extends Application
         }.setOnFailure(e ->
         {
             new ExceptionDialogController(e).instantiate(true);
-            System.exit(1);
+            TheRoundTableApplication.exitAplication(1);
         }).execute(true);
 
         if (!SetupStageController.isSetupDone()) new SetupStageController().instantiate(true);
