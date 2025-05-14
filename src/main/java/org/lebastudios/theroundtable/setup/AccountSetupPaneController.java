@@ -9,7 +9,7 @@ import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.locale.Translator;
-import org.lebastudios.theroundtable.ui.TitleBuilder;
+import org.lebastudios.theroundtable.components.TitleBuilder;
 
 import java.net.URL;
 

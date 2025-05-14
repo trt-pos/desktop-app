@@ -7,7 +7,7 @@ import javafx.stage.Modality;
 import org.lebastudios.theroundtable.camelot.converters.StringConverter;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.entities.AppInstallation;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 public class InstallationControlStageController extends StageController<InstallationControlStageController>
 {

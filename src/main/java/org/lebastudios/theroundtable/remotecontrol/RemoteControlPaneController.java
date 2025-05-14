@@ -13,7 +13,7 @@ import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.entities.AppInstallation;
 import org.lebastudios.theroundtable.plugins.Version;
-import org.lebastudios.theroundtable.ui.IconButton;
+import org.lebastudios.theroundtable.components.IconButton;
 
 import java.util.List;
 import java.util.concurrent.Executors;

@@ -13,7 +13,7 @@ import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.net.URL;
 

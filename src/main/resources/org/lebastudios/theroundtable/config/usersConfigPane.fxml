@@ -3,8 +3,8 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.lebastudios.theroundtable.ui.IconButton?>
-<?import org.lebastudios.theroundtable.ui.IconView?>
+<?import org.lebastudios.theroundtable.components.IconButton?>
+<?import org.lebastudios.theroundtable.components.IconView?>
 <HBox fx:id="root" spacing="15" xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lebastudios.theroundtable.config.UsersConfigPaneController">
     <padding>

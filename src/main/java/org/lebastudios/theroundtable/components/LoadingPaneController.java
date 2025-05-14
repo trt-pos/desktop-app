@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.ui;
+package org.lebastudios.theroundtable.components;
 
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;

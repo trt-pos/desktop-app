@@ -9,7 +9,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 public class ExceptionDialogController extends StageController<ExceptionDialogController>
 {

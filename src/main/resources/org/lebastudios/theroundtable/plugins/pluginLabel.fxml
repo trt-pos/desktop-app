@@ -5,8 +5,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import org.lebastudios.theroundtable.ui.IconButton?>
-<?import org.lebastudios.theroundtable.ui.IconTextButton?>
+<?import org.lebastudios.theroundtable.components.IconButton?>
+<?import org.lebastudios.theroundtable.components.IconTextButton?>
 <HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.lebastudios.theroundtable.plugins.PluginLabelController"
       xmlns="http://javafx.com/javafx" alignment="CENTER_LEFT"

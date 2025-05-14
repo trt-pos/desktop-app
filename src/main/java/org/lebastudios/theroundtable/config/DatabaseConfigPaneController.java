@@ -15,7 +15,7 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.ui.SwitcheableNodePane;
+import org.lebastudios.theroundtable.components.SwitcheableNodePane;
 
 import java.io.File;
 import java.sql.Connection;

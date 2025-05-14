@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.ui;
+package org.lebastudios.theroundtable.components;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class MultipleItemsListView<T> extends VBox
+public class PaginableListView<T> extends VBox
 {
     @Getter private final ListView<T> listView;
     private final Label actualItemsLabel;
@@ -45,7 +45,7 @@ public class MultipleItemsListView<T> extends VBox
      * @param itemsGenerator The content generator defines how to generate the content of the list view
      * @param groupSize The max size of the pages
      */
-    public MultipleItemsListView(Supplier<IReciclablePane<T>> reciclablePaneFactory, ItemsGenerator<T> itemsGenerator,
+    public PaginableListView(Supplier<IReciclablePane<T>> reciclablePaneFactory, ItemsGenerator<T> itemsGenerator,
             int groupSize)
     {
         this.reciclablePaneFactory = reciclablePaneFactory;
@@ -102,7 +102,7 @@ public class MultipleItemsListView<T> extends VBox
                     private final IReciclablePane<T> reciclablePane;
                     
                     {
-                        reciclablePane = MultipleItemsListView.this.reciclablePaneFactory.get();
+                        reciclablePane = PaginableListView.this.reciclablePaneFactory.get();
                         ((PaneController<?>) reciclablePane).getRoot();
                         
                         this.setCache(true);
@@ -122,7 +122,7 @@ public class MultipleItemsListView<T> extends VBox
                             return;
                         }
 
-                        setGraphic(reciclablePane.updateItem(item, MultipleItemsListView.this).getRoot());
+                        setGraphic(reciclablePane.updateItem(item, PaginableListView.this).getRoot());
                     }
                 };
             }
@@ -131,17 +131,17 @@ public class MultipleItemsListView<T> extends VBox
         refresh();
     }
 
-    public MultipleItemsListView(Supplier<IReciclablePane<T>> reciclablePaneFactory, ItemsGenerator<T> itemsGenerator)
+    public PaginableListView(Supplier<IReciclablePane<T>> reciclablePaneFactory, ItemsGenerator<T> itemsGenerator)
     {
         this(reciclablePaneFactory, itemsGenerator, 500);
     }
 
-    public MultipleItemsListView(ItemsGenerator<T> itemsGenerator)
+    public PaginableListView(ItemsGenerator<T> itemsGenerator)
     {
         this(null, itemsGenerator);
     }
 
-    public MultipleItemsListView()
+    public PaginableListView()
     {
         this(new ItemsGenerator<>()
         {
@@ -246,6 +246,6 @@ public class MultipleItemsListView<T> extends VBox
 
     public interface IReciclablePane<I>
     {
-        PaneController<?> updateItem(I item, MultipleItemsListView<I> control);
+        PaneController<?> updateItem(I item, PaginableListView<I> control);
     }
 }

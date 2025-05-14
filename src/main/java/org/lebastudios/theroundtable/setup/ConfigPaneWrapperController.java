@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.ConfigPaneController;
-import org.lebastudios.theroundtable.ui.TitleBuilder;
+import org.lebastudios.theroundtable.components.TitleBuilder;
 
 class ConfigPaneWrapperController extends SetupPaneController
 {

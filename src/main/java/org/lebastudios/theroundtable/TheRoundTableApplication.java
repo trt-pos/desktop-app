@@ -29,7 +29,7 @@ import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.tasks.MajorVersionMigratorTask;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.ui.SceneBuilder;
+import org.lebastudios.theroundtable.components.SceneBuilder;
 
 import java.io.File;
 import java.net.URI;

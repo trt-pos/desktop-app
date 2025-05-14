@@ -3,8 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.lebastudios.theroundtable.ui.IconButton?>
-<?import org.lebastudios.theroundtable.ui.SwitcheableNodePane?>
+<?import org.lebastudios.theroundtable.components.IconButton?>
+<?import org.lebastudios.theroundtable.components.SwitcheableNodePane?>
 <VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
       xmlns="http://javafx.com/javafx"
       fx:controller="org.lebastudios.theroundtable.config.DatabaseConfigPaneController"

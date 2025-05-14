@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import org.lebastudios.theroundtable.ui.IconButton?>
+<?import org.lebastudios.theroundtable.components.IconButton?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.lebastudios.theroundtable.setup.SetupStageController"

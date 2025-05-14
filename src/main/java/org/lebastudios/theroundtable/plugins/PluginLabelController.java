@@ -20,9 +20,9 @@ import org.lebastudios.theroundtable.events.Event;
 import org.lebastudios.theroundtable.events.IEventMethod;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.ui.IconButton;
-import org.lebastudios.theroundtable.ui.IconTextButton;
-import org.lebastudios.theroundtable.ui.LoadingPaneController;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.IconTextButton;
+import org.lebastudios.theroundtable.components.LoadingPaneController;
 
 import java.io.File;
 

@@ -1,44 +1,43 @@
-package org.lebastudios.theroundtable.ui;
+package org.lebastudios.theroundtable.components;
 
 import javafx.scene.control.Button;
 import lombok.Getter;
 
 @Getter
-public class IconButton extends Button
+public class IconTextButton extends Button
 {
-    private int iconSize = 35;
+    private int iconSize = 20;
 
     private String iconName;
 
-    public IconButton()
+    public IconTextButton()
     {
         this("");
     }
 
-    public IconButton(String iconName)
+    public IconTextButton(String iconName)
     {
         super();
 
         this.iconName = iconName;
 
         updateIcon();
-
-        this.setStyle("-fx-padding: 0; -fx-border-width: 0; -fx-background-color: transparent; -fx-border-color: " +
-                "transparent;");
     }
 
     private void updateIcon()
     {
+        if (iconName == null || iconName.isEmpty()) 
+        {
+            this.setGraphic(null);
+            return;
+        }
+        
         IconView iconView = new IconView(iconName);
 
         iconView.setFitWidth(iconSize);
         iconView.setFitHeight(iconSize);
 
         this.setGraphic(iconView);
-
-        this.setPrefSize(iconSize, iconSize);
-        this.setMinSize(iconSize, iconSize);
-        this.setMaxSize(iconSize, iconSize);
     }
 
     public void setIconSize(int iconSize)
@@ -53,3 +52,4 @@ public class IconButton extends Button
         updateIcon();
     }
 }
+

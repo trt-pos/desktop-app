@@ -9,7 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.logs.Logs;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 public class TaskStageController extends StageController<TaskStageController>
 {

@@ -19,8 +19,8 @@ import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.tasks.TaskManager;
-import org.lebastudios.theroundtable.ui.IconButton;
-import org.lebastudios.theroundtable.ui.LoadingPaneController;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.LoadingPaneController;
 
 public class MainStageController extends PaneController<MainStageController>
 {

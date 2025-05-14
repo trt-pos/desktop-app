@@ -18,8 +18,8 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
 import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.locale.Translator;
-import org.lebastudios.theroundtable.ui.IconButton;
-import org.lebastudios.theroundtable.ui.IconView;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.IconView;
 
 import java.util.HashSet;
 import java.util.List;

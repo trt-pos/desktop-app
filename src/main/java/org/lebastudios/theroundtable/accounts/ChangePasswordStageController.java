@@ -8,7 +8,7 @@ import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.entities.Account;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.net.URL;
 

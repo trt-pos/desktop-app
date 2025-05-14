@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.locale.Translator;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.net.URL;
 

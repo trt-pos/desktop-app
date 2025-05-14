@@ -15,7 +15,7 @@ import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -9,8 +9,8 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import lombok.NonNull;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.ui.StageBuilder;
-import org.lebastudios.theroundtable.ui.TitleBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
+import org.lebastudios.theroundtable.components.TitleBuilder;
 
 public class RequestConfigStageController extends StageController<RequestConfigStageController>
 {

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.VBox?>
-<?import org.lebastudios.theroundtable.ui.IconView?>
+<?import org.lebastudios.theroundtable.components.IconView?>
+<?import org.lebastudios.theroundtable.components.DateRangePicker?>
 <VBox maxWidth="Infinity" alignment="CENTER" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml" fx:id="root"
-      fx:controller="org.lebastudios.theroundtable.ui.LoadingPaneController">
+      fx:controller="org.lebastudios.theroundtable.components.LoadingPaneController">
     <IconView fx:id="loadingIcon"/>
+    
+    <DateRangePicker end />
 </VBox>

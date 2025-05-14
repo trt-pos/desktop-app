@@ -7,8 +7,8 @@ import javafx.stage.Modality;
 import lombok.NonNull;
 import org.lebastudios.theroundtable.controllers.FormPaneController;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.ui.IconButton;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.util.function.Function;
 

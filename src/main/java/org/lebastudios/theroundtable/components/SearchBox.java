@@ -1,4 +1,4 @@
-package org.lebastudios.theroundtable.ui;
+package org.lebastudios.theroundtable.components;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;

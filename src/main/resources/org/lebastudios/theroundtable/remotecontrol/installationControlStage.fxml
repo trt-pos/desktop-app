@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.lebastudios.theroundtable.ui.*?>
+<?import org.lebastudios.theroundtable.components.*?>
 <VBox xmlns="http://javafx.com/javafx" spacing="5"
       xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
       fx:controller="org.lebastudios.theroundtable.remotecontrol.InstallationControlStageController"

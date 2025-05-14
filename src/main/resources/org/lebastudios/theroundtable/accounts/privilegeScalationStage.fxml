@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import org.lebastudios.theroundtable.ui.IconView?>
+<?import org.lebastudios.theroundtable.components.IconView?>
 <VBox xmlns="http://javafx.com/javafx" alignment="CENTER"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.lebastudios.theroundtable.accounts.PrivilegeScalationStageController"

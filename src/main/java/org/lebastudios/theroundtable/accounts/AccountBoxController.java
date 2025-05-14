@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import lombok.Getter;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.entities.Account;
-import org.lebastudios.theroundtable.ui.IconView;
+import org.lebastudios.theroundtable.components.IconView;
 
 import java.net.URL;
 import java.util.function.BiConsumer;

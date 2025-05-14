@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.config.SettingsItem;
-import org.lebastudios.theroundtable.ui.LabeledIconButton;
+import org.lebastudios.theroundtable.components.LabeledIconButton;
 
 import java.util.*;
 

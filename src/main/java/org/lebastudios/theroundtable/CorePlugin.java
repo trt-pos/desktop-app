@@ -13,9 +13,9 @@ import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController;
-import org.lebastudios.theroundtable.ui.IconButton;
-import org.lebastudios.theroundtable.ui.IconView;
-import org.lebastudios.theroundtable.ui.LabeledIconButton;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.IconView;
+import org.lebastudios.theroundtable.components.LabeledIconButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
                 "org/lebastudios/theroundtable/setup",
                 "org/lebastudios/theroundtable/tasks",
                 "org/lebastudios/theroundtable/remotecontrol",
-                "org/lebastudios/theroundtable/ui",
+                "org/lebastudios/theroundtable/components",
                 "org/lebastudios/theroundtable",
         }
 )

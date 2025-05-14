@@ -11,7 +11,7 @@ import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.database.IDatabaseUpdater;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
-import org.lebastudios.theroundtable.ui.LabeledIconButton;
+import org.lebastudios.theroundtable.components.LabeledIconButton;
 
 import java.io.*;
 import java.util.ArrayList;

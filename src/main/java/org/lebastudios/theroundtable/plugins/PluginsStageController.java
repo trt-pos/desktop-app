@@ -11,9 +11,9 @@ import javafx.stage.Modality;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.ui.IconTextButton;
-import org.lebastudios.theroundtable.ui.LazyTab;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.IconTextButton;
+import org.lebastudios.theroundtable.components.LazyTab;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

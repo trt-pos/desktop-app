@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.TaskProgressView;
-import org.lebastudios.theroundtable.ui.IconView;
+import org.lebastudios.theroundtable.components.IconView;
 
 public class TaskManager
 {

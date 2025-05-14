@@ -3,8 +3,8 @@ package org.lebastudios.theroundtable.controllers;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.ui.SceneBuilder;
-import org.lebastudios.theroundtable.ui.StageBuilder;
+import org.lebastudios.theroundtable.components.SceneBuilder;
+import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.util.function.Consumer;
 
