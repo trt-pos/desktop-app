@@ -14,12 +14,9 @@ import javafx.util.Callback;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.lebastudios.theroundtable.database.Database;
-import org.lebastudios.theroundtable.logs.Logs;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class MultipleItemsListView<T> extends VBox
 {
@@ -37,22 +34,21 @@ public class MultipleItemsListView<T> extends VBox
     @Setter private Consumer<T> onItemSelected;
 
     @Setter private ItemsGenerator<T> itemsGenerator;
-    @Setter private Function<MultipleItemsListView<T>, ICellRecicler<T>> cellReciclerGenerator;
+    @Setter private IReciclablePane<MultipleItemsListView<T>, T> reciclablePane;
     @Setter @Getter private int groupSize;
 
     /**
      * Main constructor of the class. It receives the list cell node recicler, the content generator and the group
      * size.
      *
-     * @param cellReciclerGenerator The node recicler defines how to reuse the graphic nodes of the list cells to
-     *         avoid loading new ones
+     * @param reciclablePane The reciclable pane is the item that will be shown in each row
      * @param itemsGenerator The content generator defines how to generate the content of the list view
      * @param groupSize The max size of the pages
      */
-    public MultipleItemsListView(Function<MultipleItemsListView<T>, ICellRecicler<T>> cellReciclerGenerator, ItemsGenerator<T> itemsGenerator,
+    public MultipleItemsListView(IReciclablePane<MultipleItemsListView<T>, T> reciclablePane, ItemsGenerator<T> itemsGenerator,
             int groupSize)
     {
-        this.cellReciclerGenerator = cellReciclerGenerator;
+        this.reciclablePane = reciclablePane;
         this.itemsGenerator = itemsGenerator;
         this.groupSize = groupSize;
 
@@ -103,18 +99,14 @@ public class MultipleItemsListView<T> extends VBox
             {
                 return new ListCell<>()
                 {
-                    private final ICellRecicler<T> cellRecicler;
+                    private final IReciclablePane<MultipleItemsListView<T>, T> reciclablePane;
                     
                     {
-                        if (MultipleItemsListView.this.cellReciclerGenerator == null)
+                        reciclablePane = MultipleItemsListView.this.reciclablePane.paneFactory();
+                        
+                        if (reciclablePane == null)
                         {
-                            Logs.getInstance().log(Logs.LogType.WARNING, "multipleItemsListView has no " +
-                                    "cellViewGenerator");
-                            cellRecicler = null;
-                        }
-                        else
-                        {
-                            cellRecicler = MultipleItemsListView.this.cellReciclerGenerator.apply(MultipleItemsListView.this);
+                            throw new IllegalStateException("The reciclabe pane factory didn't return a valid node");
                         }
                         
                         this.setCache(true);
@@ -127,17 +119,17 @@ public class MultipleItemsListView<T> extends VBox
                     {
                         super.updateItem(item, empty);
 
-                        if (empty || item == null || cellRecicler == null)
+                        if (empty || item == null)
                         {
                             setGraphic(null);
                             setText(null);
                             return;
                         }
 
-                        cellRecicler.update(item);
+                        reciclablePane.updateItem(item, MultipleItemsListView.this);
                         
-                        setText(cellRecicler.getText());
-                        setGraphic(cellRecicler.getGraphic());
+                        setText(reciclablePane.getText());
+                        setGraphic(reciclablePane.getGraphic());
                     }
                 };
             }
@@ -146,9 +138,9 @@ public class MultipleItemsListView<T> extends VBox
         refresh();
     }
 
-    public MultipleItemsListView(Function<MultipleItemsListView<T>, ICellRecicler<T>> cellReciclerGenerator, ItemsGenerator<T> itemsGenerator)
+    public MultipleItemsListView(IReciclablePane<MultipleItemsListView<T>, T> reciclablePane, ItemsGenerator<T> itemsGenerator)
     {
-        this(cellReciclerGenerator, itemsGenerator, 500);
+        this(reciclablePane, itemsGenerator, 500);
     }
 
     public MultipleItemsListView(ItemsGenerator<T> itemsGenerator)
@@ -266,43 +258,5 @@ public class MultipleItemsListView<T> extends VBox
          * This method has to return the total number of items that can be generated.
          */
         long count();
-    }
-
-    @Deprecated
-    public static class HQLItemsGenerator<T, Q> implements ItemsGenerator<T>
-    {
-        private final String hql;
-        private final Class<Q> clazz;
-        private final Function<Q, T> mapper;
-
-        public HQLItemsGenerator(String hql, Class<Q> clazz, Function<Q, T> mapper)
-        {
-            this.hql = hql;
-            this.clazz = clazz;
-            this.mapper = mapper;
-        }
-
-        @Override
-        public List<T> generateItems(int from, int to)
-        {
-            return Database.getInstance().connectQuery(session ->
-            {
-                return session.createQuery(hql, clazz)
-                        .setFirstResult(from)
-                        .setMaxResults(to)
-                        .list().stream()
-                        .map(mapper)
-                        .toList();
-            });
-        }
-
-        @Override
-        public long count()
-        {
-            return Database.getInstance().connectQuery(session ->
-            {
-                return session.createQuery("select count(*) " + hql, Long.class).uniqueResult();
-            });
-        }
     }
 }
