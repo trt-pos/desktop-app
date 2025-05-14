@@ -11,7 +11,7 @@ public class Logs
 
     public enum LogType
     {
-        INFO, WARNING, ERROR, EXCEPTION;
+        INFO, WARNING, ERROR, EXCEPTION, DEBUG;
         
         public boolean isError()
         {
@@ -25,6 +25,7 @@ public class Logs
                 case INFO -> "\u001B[32m";
                 case WARNING -> "\u001B[33m";
                 case ERROR, EXCEPTION -> "\u001B[31m";
+                case DEBUG -> "\u001B[34m";
             };
         }
     }
@@ -40,6 +41,8 @@ public class Logs
 
     public void log(LogType type, String message)
     {
+        if (type == LogType.DEBUG && !Variables.isDev()) return;
+        
         PrintStream out = type.isError() ? System.err : System.out;
         
         final String date = getDateString();
@@ -64,6 +67,4 @@ public class Logs
     {
         return java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
     }
-
-
 }
