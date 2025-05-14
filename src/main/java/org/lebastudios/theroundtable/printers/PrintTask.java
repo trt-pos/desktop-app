@@ -42,8 +42,6 @@ public abstract class PrintTask extends Task<Void>
         
         try (EscPos escpos = print(this.escpos))
         {
-            print(escpos);
-
             if (cut) escpos.feed(feed).cut(cutMode);
         }
         return null;
