@@ -15,8 +15,6 @@ import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.StageBuilder;
 
-import java.net.URL;
-
 public class SetupStageController extends StageController<SetupStageController>
 {
     private static final SetupPaneController[] setupPanes = {
@@ -67,11 +65,7 @@ public class SetupStageController extends StageController<SetupStageController>
                 }));
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return SetupStageController.class.getResource("setupStage.fxml");
-    }
+    
 
     @FXML
     public void backButtonAction(ActionEvent actionEvent)

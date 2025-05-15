@@ -78,9 +78,5 @@ public class ChangePasswordStageController extends StageController<ChangePasswor
         close();
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return ChangePasswordStageController.class.getResource("changePasswordStage.fxml");
-    }
+    
 }

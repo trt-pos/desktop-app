@@ -33,11 +33,7 @@ public class AccountSetupPaneController extends SetupPaneController
         errorLabel.setText("");
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return AccountSetupPaneController.class.getResource("accountSetupPane.fxml");
-    }
+    
 
     @Override
     public void apply()

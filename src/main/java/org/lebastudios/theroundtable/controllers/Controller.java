@@ -71,11 +71,4 @@ public abstract class Controller<T extends Controller<T>>
         
         return (Stage) scene.getWindow();
     }
-
-    public final Class<? extends IPlugin> getBundleClass()
-    {
-        return PluginsManager.getInstance().getPluginOf(this.getClass())
-                .orElseThrow()
-                .getClass();
-    }
 }

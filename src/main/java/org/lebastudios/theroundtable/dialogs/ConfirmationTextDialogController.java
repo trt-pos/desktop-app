@@ -43,11 +43,7 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
         stage.close();
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return ConfirmationTextDialogController.class.getResource("confirmationTextDialog.fxml");
-    }
+    
 
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)

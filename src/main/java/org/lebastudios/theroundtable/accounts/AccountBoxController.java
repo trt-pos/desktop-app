@@ -33,10 +33,4 @@ public class AccountBoxController extends PaneController<AccountBoxController>
     {
         getRoot().setOnMouseClicked(_ -> action.accept(this, getRoot()));
     }
-
-    @Override
-    public URL getFXML()
-    {
-        return AccountBoxController.class.getResource("accountBox.fxml");
-    }
 }

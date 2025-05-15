@@ -79,10 +79,4 @@ public class AccountCreatorStageController extends StageController<AccountCreato
     {
         return "Create Account";
     }
-
-    @Override
-    public URL getFXML()
-    {
-        return AccountCreatorStageController.class.getResource("accountCreator.fxml");
-    }
 }

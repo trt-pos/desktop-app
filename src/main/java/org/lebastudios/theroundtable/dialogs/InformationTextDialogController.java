@@ -31,11 +31,7 @@ public class InformationTextDialogController extends StageController<Information
         close();
     }
 
-    @Override
-    public URL getFXML()
-    {
-        return InformationTextDialogController.class.getResource("informationTextDialog.fxml");
-    }
+    
 
     @Override
     protected void customizeStageBuilder(StageBuilder stageBuilder)
