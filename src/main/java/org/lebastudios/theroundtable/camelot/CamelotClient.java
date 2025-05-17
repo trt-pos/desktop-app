@@ -341,7 +341,7 @@ public class CamelotClient implements AutoCloseable
                             request = new Request().fromBytes(packet);
 
                             Logs.getInstance().log(
-                                    Logs.LogType.INFO,
+                                    Logs.LogType.DEBUG,
                                     "Received request from Camelot (" + packet.length + " bytes) with of type: " +
                                             request.getAction().getType()
                             );
@@ -376,7 +376,7 @@ public class CamelotClient implements AutoCloseable
                                 Response response = new Response().fromBytes(packet);
 
                                 Logs.getInstance().log(
-                                        Logs.LogType.INFO,
+                                        Logs.LogType.DEBUG,
                                         "Received response from Camelot (" + packet.length + " bytes) with status: " +
                                                 response.getStatusCode()
                                 );
