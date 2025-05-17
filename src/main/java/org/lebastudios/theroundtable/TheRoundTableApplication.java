@@ -132,8 +132,42 @@ public class TheRoundTableApplication extends Application
                     AppInstallation master = session.createQuery(
                                     "from AppInstallation i where i.isMaster = true",
                                     AppInstallation.class)
-                            .getSingleResult();
+                            .getSingleResultOrNull();
 
+                    if (master == null)
+                    {
+                        AtomicBoolean response = new AtomicBoolean(false);
+                        new ConfirmationTextDialogController(
+                                "There is no master in this network, " +
+                                        "continue and make this installation the master?",
+                                response::set
+                        ).instantiate(true);
+
+                        if (response.get())
+                        {
+                            new PrivilegeScalationStageController(
+                                    Account.AccountType.ADMIN,
+                                    response::set
+                            ).instantiate(true);
+
+                            if (response.get())
+                            {
+                                Database.getInstance().connectTransaction(session1 ->
+                                {
+                                    AppInstallation installation = AppInstallation.thisInstalation(session1);
+                                    installation.setMaster(true);
+                                    session1.persist(installation);
+                                });
+                            }
+                            
+                            return response.get();
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    
                     if (master.getUuid().equals(new TrtUUIDReader().getTrtUUID()))
                     {
                         return true;
