@@ -62,12 +62,12 @@ public class PluginLoader
                 {
                     var pluginData = plugin.getPluginData();
 
-                    if (pluginData.requiredDesktopAppVersion() == null)
+                    if (pluginData.requiredCoreVersion() == null)
                     {
                         Logs.getInstance().log(
                                 Logs.LogType.WARNING,
                                 "Plugin " + pluginData.pluginName +
-                                        " does not specify a required desktop app version so it will be ignored"
+                                        " does not specify a required core version so it will be ignored"
                         );
                         continue;
                     }

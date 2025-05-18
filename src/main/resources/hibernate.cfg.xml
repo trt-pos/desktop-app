@@ -5,17 +5,13 @@
 <hibernate-configuration>
 
     <session-factory>
-        <!-- Habilitar la gestión automática del contexto de sesión de Hibernate -->
         <property name="hibernate.current_session_context_class">thread</property>
-
-        <!-- Mostrar SQL ejecutado en stdout -->
+        
         <property name="hibernate.show_sql">false</property>
         <property name="hibernate.format_sql">true</property>
 
-        <!-- Actualizar el esquema de la base de datos al iniciar (puede ser 'update', 'create', 'create-drop', etc.) -->
         <property name="hibernate.hbm2ddl.auto">validate</property>
 
-        <!-- Configuración específica de HikariCP -->
         <property name="hibernate.hikari.maximumPoolSize">10</property>
         <property name="hibernate.hikari.idleTimeout">30000</property>
         <property name="hibernate.hikari.connectionTimeout">20000</property>

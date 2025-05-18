@@ -207,7 +207,7 @@ public interface IDatabaseUpdater
         {
             try (InputStream is = getSQLFile(dbms, updateType, version, plugin.getClass()))
             {
-                executeSQL(conn, is, dbms);
+                executeSQL(conn, is, dbms, plugin);
             }
 
             return true;
@@ -235,7 +235,7 @@ public interface IDatabaseUpdater
                     + "\tsql/<upgrade|downgrade>/<dbms>-to-<version>.sql ");
         }
 
-        private void executeSQL(Connection conn, InputStream is, Dbms dbms) throws SQLException, IOException
+        private void executeSQL(Connection conn, InputStream is, Dbms dbms, IPlugin plugin) throws SQLException, IOException
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             Statement statement = conn.createStatement();
@@ -249,7 +249,7 @@ public interface IDatabaseUpdater
 
                 if (line.trim().startsWith(DELIMITER))
                 {
-                    executeStatement(statement, sql.toString(), dbms);
+                    executeStatement(statement, sql.toString(), dbms, plugin);
 
                     sql.setLength(0);
                     continue;
@@ -258,22 +258,22 @@ public interface IDatabaseUpdater
                 sql.append(line).append("\n");
             }
 
-            executeStatement(statement, sql.toString(), dbms);
+            executeStatement(statement, sql.toString(), dbms, plugin);
         }
 
-        private void executeStatement(Statement statement, String sql, Dbms dbms) throws SQLException
+        private void executeStatement(Statement statement, String sql, Dbms dbms, IPlugin plugin) throws SQLException
         {
             if (sql.trim().isBlank()) return;
 
             List<String> sqlList = List.of(sql);
 
-            for (ISQLMacroHandler transformer : ISQLMacroHandler.transformers)
+            for (ISQLMacroHandler transformer : ISQLMacroHandler.TRANSFORMERS)
             {
                 List<String> newSqlList = new ArrayList<>();
 
                 for (String sqlStr : sqlList)
                 {
-                    newSqlList.addAll(transformer.transform(sqlStr, dbms));
+                    newSqlList.addAll(transformer.transform(sqlStr, dbms, plugin));
                 }
 
                 sqlList = newSqlList;
@@ -282,7 +282,7 @@ public interface IDatabaseUpdater
             for (String sqlStr : sqlList)
             {
                 Logs.getInstance().log(
-                        Logs.LogType.INFO,
+                        Logs.LogType.DEBUG,
                         "Executing SQL statement:\n" + sqlStr
                 );
                 statement.execute(sqlStr);
@@ -291,13 +291,13 @@ public interface IDatabaseUpdater
 
         private interface ISQLMacroHandler
         {
-            ISQLMacroHandler[] transformers = new ISQLMacroHandler[]{
+            ISQLMacroHandler[] TRANSFORMERS = new ISQLMacroHandler[]{
                     new ConditionalDBMSMacroHandler(),
                     new AutoincrementMacroHandler(),
                     new TableMigratorMacroHandler(),
             };
 
-            List<String> transform(String sql, Dbms dbms);
+            List<String> transform(String sql, Dbms dbms, IPlugin plugin);
 
             default String replaceFirstGroup(String regex, String replacement, String text)
             {
@@ -321,7 +321,7 @@ public interface IDatabaseUpdater
         private static class AutoincrementMacroHandler implements ISQLMacroHandler
         {
             @Override
-            public List<String> transform(String sql, Dbms dbms)
+            public List<String> transform(String sql, Dbms dbms, IPlugin plugin)
             {
                 if (sql.contains("CREATE TABLE") || sql.contains("create table"))
                 {
@@ -346,7 +346,7 @@ public interface IDatabaseUpdater
 
 
             @Override
-            public List<String> transform(String sql, Dbms dbms)
+            public List<String> transform(String sql, Dbms dbms, IPlugin plugin)
             {
                 List<String> sqlList = new ArrayList<>();
 
@@ -402,7 +402,7 @@ public interface IDatabaseUpdater
         private static class ConditionalDBMSMacroHandler implements ISQLMacroHandler
         {
             @Override
-            public List<String> transform(String sql, Dbms dbms)
+            public List<String> transform(String sql, Dbms dbms, IPlugin plugin)
             {
                 Pattern pattern = Pattern.compile("(?si)-- IF " + dbms.name() + " *\\R(.*?)-- ENDIF");
                 List<String> sqlList = new ArrayList<>();

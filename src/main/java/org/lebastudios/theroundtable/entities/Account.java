@@ -5,6 +5,7 @@ import javafx.util.StringConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lebastudios.theroundtable.database.PluginTable;
 import org.lebastudios.theroundtable.locale.Translator;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "core_account")
+@PluginTable(name = "account")
 public class Account
 {
     public static final StringConverter<Account> STRING_CONVERTER = new StringConverter<>()

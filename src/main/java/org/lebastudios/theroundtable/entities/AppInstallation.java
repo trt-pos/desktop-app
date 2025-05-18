@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.communications.LocalIpFinder;
 import org.lebastudios.theroundtable.database.Database;
+import org.lebastudios.theroundtable.database.PluginTable;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.plugins.Version;
@@ -15,7 +16,7 @@ import org.lebastudios.theroundtable.plugins.Version;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "core_app_installation")
+@PluginTable(name = "app_installation")
 @Getter
 @Setter
 @NoArgsConstructor

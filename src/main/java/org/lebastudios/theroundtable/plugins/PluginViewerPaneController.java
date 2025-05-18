@@ -45,7 +45,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         pluginDescriptionLabel.setText(pluginData.pluginDescription);
         pluginVendorLabel.setText(pluginData.pluginVendor);
         pluginVendorUrlLabel.setText(pluginData.pluginVendorUrl);
-        pluginRequiredCoreVersionLabel.setText(pluginData.requiredDesktopAppVersion());
+        pluginRequiredCoreVersionLabel.setText(pluginData.requiredCoreVersion());
         pluginVersionLabel.setText(pluginData.pluginVersion);
         
         if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length < 2)

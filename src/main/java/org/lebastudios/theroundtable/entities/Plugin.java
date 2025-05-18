@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.lebastudios.theroundtable.database.PluginTable;
 import org.lebastudios.theroundtable.plugins.Version;
 
 import java.net.URI;
@@ -12,7 +13,7 @@ import java.net.URI;
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "core_plugin")
+@PluginTable(name = "plugin")
 public class Plugin
 {
     @Id

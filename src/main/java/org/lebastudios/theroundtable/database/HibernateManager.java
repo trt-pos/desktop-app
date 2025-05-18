@@ -232,10 +232,20 @@ class HibernateManager
             updateMessage("Building database configuration");
             updateProgress(50, 100);
             var config = databaseConfigData.getHibernateConf();
+            
+            config.setImplicitNamingStrategy(new PluginPrefixedImplicitNamingStrategy());
 
             // Loading all the plugin entities to the Hibernate configuration from the Plugins
             updateMessage("Adding plugins to the database configuration");
-            PluginsManager.getInstance().getPluginDatabaseEntities().forEach(config::addAnnotatedClass);
+            PluginsManager pluginsManager = PluginsManager.getInstance();
+            for (Class<?> entityClass : pluginsManager.getPluginDatabaseEntities())
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.DEBUG,
+                        "Loading entity " + entityClass.getName()
+                );
+                config.addAnnotatedClass(entityClass);
+            }
 
             // Adding the plugin ClassLoader to the Hibernate configuration
             StandardServiceRegistry serviceRegistry =
@@ -298,13 +308,13 @@ class HibernateManager
                 if (!conn.getMetaData().getTables(
                         null,
                         null,
-                        "core_database_version",
+                        "_plugin_database_version",
                         new String[]{"TABLE"}).next()
                 )
                 {
                     updateMessage("Creating version managment table");
                     String sql = """
-                        create table core_database_version
+                        create table _plugin_database_version
                         (
                             plugin_identifier varchar(255) not null primary key,
                             version           integer
@@ -339,7 +349,7 @@ class HibernateManager
             try (Connection conn = connFactory.get())
             {
                 String sql = """
-                    select version from core_database_version where plugin_identifier = ?
+                    select version from _plugin_database_version where plugin_identifier = ?
                     """;
 
                 PreparedStatement statement = conn.prepareStatement(sql);
@@ -371,8 +381,8 @@ class HibernateManager
             }
 
             String formattedSql = exists
-                    ? "update core_database_version set version = %d where plugin_identifier = '%s'"
-                    : "insert into core_database_version (version, plugin_identifier) values (%d, '%s')";
+                    ? "update _plugin_database_version set version = %d where plugin_identifier = '%s'"
+                    : "insert into _plugin_database_version (version, plugin_identifier) values (%d, '%s')";
 
             if (oldVersion < newVersion)
             {
@@ -400,6 +410,8 @@ class HibernateManager
                     {
                         conn.close();
                     }
+                    
+                    formattedSql = "update _plugin_database_version set version = %d where plugin_identifier = '%s'";
                 }
             }
             else

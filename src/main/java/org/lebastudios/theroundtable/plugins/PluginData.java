@@ -20,6 +20,11 @@ public class PluginData
     public String category;
     public PluginDependencyData[] pluginDependencies;
     
+    public String getDbTablePrefix()
+    {
+        return pluginId.replace(".", "_").replace("-", "_");
+    }
+    
     public boolean areDependenciesInstalled()
     {
         for (var pluginDependencyNeeded : this.pluginDependencies)
@@ -67,7 +72,7 @@ public class PluginData
         return true;
     }
 
-    public String requiredDesktopAppVersion()
+    public String requiredCoreVersion()
     {
         return Arrays.stream(pluginDependencies)
                 .filter(data -> data.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId))
