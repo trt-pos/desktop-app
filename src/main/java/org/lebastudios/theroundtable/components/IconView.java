@@ -1,23 +1,46 @@
 package org.lebastudios.theroundtable.components;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.image.ImageView;
-import lombok.Getter;
 import org.lebastudios.theroundtable.apparience.ImageLoader;
 
-@Getter
 public class IconView extends ImageView
 {
     private static final int ICON_SIZE = 32;
 
-    private String iconName;
-    private int iconSize = ICON_SIZE;
+    private final StringProperty iconName = new SimpleStringProperty("");
+    private final DoubleProperty iconSize = new SimpleDoubleProperty();
 
     public IconView(String iconName)
     {
-        super(ImageLoader.getIcon(iconName));
-        setSize();
-        
-        this.iconName = iconName;
+        this.iconName.addListener((_, _, newValue) ->
+        {
+            this.setImage(ImageLoader.getIcon(newValue));
+        });
+
+        iconSize.addListener((_, _, newValue) ->
+        {
+            double size = newValue.doubleValue();
+            
+            this.setFitWidth(size);
+            this.setFitHeight(size);
+
+            this.minWidth(size);
+            this.minHeight(size);
+
+            this.maxWidth(size);
+            this.maxHeight(size);
+            
+            this.prefHeight(size);
+            this.prefWidth(size);
+        });
+
+        this.setPreserveRatio(true);
+        this.iconName.set(iconName);
+        this.iconSize.set(ICON_SIZE);
     }
 
     public IconView()
@@ -25,32 +48,34 @@ public class IconView extends ImageView
         this("");
     }
 
-    private void setSize()
-    {
-        this.setFitHeight(iconSize);
-        this.setFitWidth(iconSize);
-
-        this.prefHeight(iconSize);
-        this.prefWidth(iconSize);
-
-        this.maxHeight(iconSize);
-        this.maxWidth(iconSize);
-
-        this.minHeight(iconSize);
-        this.minWidth(iconSize);
-
-        this.setPreserveRatio(true);
-    }
 
     public void setIconName(String iconName)
     {
-        this.iconName = iconName;
-        this.setImage(ImageLoader.getIcon(iconName));
+        this.iconName.set(iconName);
     }
 
-    public void setIconSize(int iconSize)
+    public String getIconName()
     {
-        this.iconSize = iconSize;
-        this.setSize();
+        return iconName.get();
+    }
+
+    public StringProperty iconNameProperty()
+    {
+        return iconName;
+    }
+
+    public void setIconSize(double iconSize)
+    {
+        this.iconSize.set(iconSize);
+    }
+
+    public double getIconSize()
+    {
+        return iconSize.get();
+    }
+
+    public DoubleProperty iconSizeProperty()
+    {
+        return iconSize;
     }
 }

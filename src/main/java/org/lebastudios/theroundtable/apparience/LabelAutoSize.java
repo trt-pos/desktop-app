@@ -12,7 +12,8 @@ public class LabelAutoSize
             if (width == 0) return;
 
             int length = label.getText().length();
-            double fontSize = Math.max(8, Math.min(13, width / (length * 0.6)));
+            double scaledSize = width / (length * 0.4);
+            double fontSize = Math.max(8, Math.min(13, scaledSize));
             label.setStyle("-fx-font-size: " + fontSize + ";");
         };
 

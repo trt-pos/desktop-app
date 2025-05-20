@@ -157,7 +157,7 @@ public class CorePlugin implements IPlugin
         {
             buttons.add(new LabeledIconButton(
                     Translator.getInstance().t("core.homebuttons.remotecontrol"),
-                    new IconView("control-pane.png"),
+                    "control-pane.png",
                     _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
             ));
         }
