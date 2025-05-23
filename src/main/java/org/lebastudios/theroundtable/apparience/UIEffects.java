@@ -4,7 +4,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
+import org.controlsfx.control.PopOver;
 
 public final class UIEffects
 {
@@ -21,5 +24,15 @@ public final class UIEffects
         );
 
         timeline.play();
+    }
+
+    public static void showPopup(Node node, String text)
+    {
+        PopOver popup = new PopOver(new Label(text));
+        popup.setAutoHide(true);
+        popup.setDetachable(false);
+        popup.setHideOnEscape(true);
+        
+        popup.show(node);
     }
 }
