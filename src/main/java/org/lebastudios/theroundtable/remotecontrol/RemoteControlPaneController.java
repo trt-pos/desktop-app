@@ -6,9 +6,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import org.controlsfx.control.tableview2.TableColumn2;
 import org.controlsfx.control.tableview2.TableView2;
+import org.controlsfx.control.tableview2.cell.ComboBox2TableCell;
+import org.controlsfx.control.tableview2.cell.TextField2TableCell;
+import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.entities.AppInstallation;
@@ -50,6 +56,67 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
         menuColumn.setMinWidth(50);
         menuColumn.setMaxWidth(50);
 
+        nameColumn.setCellFactory(TextField2TableCell.forTableColumn());
+        subnetColumn.setCellFactory(TextField2TableCell.forTableColumn());
+        isMasterColumn.setCellFactory(CheckBoxTableCell.forTableColumn(isMasterColumn));
+        
+        nameColumn.setOnEditCommit(event ->
+        {
+            if (!event.getNewValue().matches("[\\w\\s-]+"))
+            {
+                UIEffects.shakeNode(installationsTableView);
+                return;
+            }
+            
+            event.getRowValue().name.set(event.getNewValue());
+            
+            if (!updateAppInstallationItem(event.getRowValue()))
+            {
+                event.getRowValue().name.set(event.getOldValue());
+            }
+        });
+        
+        subnetColumn.setOnEditCommit(event ->
+        {
+            if (!event.getNewValue().matches(
+                    "^(([12]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])[./]){4}([1-2]?[0-9]|3[0-2])$"))
+            {
+                UIEffects.shakeNode(installationsTableView);
+                return;
+            }
+
+            event.getRowValue().subnet.set(event.getNewValue());
+
+            if (!updateAppInstallationItem(event.getRowValue()))
+            {
+                event.getRowValue().subnet.set(event.getOldValue());
+            }
+        });
+        
+        isMasterColumn.setOnEditCommit(event ->
+        {
+            // Don't allow to uncheck the master installation
+            if (event.getOldValue())
+            {
+                event.getRowValue().isMaster.set(true);
+                return;
+            }
+            
+            AppInstallationTableItem actualMaster = installationsTableView.getItems().stream()
+                    .filter(i -> i.isMaster.get())
+                    .findFirst()
+                    .orElseThrow();
+            
+            actualMaster.isMaster.set(false);
+            event.getRowValue().isMaster.set(true);
+            
+            if (!updateAppInstallationItem(event.getRowValue()) || !updateAppInstallationItem(actualMaster))
+            {
+                actualMaster.isMaster.set(true);
+                event.getRowValue().isMaster.set(false);
+            }
+        });
+        
         menuColumn.setCellFactory(new Callback<>()
         {
             @Override
@@ -104,7 +171,7 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
 
         scheduler.scheduleAtFixedRate(() ->
         {
-            if (!this.getStage().isShowing())
+            if (this.getParent().getParent() != null)
             {
                 scheduler.close();
             }
@@ -134,6 +201,24 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
         );
     }
 
+    private boolean updateAppInstallationItem(AppInstallationTableItem item)
+    {
+        return Database.getInstance().connectTransaction(session ->
+        {
+            AppInstallation appInstallation = session.get(AppInstallation.class, item.uuid.get());
+
+            if (appInstallation == null) throw new IllegalStateException("appInstallation is null");
+
+            appInstallation.setName(item.name.get());
+            appInstallation.setSubnet(item.subnet.get());
+            appInstallation.setMaster(item.isMaster.get());
+
+            item.ip.set(appInstallation.getIp());
+            
+            session.merge(appInstallation);
+        });
+    }
+    
     public record AppInstallationTableItem(
             SimpleStringProperty uuid,
             SimpleStringProperty name,

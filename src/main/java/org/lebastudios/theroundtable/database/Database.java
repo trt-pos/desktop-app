@@ -48,12 +48,7 @@ public class Database
         return new DatabaseMigrator(from, to).migrate();
     }
     
-    public void connectTransaction(Consumer<Session> action)
-    {
-        HibernateManager.getInstance().connectTransaction(action);
-    }
-    
-    public boolean connectTransactionWithBool(Consumer<Session> action)
+    public boolean connectTransaction(Consumer<Session> action)
     {
         return HibernateManager.getInstance().connectTransaction(action);
     }

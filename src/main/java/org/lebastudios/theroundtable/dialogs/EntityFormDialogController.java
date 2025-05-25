@@ -28,7 +28,7 @@ public class EntityFormDialogController<T> extends FormDialogController<T>
         
         this.onDeleteAction = objectDeleted ->
         {
-            return Database.getInstance().connectTransactionWithBool(session ->
+            return Database.getInstance().connectTransaction(session ->
             {
                 session.remove(objectDeleted);
             });
@@ -36,7 +36,7 @@ public class EntityFormDialogController<T> extends FormDialogController<T>
         
         this.onSaveAction = objectBuilded ->
         {
-            return Database.getInstance().connectTransactionWithBool(session ->
+            return Database.getInstance().connectTransaction(session ->
             {
                 Consumer<T> f = persisted ? session::merge : session::persist;
                 f.accept(objectBuilded);

@@ -6,14 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Session;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.communications.LocalIpFinder;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.PluginTable;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AccountEvents;
+import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.Version;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.time.LocalDateTime;
+import java.util.Enumeration;
 
 @Entity
 @PluginTable(name = "app_installation")
@@ -95,16 +100,73 @@ public class AppInstallation
         
         if (status == Status.ACTIVE)
         {
-            this.setIp(new LocalIpFinder().find());
+            updateIp();
         }
     }
 
+    public void setSubnet(String subnet)
+    {
+        this.subnet = subnet;
+        updateIp();
+    }
+    
     public void setLastAccount(Account lastAccount)
     {
         this.lastAccount = lastAccount;
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void updateIp()
+    {
+        try
+        {
+            String[] parts = subnet.split("/");
+            InetAddress subnetAddress = InetAddress.getByName(parts[0]);
+            int prefixLength = Integer.parseInt(parts[1]);
+
+            byte[] subnetBytes = subnetAddress.getAddress();
+            int subnetMask = -1 << (32 - prefixLength);
+
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements())
+            {
+                NetworkInterface iface = interfaces.nextElement();
+                if (!iface.isUp() || iface.isLoopback()) continue;
+
+                for (InterfaceAddress addr : iface.getInterfaceAddresses())
+                {
+                    InetAddress inetAddr = addr.getAddress();
+                    if (!(inetAddr instanceof Inet4Address)) continue;
+
+                    byte[] ipBytes = inetAddr.getAddress();
+
+                    int ipInt = byteArrayToInt(ipBytes);
+                    int subnetInt = byteArrayToInt(subnetBytes);
+
+                    if ((ipInt & subnetMask) == (subnetInt & subnetMask))
+                    {
+                        ip = inetAddr.getHostAddress();
+                        return;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logs.getInstance().log("Error finding local IP in subnet", ex);
+        }
+
+        ip = "127.0.0.1";
+    }
+
+    private static int byteArrayToInt(byte[] bytes)
+    {
+        return ((bytes[0] & 0xFF) << 24) |
+                ((bytes[1] & 0xFF) << 16) |
+                ((bytes[2] & 0xFF) << 8) |
+                (bytes[3] & 0xFF);
+    }
+    
     public enum Status
     {
         ACTIVE,

@@ -9,7 +9,7 @@
     <padding>
         <Insets top="5" right="5" bottom="5" left="5"/>
     </padding>
-    <TableView2 fx:id="installationsTableView" VBox.vgrow="ALWAYS">
+    <TableView2 fx:id="installationsTableView" VBox.vgrow="ALWAYS" editable="true">
         <columns>
             <TableColumn2 fx:id="uuidColumn" text="%core.remotecontrol.uuid"/>
             <TableColumn2 fx:id="nameColumn" text="%core.remotecontrol.name"/>
@@ -17,7 +17,7 @@
             <TableColumn2 fx:id="versionColumn" text="%core.remotecontrol.version"/>
             <TableColumn2 fx:id="ipColumn" text="%core.remotecontrol.ip"/>
             <TableColumn2 fx:id="subnetColumn" text="%core.remotecontrol.subnet"/>
-            <TableColumn2 fx:id="isMasterColumn" text="%core.remotecontrol.master"/>
+            <TableColumn2 fx:id="isMasterColumn" text="%core.remotecontrol.master" />
             <TableColumn2 fx:id="menuColumn"/>
         </columns>
     </TableView2>

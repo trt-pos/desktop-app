@@ -24,6 +24,5 @@
         <LabeledIconButton text="%core.remotecontrol.restart" iconName="shutdown.png" onAction="#restartAppInstallationAction" />
         <LabeledIconButton text="%core.remotecontrol.disable" iconName="disable.png" onAction="#disableAppInstallationAction" />
         <LabeledIconButton text="%core.remotecontrol.syncplugins" iconName="reload.png" onAction="#syncPluginsAppInstallationAction" />
-        <LabeledIconButton text="%core.remotecontrol.edit" iconName="edit.png" onAction="#editAppInstallationAction" />
     </FlowPane>
 </VBox>
