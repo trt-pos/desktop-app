@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.lebastudios.theroundtable.components.IconView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import org.lebastudios.theroundtable.components.Copy2Clipboard?>
+<?import org.lebastudios.theroundtable.components.LabeledIconButton?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" spacing="5"
+      fx:controller="org.lebastudios.theroundtable.rustdesk.TechnicalSupportStageController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    
+    <VBox fx:id="askForSupportContainer" spacing="5">
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="RustDesk ID:" styleClass="text-bold"/>
+            <Label fx:id="rustdeskIdLabel" text="1234-5678-9012" styleClass="text-italic"/>
+            <Copy2Clipboard labelId="rustdeskIdLabel" iconSize="22"/>
+        </HBox>
+
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="RustDesk config:" styleClass="text-bold"/>
+            <Label  text="0nI9Mndp9mczkka0ljZKplVrclYWlnatJGeYpkYXVUUiZXREREOohDOPl2V6ZlI6ISeltmIsIiI6ISawFmIsIiI6ISehxWZyJCLi02bj5idwRXZsJWY0Rmb19mcus2clRGdzVnciojI0N3boJye" styleClass="text-italic" />
+            <Copy2Clipboard labelId="rustdeskConfigString" iconSize="22"/>
+        </HBox>
+
+        <LabeledIconButton iconName="support.png" text="Request remote support" iconSize="96" onAction="#askForSupport"/>
+    </VBox>
+    
+    <VBox fx:id="downloadRustDeckContainer" spacing="5">
+        <Label text="RustDesk is a tool that enables the support team to resolve any issue just by sharing your desktop." />
+        <Label text="After clicking the install button the button to ask for remote support will be shown." />
+        <LabeledIconButton iconName="download.png" text="Download RustDeck" iconSize="96" onAction="#downloadRustDeck"/>
+    </VBox>
+</VBox>

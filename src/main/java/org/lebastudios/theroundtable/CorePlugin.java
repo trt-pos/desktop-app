@@ -30,6 +30,7 @@ import java.util.List;
                 "org/lebastudios/theroundtable/tasks",
                 "org/lebastudios/theroundtable/remotecontrol",
                 "org/lebastudios/theroundtable/components",
+                "org/lebastudios/theroundtable/rustdesk",
                 "org/lebastudios/theroundtable",
         }
 )

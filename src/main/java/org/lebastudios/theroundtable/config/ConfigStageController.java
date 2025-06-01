@@ -16,6 +16,7 @@ import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
 import org.lebastudios.theroundtable.components.StageBuilder;
+import org.lebastudios.theroundtable.rustdesk.TechnicalSupportStageController;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -179,6 +180,12 @@ public class ConfigStageController extends StageController<ConfigStageController
         {
             errorLabel.setText(validationResult.message());
         }
+    }
+
+    @FXML
+    public void openTechnicalSupport(ActionEvent actionEvent) 
+    {
+        new TechnicalSupportStageController().setOwner(this.getStage()).instantiate();
     }
 
     @Override
