@@ -42,7 +42,7 @@ public class DateRangePicker extends HBox
         super(10);
 
         Label fromLabel = new Label(Translator.getInstance().t("components.rangedatepicker.from", CorePlugin.class));
-        Label toLabel = new Label(Translator.getInstance().t("components.rangedatepick.to", CorePlugin.class));
+        Label toLabel = new Label(Translator.getInstance().t("components.rangedatepicker.to", CorePlugin.class));
         
         getChildren().addAll(fromLabel, startDatePicker, toLabel, endDatePicker);
         this.setAlignment(Pos.CENTER);
@@ -65,6 +65,9 @@ public class DateRangePicker extends HBox
         startDate.bindBidirectional(startDatePicker.valueProperty());
         endDate.bindBidirectional(endDatePicker.valueProperty());
 
+        startDate.setValue(LocalDate.now());
+        endDate.setValue(LocalDate.now());
+        
         endDatePicker.valueProperty().addListener((_, _, newVal) ->
         {
             if (newVal == null) return;
