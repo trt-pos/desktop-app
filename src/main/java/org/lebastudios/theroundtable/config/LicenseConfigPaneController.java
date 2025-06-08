@@ -11,7 +11,7 @@ public class LicenseConfigPaneController extends ConfigPaneController<LicenseCon
 
     public LicenseConfigPaneController()
     {
-        super(new LicenseConfigData(), Translator.getInstance().t("word.license"), "user.png");
+        super(new LicenseConfigData(), Translator.getInstance().t("core:word.license"), "user.png");
     }
 
     @Override

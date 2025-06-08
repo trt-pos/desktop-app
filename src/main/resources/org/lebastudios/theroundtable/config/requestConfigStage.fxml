@@ -23,6 +23,6 @@
     <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 13;" />
         
     <HBox alignment="CENTER_RIGHT">
-        <Button onAction="#accept" text="%word.accept" defaultButton="true" prefWidth="150"/>
+        <Button onAction="#accept" text="%core:word.accept" defaultButton="true" prefWidth="150"/>
     </HBox>
 </VBox>

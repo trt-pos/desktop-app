@@ -212,7 +212,7 @@ public class ImageLoader
         
         var fileChooser = new FileChooser();
 
-        fileChooser.setTitle(Translator.getInstance().t("title.imagechooser"));
+        fileChooser.setTitle(Translator.getInstance().t("core:title.imagechooser"));
         fileChooser.setInitialDirectory(new File(ImageLoader.SavedImagesDirectory()));
         fileChooser.setSelectedExtensionFilter(
                 new FileChooser.ExtensionFilter("Image files", "*.png", "*.jpg", "*.jpeg")

@@ -15,7 +15,7 @@ public class CheckAppUpdateTask extends Task<Void>
         if (Updates.isUpdateAvailable())
         {
             Platform.runLater(() -> new ConfirmationTextDialogController(
-                    Translator.getInstance().t("textblock.confupdate"),
+                    Translator.getInstance().t("core:textblock.confupdate"),
                     response ->
                     {
                         if (!response) return;

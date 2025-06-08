@@ -23,7 +23,7 @@
     <PasswordField fx:id="accountPasswordField" promptText="%word.password" />
     
     <HBox alignment="CENTER_RIGHT" spacing="5" >
-        <Button onAction="#cancel" prefWidth="100" text="%word.cancel" />
-        <Button onAction="#accept" prefWidth="100" text="%word.accept" defaultButton="true" />
+        <Button onAction="#cancel" prefWidth="100" text="%core:word.cancel" />
+        <Button onAction="#accept" prefWidth="100" text="%core:word.accept" defaultButton="true" />
     </HBox>
 </VBox>

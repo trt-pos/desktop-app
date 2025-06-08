@@ -191,7 +191,7 @@ public class ConfigStageController extends StageController<ConfigStageController
     @Override
     public String getTitle()
     {
-        return Translator.getInstance().t("title.settingsstage");
+        return Translator.getInstance().t("core:title.settingsstage");
     }
 
     @Override

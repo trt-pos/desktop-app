@@ -28,9 +28,9 @@
         <HBox spacing="5" alignment="CENTER_RIGHT">
             <IconTextButton iconName="support.png" text="Support" onAction="#openTechnicalSupport" prefWidth="150" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button text="%word.accept" onAction="#accept" prefWidth="100"/>
-            <Button defaultButton="true" text="%word.cancel" onAction="#cancel" prefWidth="100"/>
-            <Button text="%word.apply" onAction="#apply" prefWidth="100"/>
+            <Button text="%core:word.accept" onAction="#accept" prefWidth="100"/>
+            <Button defaultButton="true" text="%core:word.cancel" onAction="#cancel" prefWidth="100"/>
+            <Button text="%core:word.apply" onAction="#apply" prefWidth="100"/>
         </HBox>
     </VBox>
 </SplitPane>

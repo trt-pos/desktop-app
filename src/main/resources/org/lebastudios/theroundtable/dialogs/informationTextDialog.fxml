@@ -14,6 +14,6 @@
     </padding>
     <Label fx:id="textLabel" wrapText="true" text="This is an information dialog."/>
     <HBox alignment="CENTER_RIGHT" spacing="5">
-        <Button defaultButton="true" onAction="#accept" text="%word.accept"/>
+        <Button defaultButton="true" onAction="#accept" text="%core:word.accept"/>
     </HBox>
 </VBox>

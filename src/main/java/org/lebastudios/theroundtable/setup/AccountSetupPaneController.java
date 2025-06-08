@@ -26,7 +26,7 @@ public class AccountSetupPaneController extends SetupPaneController
     {
         ((BorderPane) getRoot()).setTop(
                 new TitleBuilder(
-                        Translator.getInstance().t("setup.title.adminconfig"),
+                        Translator.getInstance().t("core:setup.title.adminconfig"),
                         "admin-user.png"
                 ).build()
         );
@@ -50,21 +50,21 @@ public class AccountSetupPaneController extends SetupPaneController
     {
         if (usernameField.getText().isBlank() || usernameField.getText().length() < 3)
         {
-            errorLabel.setText(Translator.getInstance().t("setup.error.invalidname"));
+            errorLabel.setText(Translator.getInstance().t("core:setup.error.invalidname"));
             UIEffects.shakeNode(usernameField);
             return false;
         }
 
         if (!LocalPasswordValidator.isValidFormat(passwordField.getText()))
         {
-            errorLabel.setText(Translator.getInstance().t("setup.error.invalidpassword"));
+            errorLabel.setText(Translator.getInstance().t("core:setup.error.invalidpassword"));
             UIEffects.shakeNode(passwordField);
             return false;
         }
 
         if (!passwordField.getText().equals(confirmPasswordField.getText()))
         {
-            errorLabel.setText(Translator.getInstance().t("setup.error.passwordmatch"));
+            errorLabel.setText(Translator.getInstance().t("core:setup.error.passwordmatch"));
             UIEffects.shakeNode(confirmPasswordField);
             return false;
         }

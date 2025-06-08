@@ -42,6 +42,6 @@ public class InformationTextDialogController extends StageController<Information
     @Override
     public String getTitle()
     {
-        return Translator.getInstance().t("title.infodialog");
+        return Translator.getInstance().t("core:title.infodialog");
     }
 }

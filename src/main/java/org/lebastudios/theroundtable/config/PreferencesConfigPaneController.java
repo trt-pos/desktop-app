@@ -13,7 +13,7 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
 
     public PreferencesConfigPaneController()
     {
-        super(new PreferencesConfigData(), Translator.getInstance().t("word.preferences"), "preferences.png");
+        super(new PreferencesConfigData(), Translator.getInstance().t("core:word.preferences"), "preferences.png");
     }
 
     @Override

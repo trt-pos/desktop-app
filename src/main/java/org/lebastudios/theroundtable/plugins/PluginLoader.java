@@ -100,12 +100,13 @@ public class PluginLoader
                     keepTryingToLoad = true;
 
                     updateMessage("Initializing plugin " + pluginData.pluginName);
-                    // All the chewcks passed, the plugin can be considered load and the user will be able to use it
-                    // Load plugin translations
-                    Translator.getInstance().loadT(plugin.getClass(), LocaleManager.getInstance().getActualLocale());
 
                     // Add plugin to the loaded plugins collection
                     pluginsManager.getPluginsLoaded().put(plugin.getPluginData().pluginId, plugin);
+                    
+                    // All the chewcks passed, the plugin can be considered load and the user will be able to use it
+                    // Load plugin translations
+                    Translator.getInstance().loadT(plugin.getClass(), LocaleManager.getInstance().getActualLocale());
                 }
             }
 

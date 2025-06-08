@@ -46,7 +46,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 
     public DatabaseConfigPaneController()
     {
-        super(new DatabaseConfigData(), Translator.getInstance().t("word.database"), "database.png");
+        super(new DatabaseConfigData(), Translator.getInstance().t("core:word.database"), "database.png");
 
         oldConfig = new DatabaseConfigData().load();
     }

@@ -38,11 +38,11 @@
             </VBox>
             <VBox spacing="5" VBox.vgrow="ALWAYS" maxHeight="Infinity" alignment="CENTER">
                 <HBox alignment="CENTER_LEFT">
-                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%word.password" />
+                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%core:word.password" />
                     <PasswordField  prefWidth="150" fx:id="passwordField" />
                 </HBox>
                 <HBox alignment="CENTER_LEFT">
-                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%phrase.accountype" />
+                    <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%core:phrase.accountype" />
                     <ComboBox prefWidth="150" fx:id="accountType" />
                 </HBox>
                 <Label style="-fx-font-style: italic; -fx-text-fill: red" fx:id="errorLabel"/>

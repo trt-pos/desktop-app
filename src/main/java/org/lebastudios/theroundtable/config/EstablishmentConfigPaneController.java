@@ -22,7 +22,7 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
 
     public EstablishmentConfigPaneController()
     {
-        super(new EstablishmentConfigData(), Translator.getInstance().t("word.establishment"), "establishment.png");
+        super(new EstablishmentConfigData(), Translator.getInstance().t("core:word.establishment"), "establishment.png");
     }
 
     @Override

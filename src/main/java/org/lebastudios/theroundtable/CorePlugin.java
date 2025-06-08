@@ -56,7 +56,7 @@ public class CorePlugin implements IPlugin
     @Override
     public TreeItem<SettingsItem> getSettingsRootTreeItem()
     {
-        var generalConfigSection = new TreeItem<>(new SettingsItem(Translator.getInstance().t("word.general"),
+        var generalConfigSection = new TreeItem<>(new SettingsItem(Translator.getInstance().t("core:word.general"),
                 "settings.png"));
         generalConfigSection.setExpanded(true);
 
@@ -87,7 +87,7 @@ public class CorePlugin implements IPlugin
         {
             var administrationSection = new TreeItem<>(
                     new SettingsItem(
-                            Translator.getInstance().t("core.settings.section.administration"),
+                            Translator.getInstance().t("core:core.settings.section.administration"),
                             "admin-user.png")
             );
 
@@ -157,7 +157,7 @@ public class CorePlugin implements IPlugin
         if (AccountManager.getInstance().isAccountAdmin())
         {
             buttons.add(new LabeledIconButton(
-                    Translator.getInstance().t("core.homebuttons.remotecontrol"),
+                    Translator.getInstance().t("core:core.homebuttons.remotecontrol"),
                     "control-pane.png",
                     _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
             ));

@@ -15,11 +15,11 @@
     
     <bottom>
         <VBox alignment="CENTER" maxWidth="250" spacing="15" fx:id="passwordBox">
-            <Label maxWidth="Infinity" text="%word.password" />
+            <Label maxWidth="Infinity" text="%core:word.password" />
             <PasswordField fx:id="passwordField" />
             <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Button text="%word.cancel" onAction="#cancelPassword" />
-                <Button defaultButton="true" text="%word.accept" onAction="#submitPassword" />
+                <Button text="%core:word.cancel" onAction="#cancelPassword" />
+                <Button defaultButton="true" text="%core:word.accept" onAction="#submitPassword" />
             </HBox>
             <Label fx:id="passwordError" maxWidth="Infinity" style="-fx-font-style: italic; -fx-text-fill: red;" />
         </VBox>

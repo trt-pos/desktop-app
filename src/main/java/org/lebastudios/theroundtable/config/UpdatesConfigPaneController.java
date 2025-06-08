@@ -12,7 +12,7 @@ public class UpdatesConfigPaneController extends ConfigPaneController<UpdatesCon
     {
         super(
                 new UpdatesConfigData(),
-                Translator.getInstance().t("word.updates"), 
+                Translator.getInstance().t("core:word.updates"), 
                 "reload.png"
         );
     }

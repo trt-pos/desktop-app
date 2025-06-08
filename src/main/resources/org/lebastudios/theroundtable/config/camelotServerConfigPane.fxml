@@ -12,12 +12,12 @@
         <Insets top="10" bottom="10" left="10" right="10"/>
     </padding>
     <HBox spacing="15" alignment="CENTER">
-        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%word.host"/>
+        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%core:word.host"/>
         <TextField fx:id="serverAddress"/>
-        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%word.port"/>
+        <Label HBox.hgrow="ALWAYS" maxWidth="Infinity" text="%core:word.port"/>
         <TextField fx:id="serverPort"/>
     </HBox>
-    <CheckBox text="%phrase.defaultconfig" fx:id="defaultConfigCheckbox"/>
+    <CheckBox text="%core:phrase.defaultconfig" fx:id="defaultConfigCheckbox"/>
     <Label fx:id="serviceStatus" text="Status" alignment="CENTER_RIGHT" maxWidth="Infinity" 
            style="-fx-text-fill: red; -fx-font-size: 10"/>
 </VBox>

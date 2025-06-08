@@ -22,7 +22,7 @@
             <content>
                 <VBox maxWidth="Infinity" alignment="CENTER" spacing="10">
                     <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
-                    <Label textAlignment="CENTER" wrapText="true" text="%phrase.setupwelcome"/>
+                    <Label textAlignment="CENTER" wrapText="true" text="%core:phrase.setupwelcome"/>
                 </VBox>
             </content>
         </ScrollPane>
@@ -33,8 +33,8 @@
             <BorderPane.margin>
                 <Insets top="10" />
             </BorderPane.margin>
-            <Button prefWidth="100" fx:id="backButton" onAction="#backButtonAction" text="%word.pervious" />
-            <Button defaultButton="true" prefWidth="100" fx:id="nextButton" onAction="#nextButtonAction" text="%word.next" />
+            <Button prefWidth="100" fx:id="backButton" onAction="#backButtonAction" text="%core:word.pervious" />
+            <Button defaultButton="true" prefWidth="100" fx:id="nextButton" onAction="#nextButtonAction" text="%core:word.next" />
         </HBox>
     </bottom>
 </BorderPane>

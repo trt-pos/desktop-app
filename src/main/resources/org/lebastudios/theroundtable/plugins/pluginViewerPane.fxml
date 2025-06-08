@@ -39,7 +39,7 @@
         </HBox>
     </VBox>
     
-    <TitledPane fx:id="dependenciesPaneContainer" text="%word.dependencies" style="-fx-font-size: 13;" maxWidth="Infinity" expanded="false">
+    <TitledPane fx:id="dependenciesPaneContainer" text="%core:word.dependencies" style="-fx-font-size: 13;" maxWidth="Infinity" expanded="false">
         <content>
             <VBox fx:id="dependenciesPane" />
         </content>

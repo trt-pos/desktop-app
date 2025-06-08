@@ -113,7 +113,7 @@ public class Account
         @Override
         public String toString()
         {
-            return Translator.getInstance().t("enum.accounttype." + this.name().toLowerCase());
+            return Translator.getInstance().t("core:enum.accounttype." + this.name().toLowerCase());
         }
     }
 

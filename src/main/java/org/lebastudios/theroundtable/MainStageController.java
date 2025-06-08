@@ -88,8 +88,8 @@ public class MainStageController extends PaneController<MainStageController>
 
     public void requestRestart()
     {
-        showNotification(Translator.getInstance().t("textblock.infrestartneeded"),
-                new Action(Translator.getInstance().t("word.restart"), _ ->
+        showNotification(Translator.getInstance().t("core:textblock.infrestartneeded"),
+                new Action(Translator.getInstance().t("core:word.restart"), _ ->
                         Launcher.restartAplication()));
     }
 

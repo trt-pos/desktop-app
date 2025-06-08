@@ -17,11 +17,11 @@
         </padding>
         <IconView iconName="error.png" iconSize="64" />
         <VBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="%dialogs.exception.head" prefWidth="600" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+            <Label text="%core:dialogs.exception.head" prefWidth="600" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
             <Label fx:id="textLabel" wrapText="true" maxWidth="Infinity" />
         </VBox>
     </HBox>
-    <TitledPane expanded="false" maxHeight="700" text="%dialogs.exception.backtrace" fx:id="titledPane" animated="false">
+    <TitledPane expanded="false" maxHeight="700" text="%core:dialogs.exception.backtrace" fx:id="titledPane" animated="false">
         <content>
             <ScrollPane pannable="true">
                 <content>
@@ -31,6 +31,6 @@
         </content>
     </TitledPane>
     <HBox alignment="CENTER_RIGHT" spacing="5">
-        <Button defaultButton="true" onAction="#copyToClipboard" prefWidth="150" text="%dialogs.exception.copy" />
+        <Button defaultButton="true" onAction="#copyToClipboard" prefWidth="150" text="%core:dialogs.exception.copy" />
     </HBox>
 </VBox>

@@ -54,6 +54,6 @@ public class ConfirmationTextDialogController extends StageController<Confirmati
     @Override
     public String getTitle()
     {
-        return Translator.getInstance().t("title.confirmdialog");
+        return Translator.getInstance().t("core:title.confirmdialog");
     }
 }

@@ -36,7 +36,7 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
 
     public GlobalPreferencesConfigPaneController()
     {
-        super(new GlobalPreferencesConfigData(), Translator.getInstance().t("core.config.globalpref"), "preferences.png");
+        super(new GlobalPreferencesConfigData(), Translator.getInstance().t("core:core.config.globalpref"), "preferences.png");
     }
 
     @Override

@@ -21,7 +21,7 @@ public class PrintersConfigPaneController extends ConfigPaneController<PrintersC
 
     public PrintersConfigPaneController()
     {
-        super(new PrintersConfigData(), Translator.getInstance().t("word.printers"), "printer.png");
+        super(new PrintersConfigData(), Translator.getInstance().t("core:word.printers"), "printer.png");
     }
 
     @Override

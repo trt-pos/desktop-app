@@ -10,5 +10,5 @@
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
     
-    <CheckBox fx:id="disableUpdatesCheckBox" text="%coonfig.updates.disableappupdates" />
+    <CheckBox fx:id="disableUpdatesCheckBox" text="%core:coonfig.updates.disableappupdates" />
 </VBox>

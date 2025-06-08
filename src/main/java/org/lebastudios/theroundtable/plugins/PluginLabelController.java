@@ -73,7 +73,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         pluginDescription.setText(pluginData.pluginDescription);
         pluginRepo.setText(data == null ? "Built-in" : data.url);
 
-        Tooltip tooltip = new Tooltip(Translator.getInstance().t("phrase.dependenciesnotsatisfied"));
+        Tooltip tooltip = new Tooltip(Translator.getInstance().t("core:phrase.dependenciesnotsatisfied"));
         tooltip.setShowDelay(Duration.millis(100));
         Tooltip.install(notInstallableButton, tooltip);
 
@@ -181,7 +181,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         
         if (!pluginData.isDependencyOfOther())
         {
-            new ConfirmationTextDialogController(Translator.getInstance().t("phrase.pluginsuninstall"), result ->
+            new ConfirmationTextDialogController(Translator.getInstance().t("core:phrase.pluginsuninstall"), result ->
             {
                 if (!result) return;
 
@@ -190,7 +190,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
             return;
         }
 
-        new ConfirmationTextDialogController(Translator.getInstance().t("phrase.otherplugindepends"), result ->
+        new ConfirmationTextDialogController(Translator.getInstance().t("core:phrase.otherplugindepends"), result ->
         {
             if (!result) return;
 

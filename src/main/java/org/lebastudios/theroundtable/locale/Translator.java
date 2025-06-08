@@ -54,41 +54,51 @@ public class Translator
             );
         }
 
-        getInstance().resourceBundles.put(plugin.getPackageName() + ".lang", resourceBundle);
-    }
-    
-    public String t(String key)
-    {
-        for (var resourceBundle : resourceBundles.values())
-        {
-            try
-            {
-                return resourceBundle.getString(key);
-            }
-            catch (MissingResourceException _) {}
-        }
-
-        Logs.getInstance().log(
-                Logs.LogType.WARNING,
-                "Key not found: " + key
+        getInstance().resourceBundles.put(
+                PluginsManager.getInstance().getPluginOf(plugin).orElseThrow().getPluginData().pluginId,
+                resourceBundle
         );
-
-        return key;
     }
     
-    public String t(String key, Class<? extends IPlugin> plugin)
+    public String t(String fullKey)
+    {
+        int splitIndex = fullKey.indexOf(':');
+        
+        if (splitIndex == -1) 
+        {
+            throw new IllegalArgumentException("Missing plugin ID in fullKey: " + fullKey);
+        }
+        
+        String pluginId = fullKey.substring(0, splitIndex);
+        String key = fullKey.substring(splitIndex + 1);
+
+        return t(pluginId, key);
+    }
+    
+    public String t(Class<? extends IPlugin> plugin, String key)
+    {
+        String pluginId = PluginsManager.getInstance()
+                .getPluginOf(plugin)
+                .orElseThrow()
+                .getPluginData()
+                .pluginId;
+        
+        return t(pluginId, key);
+    }
+    
+    public String t(String pluginId, String key)
     {
         try
         {
-            return resourceBundles.get(plugin.getPackageName() + ".lang").getString(key);
+            return resourceBundles.get(pluginId).getString(key);
         }
-        catch (MissingResourceException _) 
+        catch (Exception _)
         {
             Logs.getInstance().log(
                     Logs.LogType.WARNING,
-                    "Key not found: " + key
+                    "Key not found: " + pluginId + ":" + key
             );
-            
+
             return key;
         }
     }

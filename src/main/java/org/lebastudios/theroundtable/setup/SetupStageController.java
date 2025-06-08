@@ -52,7 +52,7 @@ public class SetupStageController extends StageController<SetupStageController>
                 .setStageConsumer(s -> s.setOnCloseRequest(e ->
                 {
                     new ConfirmationTextDialogController(
-                            Translator.getInstance().t("textblock.closingsetup"),
+                            Translator.getInstance().t("core:textblock.closingsetup"),
                             response ->
                             {
                                 if (response)
