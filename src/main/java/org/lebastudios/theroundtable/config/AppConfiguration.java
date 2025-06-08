@@ -1,7 +1,7 @@
 package org.lebastudios.theroundtable.config;
 
-import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.accounts.AccountManager;
+import org.lebastudios.theroundtable.env.Directories;
 
 import java.io.File;
 
@@ -14,7 +14,7 @@ public class AppConfiguration
 
     public static File get()
     {
-        return new File(TheRoundTableApplication.getUserDirectory() + "/config");
+        return new File(Directories.getHomeDir() + "/config");
     }
 
     public static File getUserDir()

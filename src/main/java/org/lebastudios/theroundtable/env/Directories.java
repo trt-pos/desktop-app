@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Directories
 {
-    public static String homeDir()
+    public static String getHomeDir()
     {
         String environment = System.getenv("TRT_HOME");
 
@@ -30,15 +30,6 @@ public class Directories
 
         return homeDir + (Variables.isDev() ? "-dev" : "");
     }
-
-    public static File internalDir()
-    {
-        File file = new File(homeDir(), "internal");
-
-        if (!file.exists()) file.mkdirs();
-
-        return file;
-    }
     
     public static File getTempDir()
     {
@@ -47,5 +38,16 @@ public class Directories
         if (!file.exists()) file.mkdirs();
         
         return file;
+    }
+
+    public static String getPersistedImagesDir()
+    {
+        var dir = getHomeDir() + "/saved-images";
+
+        var file = new File(dir);
+
+        if (!file.exists()) file.mkdirs();
+
+        return dir;
     }
 }

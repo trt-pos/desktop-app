@@ -5,6 +5,7 @@ import org.hibernate.cfg.Configuration;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.database.Dbms;
+import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.security.KeyringManager;
 
 import java.io.File;
@@ -17,10 +18,10 @@ public class DatabaseConfigData extends ConfigData<DatabaseConfigData>
 {
     public String establishmentDatabaseName = "establishment";
     
-    public String databaseFolder = TheRoundTableApplication.getUserDirectory() + File.separator + "databases";
+    public String databaseFolder = Directories.getHomeDir() + File.separator + "databases";
     public boolean enableBackups = false;
     public int numMaxBackups = 5;
-    public String backupFolder = TheRoundTableApplication.getUserDirectory() + File.separator + "trt-db-backups";
+    public String backupFolder = Directories.getHomeDir() + File.separator + "trt-db-backups";
     
     public boolean enableRemoteDb = false;
     public RemoteDbData remoteDbData;

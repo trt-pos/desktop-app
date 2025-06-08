@@ -171,7 +171,7 @@ public class FileTransferServiceManager
                     return;
                 }
 
-                if (!file.getAbsolutePath().startsWith(Directories.homeDir()))
+                if (!file.getAbsolutePath().startsWith(Directories.getHomeDir()))
                 {
                     writer.write(new byte[]{});
                     return;

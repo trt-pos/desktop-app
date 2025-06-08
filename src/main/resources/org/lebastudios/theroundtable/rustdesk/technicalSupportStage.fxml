@@ -27,12 +27,12 @@
             <Copy2Clipboard labelId="rustdeskConfigString" iconSize="22"/>
         </HBox>
 
-        <LabeledIconButton iconName="support.png" text="Request remote support" iconSize="96" onAction="#askForSupport"/>
+        <LabeledIconButton iconName="core:support.png" text="Request remote support" iconSize="96" onAction="#askForSupport"/>
     </VBox>
     
     <VBox fx:id="downloadRustDeckContainer" spacing="5">
         <Label text="RustDesk is a tool that enables the support team to resolve any issue just by sharing your desktop." />
         <Label text="After clicking the install button the button to ask for remote support will be shown." />
-        <LabeledIconButton iconName="download.png" text="Download RustDeck" iconSize="96" onAction="#downloadRustDeck"/>
+        <LabeledIconButton iconName="core:download.png" text="Download RustDeck" iconSize="96" onAction="#downloadRustDeck"/>
     </VBox>
 </VBox>

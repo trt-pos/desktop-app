@@ -43,11 +43,6 @@ public class TheRoundTableApplication extends Application
         return CorePlugin.getInstance().getPluginData().pluginVersion;
     }
 
-    public static String getUserDirectory()
-    {
-        return Directories.homeDir();
-    }
-
     public static String getAppDirectory()
     {
         return new File(CorePlugin.class.getProtectionDomain().getCodeSource()

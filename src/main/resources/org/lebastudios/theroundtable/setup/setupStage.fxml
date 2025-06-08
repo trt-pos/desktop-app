@@ -21,7 +21,7 @@
                     hbarPolicy="NEVER" fx:id="mainPane" pannable="true">
             <content>
                 <VBox maxWidth="Infinity" alignment="CENTER" spacing="10">
-                    <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
+                    <IconButton iconSize="128" iconName="core:the-round-table-logo.png"/>
                     <Label textAlignment="CENTER" wrapText="true" text="%core:phrase.setupwelcome"/>
                 </VBox>
             </content>

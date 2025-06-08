@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.LogoPaneController;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.events.AccountEvents;
 import org.lebastudios.theroundtable.locale.Translator;
@@ -112,7 +112,7 @@ public class ConfigStageController extends StageController<ConfigStageController
 
                 setText(item.value());
 
-                var imageView = new ImageView(ImageLoader.getIcon(item.iconName()));
+                var imageView = new ImageView(ImageManager.getInstance().get(item.iconName(), ImageManager.ImageType.ICON));
                 imageView.setFitHeight(20);
                 imageView.setFitWidth(20);
                 this.setGraphic(imageView);

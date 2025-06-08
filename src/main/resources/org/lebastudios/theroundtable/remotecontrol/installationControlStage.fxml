@@ -12,7 +12,7 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
     
-    <IconView iconName="control-pane.png" iconSize="100"/>
+    <IconView iconName="core:control-pane.png" iconSize="100"/>
     <Label fx:id="nameLabel" style="-fx-font-size: 18; -fx-font-weight: bold"/>
     <HBox alignment="CENTER" spacing="5">
         <Label fx:id="uuidLabel" style="-fx-font-size: 11"/>
@@ -20,9 +20,9 @@
     </HBox>
     <Region VBox.vgrow="ALWAYS"/>
     <FlowPane alignment="CENTER" hgap="10" vgap="10">
-        <LabeledIconButton text="%core:core.remotecontrol.closeapp" iconName="shutdown.png" onAction="#closeAppInstallationAction" />
-        <LabeledIconButton text="%core:core.remotecontrol.restart" iconName="shutdown.png" onAction="#restartAppInstallationAction" />
-        <LabeledIconButton text="%core:core.remotecontrol.disable" iconName="disable.png" onAction="#disableAppInstallationAction" />
-        <LabeledIconButton text="%core:core.remotecontrol.syncplugins" iconName="reload.png" onAction="#syncPluginsAppInstallationAction" />
+        <LabeledIconButton text="%core:core.remotecontrol.closeapp" iconName="core:shutdown.png" onAction="#closeAppInstallationAction" />
+        <LabeledIconButton text="%core:core.remotecontrol.restart" iconName="core:shutdown.png" onAction="#restartAppInstallationAction" />
+        <LabeledIconButton text="%core:core.remotecontrol.disable" iconName="core:disable.png" onAction="#disableAppInstallationAction" />
+        <LabeledIconButton text="%core:core.remotecontrol.syncplugins" iconName="core:reload.png" onAction="#syncPluginsAppInstallationAction" />
     </FlowPane>
 </VBox>

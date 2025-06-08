@@ -26,7 +26,7 @@
                     prefWidth="650" prefHeight="400" fx:id="mainPane"/>
         <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 13;" />
         <HBox spacing="5" alignment="CENTER_RIGHT">
-            <IconTextButton iconName="support.png" text="Support" onAction="#openTechnicalSupport" prefWidth="150" />
+            <IconTextButton iconName="core:support.png" text="Support" onAction="#openTechnicalSupport" prefWidth="150" />
             <Region HBox.hgrow="ALWAYS" />
             <Button text="%core:word.accept" onAction="#accept" prefWidth="100"/>
             <Button defaultButton="true" text="%core:word.cancel" onAction="#cancel" prefWidth="100"/>

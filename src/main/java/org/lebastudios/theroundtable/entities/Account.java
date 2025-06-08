@@ -105,8 +105,8 @@ public class Account
         {
             return switch (this)
             {
-                case ROOT, ADMIN -> "admin-user.png";
-                default -> "user.png";
+                case ROOT, ADMIN -> "core:admin-user.png";
+                default -> "core:user.png";
             };
         }
 

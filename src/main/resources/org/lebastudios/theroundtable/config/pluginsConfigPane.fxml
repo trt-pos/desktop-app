@@ -16,8 +16,8 @@
     <VBox spacing="5">
         <Label text="Repositories" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
         <HBox spacing="5" alignment="CENTER_RIGHT">
-            <IconButton iconName="plus.png" onAction="#addRepo" />
-            <IconButton iconName="less.png" onAction="#removeRepo" />
+            <IconButton iconName="core:plus.png" onAction="#addRepo" />
+            <IconButton iconName="core:less.png" onAction="#removeRepo" />
         </HBox>
         <ListView fx:id="reposList"/>
     </VBox>

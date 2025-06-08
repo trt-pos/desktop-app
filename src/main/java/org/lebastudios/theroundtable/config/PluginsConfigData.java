@@ -1,6 +1,6 @@
 package org.lebastudios.theroundtable.config;
 
-import org.lebastudios.theroundtable.TheRoundTableApplication;
+import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.Variables;
 import org.lebastudios.theroundtable.server.Server;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class PluginsConfigData extends ConfigData<PluginsConfigData>
 {
-    public String pluginsFolder = TheRoundTableApplication.getUserDirectory() + "/plugins/";
+    public String pluginsFolder = Directories.getHomeDir() + "/plugins/";
     public String centralRepo = Server.CENTRAL_PLUGIN_REPO_BASE_URL;
     public Set<String> customRepos = new HashSet<>();
 

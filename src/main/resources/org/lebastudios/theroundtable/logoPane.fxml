@@ -7,7 +7,7 @@
 <HBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" xmlns="http://javafx.com/javafx/17.0.2-ea"
       fx:controller="org.lebastudios.theroundtable.LogoPaneController">
     <VBox HBox.hgrow="ALWAYS" spacing="15" alignment="CENTER">
-        <IconButton iconSize="128" iconName="the-round-table-logo.png"/>
+        <IconButton iconSize="128" iconName="core:the-round-table-logo.png"/>
         <Label alignment="CENTER" contentDisplay="CENTER" text="The Round Table" textAlignment="CENTER"/>
     </VBox>
 </HBox>

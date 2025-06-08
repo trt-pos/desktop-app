@@ -14,7 +14,7 @@
     </padding>
     <StackPane fx:id="formContainer" VBox.vgrow="ALWAYS"/>
     <HBox alignment="CENTER_RIGHT" spacing="5">
-        <IconButton iconName="delete.png" fx:id="deleteButton" onAction="#deleteButtonAction" visible="false"/>
+        <IconButton iconName="core:delete.png" fx:id="deleteButton" onAction="#deleteButtonAction" visible="false"/>
         <Button onAction="#cancelButtonAction" prefWidth="150" text="%core:word.cancel"/>
         <Button defaultButton="true" onAction="#saveButtonAction" prefWidth="150" text="%core:word.save" />
     </HBox>

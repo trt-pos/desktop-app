@@ -19,8 +19,8 @@
                 <padding>
                     <Insets top="5" right="5" bottom="5" left="5"/>
                 </padding>
-                <IconButton onAction="#openTasksPopup" iconName="task.png" fx:id="openTasksPopupButton"/>
-                <IconButton onAction="#closeSession" iconName="close-session.png" />
+                <IconButton onAction="#openTasksPopup" iconName="core:task.png" fx:id="openTasksPopupButton"/>
+                <IconButton onAction="#closeSession" iconName="core:close-session.png" />
             </VBox>
         </VBox>
     </left>

@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.config;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.locale.Translator;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
 
     public EstablishmentConfigPaneController()
     {
-        super(new EstablishmentConfigData(), Translator.getInstance().t("core:word.establishment"), "establishment.png");
+        super(new EstablishmentConfigData(), Translator.getInstance().t("core:word.establishment"), "core:establishment.png");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
 
         if (imageFile != null)
         {
-            imageFile = ImageLoader.saveImageInSpecialFolder(imageFile);
+            imageFile = ImageManager.getInstance().persistImageFile(imageFile);
             configData.logoImgPath = imageFile.getAbsolutePath();
         }
     }
@@ -58,14 +58,13 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
 
         var imageFile = new File(configData.logoImgPath);
         establishmentLogo.setOnMouseClicked(_ -> selectImage());
-        establishmentLogo.setOnTouchPressed(_ -> selectImage());
         if (!imageFile.exists() || !imageFile.isFile())
         {
-            establishmentLogo.setImage(ImageLoader.getIcon("no-product-image.png"));
+            establishmentLogo.setImage(ImageManager.getInstance().get("core:icon-not-found.png", ImageManager.ImageType.ICON));
         }
         else
         {
-            establishmentLogo.setImage(ImageLoader.getSavedImage(configData.logoImgPath));
+            establishmentLogo.setImage(ImageManager.getInstance().get(configData.logoImgPath, ImageManager.ImageType.PERSISTED));
         }
     }
 
@@ -78,7 +77,7 @@ public class EstablishmentConfigPaneController extends ConfigPaneController<Esta
     @SneakyThrows
     private void selectImage()
     {
-        var result = ImageLoader.showImageChooser(this.getStage().getOwner());
+        var result = ImageManager.showImageChooser(this.getStage().getOwner());
         
         if (result == null) return;
         

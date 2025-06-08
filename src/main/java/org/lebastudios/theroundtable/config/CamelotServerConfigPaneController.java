@@ -20,7 +20,7 @@ public class CamelotServerConfigPaneController extends ConfigPaneController<Came
 
     public CamelotServerConfigPaneController()
     {
-        super(new CamelotServerConfigData(), "Camelot", "server.png");
+        super(new CamelotServerConfigData(), "Camelot", "core:server.png");
     }
 
     @Override

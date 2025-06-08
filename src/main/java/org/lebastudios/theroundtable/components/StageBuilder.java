@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.logs.Logs;
 
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class StageBuilder
 
         Image image = iconName == null
                 ? defaultIcon
-                : ImageLoader.getIcon(iconName);
+                : ImageManager.getInstance().get(iconName, ImageManager.ImageType.ICON);
 
         stage.getIcons().add(image);
 

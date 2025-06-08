@@ -6,9 +6,10 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.database.IDatabaseUpdater;
+import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.LabeledIconButton;
@@ -47,7 +48,7 @@ public interface IPlugin extends IDatabaseUpdater
     
     default File getPluginFolder()
     {
-        return new File(TheRoundTableApplication.getUserDirectory(), getPluginData().pluginId);
+        return new File(Directories.getHomeDir(), getPluginData().pluginId);
     }
     
     default Image getPluginIcon()
@@ -56,7 +57,7 @@ public interface IPlugin extends IDatabaseUpdater
 
         if (inputStream == null)
         {
-            return ImageLoader.getIcon("plugins.png");
+            return ImageManager.getInstance().get("core:plugins.png", ImageManager.ImageType.ICON);
         }
 
         return new Image(inputStream);

@@ -13,6 +13,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
+import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.SwitcheableNodePane;
@@ -46,7 +47,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
 
     public DatabaseConfigPaneController()
     {
-        super(new DatabaseConfigData(), Translator.getInstance().t("core:word.database"), "database.png");
+        super(new DatabaseConfigData(), Translator.getInstance().t("core:word.database"), "core:database.png");
 
         oldConfig = new DatabaseConfigData().load();
     }
@@ -307,7 +308,7 @@ public class DatabaseConfigPaneController extends ConfigPaneController<DatabaseC
     private DirectoryChooser getDirectoryChooser(String title)
     {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File(TheRoundTableApplication.getUserDirectory()));
+        directoryChooser.setInitialDirectory(new File(Directories.getHomeDir()));
         directoryChooser.setTitle(title);
         return directoryChooser;
     }

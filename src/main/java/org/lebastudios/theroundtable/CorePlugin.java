@@ -57,7 +57,7 @@ public class CorePlugin implements IPlugin
     public TreeItem<SettingsItem> getSettingsRootTreeItem()
     {
         var generalConfigSection = new TreeItem<>(new SettingsItem(Translator.getInstance().t("core:word.general"),
-                "settings.png"));
+                "core:settings.png"));
         generalConfigSection.setExpanded(true);
 
         if (AccountManager.getInstance().isAccountAdmin())
@@ -88,7 +88,7 @@ public class CorePlugin implements IPlugin
             var administrationSection = new TreeItem<>(
                     new SettingsItem(
                             Translator.getInstance().t("core:core.settings.section.administration"),
-                            "admin-user.png")
+                            "core:admin-user.png")
             );
 
             administrationSection.getChildren().add(
@@ -109,7 +109,7 @@ public class CorePlugin implements IPlugin
 
         if (Variables.isDev())
         {
-            var developerSection = new TreeItem<>(new SettingsItem("Developer", "settings.png"));
+            var developerSection = new TreeItem<>(new SettingsItem("Developer", "core:settings.png"));
 
 
             generalConfigSection.getChildren().add(developerSection);
@@ -123,7 +123,7 @@ public class CorePlugin implements IPlugin
     {
         List<Button> buttons = new ArrayList<>();
 
-        IconButton settingsButton = new IconButton("settings.png");
+        IconButton settingsButton = new IconButton("core:settings.png");
         settingsButton.setOnAction(_ -> new ConfigStageController()
                 .setOwner(MainStageController.getInstance().getStage())
                 .instantiate()
@@ -135,7 +135,7 @@ public class CorePlugin implements IPlugin
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
-            IconButton pluginsButton = new IconButton("plugins.png");
+            IconButton pluginsButton = new IconButton("core:plugins.png");
             pluginsButton.setOnAction(_ -> new PluginsStageController()
                     .setOwner(MainStageController.getInstance().getStage())
                     .instantiate()
@@ -158,7 +158,7 @@ public class CorePlugin implements IPlugin
         {
             buttons.add(new LabeledIconButton(
                     Translator.getInstance().t("core:core.homebuttons.remotecontrol"),
-                    "control-pane.png",
+                    "core:control-pane.png",
                     _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
             ));
         }

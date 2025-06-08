@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.ImageView;
-import org.lebastudios.theroundtable.apparience.ImageLoader;
+import org.lebastudios.theroundtable.apparience.ImageManager;
 
 public class IconView extends ImageView
 {
@@ -18,7 +18,7 @@ public class IconView extends ImageView
     {
         this.iconName.addListener((_, _, newValue) ->
         {
-            this.setImage(ImageLoader.getIcon(newValue));
+            this.setImage(ImageManager.getInstance().get(newValue, ImageManager.ImageType.ICON));
         });
 
         iconSize.addListener((_, _, newValue) ->

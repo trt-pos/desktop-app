@@ -14,7 +14,7 @@ public class LoadingPaneController extends PaneController<LoadingPaneController>
     @Override
     protected void initialize()
     {
-        loadingIcon.setIconName("loading.png");
+        loadingIcon.setIconName("core:loading.png");
         loadingIcon.setIconSize(35);
 
         new Thread(() ->

@@ -45,7 +45,7 @@ public class UsersConfigPaneController extends ConfigPaneController<NoConfigFile
 
     public UsersConfigPaneController()
     {
-        super(new NoConfigFile(), Translator.getInstance().t("core:word.users"), "users.png");
+        super(new NoConfigFile(), Translator.getInstance().t("core:word.users"), "core:users.png");
     }
 
     @Override

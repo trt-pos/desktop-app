@@ -15,7 +15,7 @@
         <padding>
             <Insets bottom="15" left="15" right="15" top="15" />
         </padding>
-        <IconView iconName="error.png" iconSize="64" />
+        <IconView iconName="core:error.png" iconSize="64" />
         <VBox spacing="5" alignment="CENTER_LEFT">
             <Label text="%core:dialogs.exception.head" prefWidth="600" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
             <Label fx:id="textLabel" wrapText="true" maxWidth="Infinity" />

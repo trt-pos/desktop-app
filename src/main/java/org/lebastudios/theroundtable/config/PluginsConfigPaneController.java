@@ -14,7 +14,7 @@ public class PluginsConfigPaneController extends ConfigPaneController<PluginsCon
 
     public PluginsConfigPaneController()
     {
-        super(new PluginsConfigData(), "Plugins", "plugins.png");
+        super(new PluginsConfigData(), "Plugins", "core:plugins.png");
     }
 
     @Override
