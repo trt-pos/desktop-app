@@ -125,7 +125,7 @@ public class RemoteControlPaneController extends PaneController<RemoteControlPan
             {
                 return new TableCell<>()
                 {
-                    private final IconButton iconButton = new IconButton("control-pane.png");
+                    private final IconButton iconButton = new IconButton("core:control-pane.png");
 
                     {
                         iconButton.setOnAction(event ->

@@ -35,7 +35,7 @@ public class SearchBox extends HBox
         HBox.setHgrow(searchField, Priority.ALWAYS);
         
         searchButton = new IconButton();
-        searchButton.setIconName("find.png");
+        searchButton.setIconName("core:find.png");
         searchButton.setIconSize(16);
         
         searchButton.setOnAction(e -> onSearch.accept(searchField.getText()));

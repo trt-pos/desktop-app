@@ -38,7 +38,7 @@ public class MainStageController extends PaneController<MainStageController>
     {
         instance = this;
         
-        homeButton = new IconButton("home.png");
+        homeButton = new IconButton("core:home.png");
         homeButton.setOnAction(_ -> setCentralNode(new HomePaneController()));
     }
 
@@ -95,11 +95,12 @@ public class MainStageController extends PaneController<MainStageController>
 
     public void showNotification(String message, Action action)
     {
-        Notifications.create()
+        Platform.runLater(() -> Notifications.create()
                 .text(message)
                 .owner(getRoot())
                 .action(action)
-                .show();
+                .show()
+        );
     }
 
     @FXML

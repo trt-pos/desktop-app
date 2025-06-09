@@ -20,7 +20,7 @@
     <IconView fx:id="iconView" iconSize="100" iconName="core:security.png" />
     <Region prefHeight="25" />
     <ChoiceBox fx:id="accountChoiceBox" maxWidth="Infinity"/>
-    <PasswordField fx:id="accountPasswordField" promptText="%word.password" />
+    <PasswordField fx:id="accountPasswordField" promptText="%core:word.password" />
     
     <HBox alignment="CENTER_RIGHT" spacing="5" >
         <Button onAction="#cancel" prefWidth="100" text="%core:word.cancel" />

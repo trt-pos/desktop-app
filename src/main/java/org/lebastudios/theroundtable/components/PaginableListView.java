@@ -58,13 +58,13 @@ public class PaginableListView<T> extends VBox
 
         VBox.setVgrow(listView, Priority.ALWAYS);
 
-        this.doubleLeft = new IconButton("double-left.png");
+        this.doubleLeft = new IconButton("core:double-left.png");
         doubleLeft.setOnAction(_ -> showContent(0));
-        this.left = new IconButton("left.png");
+        this.left = new IconButton("core:left.png");
         left.setOnAction(_ -> showContent(actualGroup - 1));
-        this.right = new IconButton("right.png");
+        this.right = new IconButton("core:right.png");
         right.setOnAction(_ -> showContent(actualGroup + 1));
-        this.doubleRight = new IconButton("double-right.png");
+        this.doubleRight = new IconButton("core:double-right.png");
         doubleRight.setOnAction(_ -> showContent(maxGroup));
 
         this.doubleLeft.setIconSize(26);
