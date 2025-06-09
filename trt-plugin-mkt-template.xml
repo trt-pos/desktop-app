@@ -46,7 +46,7 @@
                     <Directory name="META-INF">
                         <Directory name="services">
                             <File name="org.lebastudios.theroundtable.plugins" extension="IPlugin">
-                                org.lebastudios.theroundtable.plugintemplate.PluginMainClass
+                                org.lebastudios.theroundtableplugins.template.PluginMainClass
                             </File>
                         </Directory>
                     </Directory>
