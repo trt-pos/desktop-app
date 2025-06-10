@@ -22,7 +22,7 @@ public class Account
         @Override
         public String toString(Account account)
         {
-            return account.getName();
+            return account.name;
         }
 
         @Override
