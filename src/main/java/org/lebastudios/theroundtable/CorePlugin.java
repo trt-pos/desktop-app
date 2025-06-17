@@ -14,8 +14,8 @@ import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController;
 import org.lebastudios.theroundtable.components.IconButton;
-import org.lebastudios.theroundtable.components.IconView;
 import org.lebastudios.theroundtable.components.LabeledIconButton;
+import org.lebastudios.theroundtable.themes.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,6 +176,20 @@ public class CorePlugin implements IPlugin
         entities.add(AppInstallation.class);
 
         return entities;
+    }
+
+    @Override
+    public List<Theme> getStyles()
+    {
+        return List.of(
+                new Theme("Cupertino Dark", "cupertino-dark", this),
+                new Theme("Cupertino Light", "cupertino-light", this),
+                new Theme("Dracula", "dracula", this),
+                new Theme("Nord Dark", "nord-dark", this),
+                new Theme("Nord Light", "nord-light", this),
+                new Theme("Primer Dark", "primer-dark", this),
+                new Theme("Primer Light", "primer-light", this)
+        );
     }
 
     @Override

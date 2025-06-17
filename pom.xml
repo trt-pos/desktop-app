@@ -19,6 +19,8 @@
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <charm-down.version>3.8.6</charm-down.version>
+        <styles.package.input>${project.basedir}/src/main/resources/org/lebastudios/theroundtable/themes</styles.package.input>
+        <styles.package.output>${project.basedir}/target/classes/org/lebastudios/theroundtable/themes</styles.package.output>
     </properties>
 
     <repositories>
@@ -204,6 +206,33 @@
                                 </manifest>
                             </archive>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>us.hebi.sass</groupId>
+                        <artifactId>sass-cli-maven-plugin</artifactId>
+                        <version>1.0.4</version>
+                        <configuration>
+                            <sassVersion>1.54.5</sassVersion>
+                            <args>
+                                <arg>${styles.package.input}/cupertino-dark.scss:${styles.package.output}/cupertino-dark.css</arg>
+                                <arg>${styles.package.input}/cupertino-light.scss:${styles.package.output}/cupertino-light.css</arg>
+                                <arg>${styles.package.input}/dracula.scss:${styles.package.output}/dracula.css</arg>
+                                <arg>${styles.package.input}/nord-dark.scss:${styles.package.output}/nord-dark.css</arg>
+                                <arg>${styles.package.input}/nord-light.scss:${styles.package.output}/nord-light.css</arg>
+                                <arg>${styles.package.input}/primer-dark.scss:${styles.package.output}/primer-dark.css</arg>
+                                <arg>${styles.package.input}/primer-light.scss:${styles.package.output}/primer-light.css</arg>
+                                <arg>--no-source-map</arg>
+                            </args>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sass-exec</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

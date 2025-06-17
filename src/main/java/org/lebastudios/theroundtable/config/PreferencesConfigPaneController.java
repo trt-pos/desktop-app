@@ -1,15 +1,15 @@
 package org.lebastudios.theroundtable.config;
 
+import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import org.lebastudios.theroundtable.apparience.ThemeLoader;
 import org.lebastudios.theroundtable.locale.Translator;
-
-import java.util.Objects;
+import org.lebastudios.theroundtable.plugins.PluginsManager;
+import org.lebastudios.theroundtable.themes.Theme;
 
 public class PreferencesConfigPaneController extends ConfigPaneController<PreferencesConfigData>
 {
-    @FXML public ChoiceBox<String> themeChoiceBox;
+    @FXML public ChoiceBox<Theme> themeChoiceBox;
 
     public PreferencesConfigPaneController()
     {
@@ -17,9 +17,17 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     }
 
     @Override
+    protected void initialize()
+    {
+        themeChoiceBox.setConverter(Theme.STRING_CONVERTER);
+        
+        super.initialize();
+    }
+
+    @Override
     public void updateConfigData(PreferencesConfigData configData)
     {
-        configData.theme = transformThemeToInternalText(themeChoiceBox.getValue());
+        configData.theme = themeChoiceBox.getValue().url().toExternalForm();
     }
 
     @Override
@@ -27,46 +35,23 @@ public class PreferencesConfigPaneController extends ConfigPaneController<Prefer
     {
         if (themeChoiceBox.getItems().isEmpty())
         {
-            var themesDir = ThemeLoader.getThemesDir();
-
-            for (var theme : Objects.requireNonNull(themesDir.listFiles()))
-            {
-                if (theme.isFile()) continue;
-
-                themeChoiceBox.getItems().add(transformThemeToDisplayableText(theme.getName()));
-            }
+            PluginsManager.getInstance()
+                    .getLoadedPlugins()
+                    .forEach(p -> themeChoiceBox.getItems().addAll(p.getStyles()));
         }
 
-        themeChoiceBox.setValue(transformThemeToDisplayableText(configData.theme));
+        themeChoiceBox.getSelectionModel().select(0);
+    }
+
+    @Override
+    public void onSave(PreferencesConfigData configData)
+    {
+        Application.setUserAgentStylesheet(configData.theme);
     }
 
     @Override
     public ValidationResult validate()
     {
         return ValidationResult.valid();
-    }
-
-    @Override
-    public void onSave(PreferencesConfigData configData)
-    {
-        ThemeLoader.reloadThemes();
-    }
-
-    private String transformThemeToDisplayableText(String theme)
-    {
-        int index = theme.indexOf("-");
-        
-        if (index == -1) 
-        {
-            return theme.substring(0, 1).toUpperCase() + theme.substring(1);
-        }
-        
-        return theme.substring(0, 1).toUpperCase() + theme.substring(1, index) + " " 
-                + theme.substring(index + 1, index + 2).toUpperCase() + theme.substring(index + 2);
-    }
-
-    private String transformThemeToInternalText(String theme)
-    {
-        return theme.toLowerCase().replace(" ", "-");
     }
 }

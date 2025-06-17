@@ -1,10 +1,12 @@
 package org.lebastudios.theroundtable.config;
 
+import org.lebastudios.theroundtable.themes.Theme;
+
 import java.io.File;
 
 public class PreferencesConfigData extends ConfigData<PreferencesConfigData>
 {
-    public String theme = "cupertino-light";
+    public String theme = Theme.DEFAULT.url().toExternalForm();
 
     @Override
     public File getFile()

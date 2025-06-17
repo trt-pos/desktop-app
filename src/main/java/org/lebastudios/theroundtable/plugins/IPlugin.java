@@ -5,12 +5,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import org.lebastudios.theroundtable.CorePlugin;
-import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.config.SettingsItem;
 import org.lebastudios.theroundtable.database.IDatabaseUpdater;
 import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.logs.Logs;
+import org.lebastudios.theroundtable.themes.Theme;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.LabeledIconButton;
 
@@ -46,6 +46,11 @@ public interface IPlugin extends IDatabaseUpdater
     
     default Task<PurgeTaskResult> purgeTask() { return null; }
     
+    default List<Theme> getStyles()
+    {
+        return new ArrayList<>();
+    }
+    
     default File getPluginFolder()
     {
         return new File(Directories.getHomeDir(), getPluginData().pluginId);
@@ -65,12 +70,7 @@ public interface IPlugin extends IDatabaseUpdater
     
     default PluginData getPluginData()
     {
-        InputStream is = this.getClass().getResourceAsStream("pluginData.json");
-        
-        if (is == null) 
-        {
-            is = this.getClass().getResourceAsStream("plugin-data.json");
-        }
+        InputStream is = this.getClass().getResourceAsStream("plugin-data.json");
         
         if (is == null) 
         {

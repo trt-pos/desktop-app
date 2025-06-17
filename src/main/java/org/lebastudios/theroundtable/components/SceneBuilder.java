@@ -2,7 +2,6 @@ package org.lebastudios.theroundtable.components;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import org.lebastudios.theroundtable.apparience.ThemeLoader;
 
 public class SceneBuilder
 {
@@ -15,6 +14,6 @@ public class SceneBuilder
 
     public Scene build()
     {
-        return ThemeLoader.addActualTheme(new Scene(root));
+        return new Scene(root);
     }
 }

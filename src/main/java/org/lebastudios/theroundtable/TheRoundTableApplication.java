@@ -11,6 +11,7 @@ import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.accounts.PrivilegeScalationStageController;
 import org.lebastudios.theroundtable.camelot.CamelotServiceManager;
 import org.lebastudios.theroundtable.communications.FileTransferServiceManager;
+import org.lebastudios.theroundtable.config.PreferencesConfigData;
 import org.lebastudios.theroundtable.config.UpdatesConfigData;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
@@ -18,7 +19,6 @@ import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.entities.AppInstallation;
 import org.lebastudios.theroundtable.entities.Plugin;
-import org.lebastudios.theroundtable.env.Directories;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
 import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LocaleManager;
@@ -27,6 +27,7 @@ import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.*;
 import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
+import org.lebastudios.theroundtable.themes.Theme;
 import org.lebastudios.theroundtable.tasks.MajorVersionMigratorTask;
 import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.SceneBuilder;
@@ -54,7 +55,12 @@ public class TheRoundTableApplication extends Application
     public void start(Stage stage)
     {
         Class.forName("org.mariadb.jdbc.Driver");
+        String styleURL = new File(new URI(new PreferencesConfigData().load().theme).toURL().getFile()).exists() 
+                ? new PreferencesConfigData().load().theme
+                : Theme.DEFAULT.url().toExternalForm();
 
+        Application.setUserAgentStylesheet(styleURL);
+        
         // Would like to differenciate between CorePlugin translations and basic app translations
         // cause this is executed twice,
         // one here and another when loading the plugins.
