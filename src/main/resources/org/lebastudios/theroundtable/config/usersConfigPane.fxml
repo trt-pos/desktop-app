@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.components.IconButton?>
 <?import org.lebastudios.theroundtable.components.IconView?>
-<HBox fx:id="root" spacing="15" xmlns="http://javafx.com/javafx/17.0.12"
+<HBox spacing="15" xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.lebastudios.theroundtable.config.UsersConfigPaneController">
     <padding>
         <Insets top="10" right="10" bottom="10" left="10"/>

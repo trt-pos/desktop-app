@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.components.IconButton?>
 <?import org.lebastudios.theroundtable.components.SwitcheableNodePane?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
+<VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="org.lebastudios.theroundtable.config.DatabaseConfigPaneController"
       spacing="15">

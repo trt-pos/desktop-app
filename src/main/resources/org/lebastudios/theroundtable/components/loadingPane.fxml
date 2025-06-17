@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.components.IconView?>
 <VBox maxWidth="Infinity" alignment="CENTER" xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml" fx:id="root"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.lebastudios.theroundtable.components.LoadingPaneController">
     <IconView fx:id="loadingIcon"/>
 </VBox>

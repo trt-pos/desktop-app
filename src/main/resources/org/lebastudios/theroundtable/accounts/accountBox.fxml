@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.components.IconView?>
-<VBox xmlns="http://javafx.com/javafx" fx:id="root"
+<VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml" styleClass="button"
       prefWidth="150" prefHeight="150"
       alignment="CENTER" spacing="10">

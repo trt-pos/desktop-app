@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.lebastudios.theroundtable.components.IconTextButton?>
-<GridPane xmlns:fx="http://javafx.com/fxml" fx:id="root" maxWidth="Infinity" maxHeight="Infinity"
+<GridPane xmlns:fx="http://javafx.com/fxml" maxWidth="Infinity" maxHeight="Infinity"
           xmlns="http://javafx.com/javafx" vgap="5" hgap="10"
           fx:controller="org.lebastudios.theroundtable.config.PrintersConfigPaneController">
     <padding>

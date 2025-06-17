@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.lebastudios.theroundtable.components.IconButton?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:id="root"
+<VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="org.lebastudios.theroundtable.config.PluginsConfigPaneController"
       spacing="15">
