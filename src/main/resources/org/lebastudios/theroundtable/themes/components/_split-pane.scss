@@ -17,7 +17,7 @@ $grabber-length:        10px !default;
   -color-split-grabber:         $color-grabber;
   -color-split-grabber-pressed: $color-grabber-pressed;
 
-  -fx-background-color: transparent;
+  -fx-background-color: -color-bg-default;
   -fx-background-insets: 0;
   -fx-padding: 0;
 
