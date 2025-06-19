@@ -30,7 +30,7 @@ public class PluginRepoIntrospector
 
     public AllPluginsDataResponse getAllPluginData(String[] tags, String search)
     {
-        String endpoint = repoUrl + "/data/all?tags=" + String.join(",", tags) + "&q=" + search;
+        String endpoint = repoUrl + "/search?tags=" + String.join(",", tags) + "&q=" + search;
 
         try (var client = AppHttpClient.getInstance().newClient())
         {
