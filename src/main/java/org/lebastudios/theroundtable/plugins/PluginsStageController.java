@@ -58,7 +58,7 @@ public class PluginsStageController extends StageController<PluginsStageControll
                         PluginRepoIntrospector introspector = new PluginRepoIntrospector(repo);
                         PluginRepoData metadata = introspector.intoMetadata();
 
-                        List<PluginData> pluginsData = introspector.getAllPluginData(new String[]{}, "").pluginsData;
+                        List<PluginData> pluginsData = introspector.getAllPluginData(new String[]{}, "", "").pluginsData;
 
                         List<Plugin> plugins = pluginsData.stream()
                                 .map(data -> new Plugin(data, metadata, null))

@@ -28,9 +28,9 @@ public class PluginRepoIntrospector
         return true;
     }
 
-    public AllPluginsDataResponse getAllPluginData(String[] tags, String search)
+    public AllPluginsDataResponse getAllPluginData(String[] tags, String category, String search)
     {
-        String endpoint = repoUrl + "/search?tags=" + String.join(",", tags) + "&q=" + search;
+        String endpoint = repoUrl + "/search?tags=" + String.join(",", tags) + "&q=" + search + "&category=" + category;
 
         try (var client = AppHttpClient.getInstance().newClient())
         {
@@ -71,6 +71,26 @@ public class PluginRepoIntrospector
         }
     }
 
+    public AllPluginsCategoriesResponse getCategories()
+    {
+        String endpoint = repoUrl + "/categories";
+
+        try (var client = AppHttpClient.getInstance().newClient())
+        {
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .build();
+
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return new Gson().fromJson(response.body(), AllPluginsCategoriesResponse.class);
+        }
+        catch (Exception e)
+        {
+            Logs.getInstance().log("An error ocurred while trying to get the available categories", e);
+            return null;
+        }
+    }
+    
     public String getWebIconUrl(String pluginId, Version version)
     {
         return repoUrl + "/plugin/" + pluginId + "/" + version.toString() + "/icon";
@@ -123,5 +143,11 @@ public class PluginRepoIntrospector
     {
         @SerializedName("plugins-data")
         public List<PluginData> pluginsData;
+    }
+
+    public static class AllPluginsCategoriesResponse
+    {
+        @SerializedName("categories")
+        public List<String> categories;
     }
 }
