@@ -3,12 +3,28 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
-<HBox xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.layout.VBox?>
+<?import org.lebastudios.theroundtable.components.SearchBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.layout.Region?>
+<VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
       fx:controller="org.lebastudios.theroundtable.plugins.PluginsStageController"
-      prefHeight="500" maxWidth="Infinity" spacing="10">
+      prefHeight="500" maxWidth="Infinity" spacing="5">
     <padding>
-        <Insets top="15" right="15" bottom="15" left="15"/>
+        <Insets top="5" right="5" bottom="5" left="5"/>
     </padding>
-    <TabPane minWidth="600" HBox.hgrow="ALWAYS" fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" />
-</HBox>
+    <HBox spacing="15" alignment="CENTER">
+        <padding>
+            <Insets left="25" right="25" />
+        </padding>
+        <SearchBox fx:id="searchBox"/>
+        <Region HBox.hgrow="ALWAYS" />
+        <Label text="%core:word.category"/>
+        <ChoiceBox prefWidth="150" fx:id="categoryChoiceBox"/>
+    </HBox>
+    <HBox fx:id="centerBox" VBox.vgrow="ALWAYS">
+        <TabPane minWidth="600" HBox.hgrow="ALWAYS" fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" />
+    </HBox>
+</VBox>

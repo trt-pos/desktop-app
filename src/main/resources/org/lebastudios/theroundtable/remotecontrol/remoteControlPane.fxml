@@ -11,13 +11,13 @@
     </padding>
     <TableView2 fx:id="installationsTableView" VBox.vgrow="ALWAYS" editable="true">
         <columns>
-            <TableColumn2 fx:id="uuidColumn" text="%core:core.remotecontrol.uuid"/>
-            <TableColumn2 fx:id="nameColumn" text="%core:core.remotecontrol.name"/>
-            <TableColumn2 fx:id="statusColumn" text="%core:core.remotecontrol.status"/>
-            <TableColumn2 fx:id="versionColumn" text="%core:core.remotecontrol.version"/>
-            <TableColumn2 fx:id="ipColumn" text="%core:core.remotecontrol.ip"/>
-            <TableColumn2 fx:id="subnetColumn" text="%core:core.remotecontrol.subnet"/>
-            <TableColumn2 fx:id="isMasterColumn" text="%core:core.remotecontrol.master" />
+            <TableColumn2 fx:id="uuidColumn" text="%core:remotecontrol.uuid"/>
+            <TableColumn2 fx:id="nameColumn" text="%core:remotecontrol.name"/>
+            <TableColumn2 fx:id="statusColumn" text="%core:remotecontrol.status"/>
+            <TableColumn2 fx:id="versionColumn" text="%core:remotecontrol.version"/>
+            <TableColumn2 fx:id="ipColumn" text="%core:remotecontrol.ip"/>
+            <TableColumn2 fx:id="subnetColumn" text="%core:remotecontrol.subnet"/>
+            <TableColumn2 fx:id="isMasterColumn" text="%core:remotecontrol.master" />
             <TableColumn2 fx:id="menuColumn"/>
         </columns>
     </TableView2>

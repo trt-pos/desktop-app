@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import org.lebastudios.theroundtable.CorePlugin;
+import org.lebastudios.theroundtable.components.SearchBox;
 import org.lebastudios.theroundtable.config.PluginsConfigData;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.components.IconTextButton;
@@ -22,6 +23,9 @@ import java.util.function.Supplier;
 public class PluginsStageController extends StageController<PluginsStageController>
 {
     @FXML public TabPane tabPane;
+    @FXML public SearchBox searchBox;
+    @FXML public ChoiceBox<String> categoryChoiceBox;
+    @FXML public HBox centerBox;
 
     @FXML
     @Override
@@ -30,6 +34,8 @@ public class PluginsStageController extends StageController<PluginsStageControll
         this.instantiateInstalledPlugins();
         this.instantiateAvailablePlugins();
 
+        categoryChoiceBox.getItems().add("");
+        
         showPluginViewer(CorePlugin.getInstance().intoPluginObject());
     }
 
@@ -76,11 +82,9 @@ public class PluginsStageController extends StageController<PluginsStageControll
 
     private void showPluginViewer(Plugin plugin)
     {
-        final var root = (HBox) getRoot();
+        if (centerBox.getChildren().size() > 1) centerBox.getChildren().removeLast();
 
-        if (root.getChildren().size() > 1) root.getChildren().removeLast();
-
-        root.getChildren().add(new PluginViewerPaneController(plugin).getRoot());
+        centerBox.getChildren().add(new PluginViewerPaneController(plugin).getRoot());
     }
 
     @Override

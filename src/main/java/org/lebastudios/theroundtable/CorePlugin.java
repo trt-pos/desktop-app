@@ -87,7 +87,7 @@ public class CorePlugin implements IPlugin
         {
             var administrationSection = new TreeItem<>(
                     new SettingsItem(
-                            Translator.getInstance().t("core:core.settings.section.administration"),
+                            Translator.getInstance().t("core:settings.section.administration"),
                             "core:admin-user.png")
             );
 
@@ -157,7 +157,7 @@ public class CorePlugin implements IPlugin
         if (AccountManager.getInstance().isAccountAdmin())
         {
             buttons.add(new LabeledIconButton(
-                    Translator.getInstance().t("core:core.homebuttons.remotecontrol"),
+                    Translator.getInstance().t("core:homebuttons.remotecontrol"),
                     "core:control-pane.png",
                     _ -> MainStageController.getInstance().setCentralNode(new RemoteControlPaneController())
             ));
