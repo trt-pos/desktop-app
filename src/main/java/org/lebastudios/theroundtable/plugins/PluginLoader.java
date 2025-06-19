@@ -115,8 +115,6 @@ public class PluginLoader
 
         private List<URL> getValidJars()
         {
-            movePluginsWithoutRepoToCentral();
-
             List<File> jars = new ArrayList<>();
             getInstalledPluginsJars(new File(new PluginsConfigData().load().pluginsFolder), jars);
 
@@ -154,28 +152,6 @@ public class PluginLoader
             }
 
             return validJars;
-        }
-
-        @SneakyThrows
-        private void movePluginsWithoutRepoToCentral()
-        {
-            File[] jars = new File(new PluginsConfigData().load().pluginsFolder)
-                    .listFiles((_, name) -> name.endsWith(".jar"));
-
-            if (jars == null) return;
-            if (jars.length == 0) return;
-
-            File centralRepoFolder = new File(PluginRepoData.centralRepo().getLocalRepoFolder());
-            if (centralRepoFolder.mkdirs())
-            {
-                PluginRepoData.centralRepo().save();
-            }
-
-            for (File jar : jars)
-            {
-                File finalJar = new File(centralRepoFolder, jar.getName());
-                Files.move(jar.toPath(), finalJar.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
         }
 
         private void getInstalledPluginsJars(File folder, List<File> jars)
