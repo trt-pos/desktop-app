@@ -13,7 +13,7 @@ public class PluginData
 {
     public String name;
     public String id;
-    public String descriprion;
+    public String description;
     public String version;
     public String vendor;
     @SerializedName(value = "vendor-url")
@@ -37,27 +37,27 @@ public class PluginData
             pluginsData.addAll(PluginsManager.getInstance().restartPendingPlugins());
 
             var pluginDependencyFound = pluginsData.stream()
-                    .filter(p -> p.id.equals(pluginDependencyNeeded.pluginId))
+                    .filter(p -> p.id.equals(pluginDependencyNeeded.id))
                     .findFirst()
                     .orElse(null);
 
             if (pluginDependencyFound == null)
             {
                 Logs.getInstance().log(Logs.LogType.INFO, "The plugin " + this.name
-                        + " requires the plugin " + pluginDependencyNeeded.pluginId + " to be installed."
+                        + " requires the plugin " + pluginDependencyNeeded.id + " to be installed."
                 );
                 return false;
             }
             
             final var installedDependencyVersion = new Version(pluginDependencyFound.version);
-            final var neededDependencyVersion = new Version(pluginDependencyNeeded.pluginVersion);
+            final var neededDependencyVersion = new Version(pluginDependencyNeeded.version);
 
             if (!installedDependencyVersion.hasSameMajor(neededDependencyVersion))
             {
                 Logs.getInstance().log(
                         Logs.LogType.INFO,
                         "The plugin " + this.name
-                                + " requires a different major version of the plugin " + pluginDependencyNeeded.pluginId
+                                + " requires a different major version of the plugin " + pluginDependencyNeeded.id
                 );
                 return false;
             }
@@ -65,7 +65,7 @@ public class PluginData
             if (installedDependencyVersion.isLessThan(neededDependencyVersion))
             {
                 Logs.getInstance().log(Logs.LogType.INFO, "The plugin " + this.name
-                        + " requires the plugin " + pluginDependencyNeeded.pluginId + " to be updated."
+                        + " requires the plugin " + pluginDependencyNeeded.id + " to be updated."
                 );
                 return false;
             }
@@ -77,8 +77,8 @@ public class PluginData
     public String requiredCoreVersion()
     {
         return Arrays.stream(dependencies)
-                .filter(data -> data.pluginId.equals(CorePlugin.getInstance().getPluginData().id))
-                .map(data -> data.pluginVersion)
+                .filter(data -> data.id.equals(CorePlugin.getInstance().getPluginData().id))
+                .map(data -> data.version)
                 .findFirst()
                 .orElse(null);
     }
@@ -90,7 +90,7 @@ public class PluginData
             PluginData otherPluginData = other.getPluginData();
 
             if (Arrays.stream(otherPluginData.dependencies)
-                    .anyMatch(data -> data.pluginId.equals(this.id)))
+                    .anyMatch(data -> data.id.equals(this.id)))
             {
                 return true;
             }
@@ -99,7 +99,7 @@ public class PluginData
         for (PluginData otherPluginData : PluginsManager.getInstance().getPluginsRestartPending().values())
         {
             if (Arrays.stream(otherPluginData.dependencies)
-                    .anyMatch(data -> data.pluginId.equals(this.id)))
+                    .anyMatch(data -> data.id.equals(this.id)))
             {
                 return true;
             }

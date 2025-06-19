@@ -42,7 +42,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         iconViewContainer.getChildren().add(iconView);
         pluginNameLabel.setText(pluginData.name);
         pluginIdLabel.setText(pluginData.id);
-        pluginDescriptionLabel.setText(pluginData.descriprion);
+        pluginDescriptionLabel.setText(pluginData.description);
         pluginVendorLabel.setText(pluginData.vendor);
         pluginVendorUrlLabel.setText(pluginData.vendorUrl);
         pluginRequiredCoreVersionLabel.setText(pluginData.requiredCoreVersion());
@@ -56,7 +56,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         {
             for (var dependency : pluginData.dependencies)
             {
-                if (dependency.pluginId.equals(CorePlugin.getInstance().getPluginData().id)) continue;
+                if (dependency.id.equals(CorePlugin.getInstance().getPluginData().id)) continue;
                 dependenciesPane.getChildren().add(createDependencyNode(dependency));
             }
         }
@@ -64,7 +64,7 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
 
     private Node createDependencyNode(PluginDependencyData dependency)
     {
-        final var dependencyLabel = new Label(dependency.pluginId + " " + dependency.pluginVersion);
+        final var dependencyLabel = new Label(dependency.id + " " + dependency.version);
         dependencyLabel.getStyleClass().add("dependency-label");
         return dependencyLabel;
     }

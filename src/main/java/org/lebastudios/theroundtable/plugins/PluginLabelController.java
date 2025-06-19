@@ -70,7 +70,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         pluginIcon.setFitWidth(35);
 
         pluginName.setText(pluginData.name);
-        pluginDescription.setText(pluginData.descriprion);
+        pluginDescription.setText(pluginData.description);
         pluginRepo.setText(data == null ? "Built-in" : data.url);
 
         Tooltip tooltip = new Tooltip(Translator.getInstance().t("core:phrase.dependenciesnotsatisfied"));
