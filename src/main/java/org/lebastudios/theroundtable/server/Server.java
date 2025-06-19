@@ -10,14 +10,14 @@ public class Server
     public static final String BASE_URL = switch (Variables.getEnvironmentType()) 
     {
         case TEST, DEV -> Variables.getTestServerUrl();
-        case PROD -> "https://theorundtable.org/api/v3/theroundtable";
+        case PROD -> "https://api.rountabletpv.com/v3";
         default -> throw new IllegalStateException("Unexpected value: " + Variables.getEnvironmentType());
     };
 
     public static final String CENTRAL_PLUGIN_REPO_BASE_URL = switch (Variables.getEnvironmentType())
     {
         case TEST, DEV -> Variables.getTestCentralPluginRepoUrl();
-        case PROD -> "https://repo.theorundtable.org/plugins-repo";
+        case PROD -> "https://plugins.rountabletpv.com/repo";
         default -> throw new IllegalStateException("Unexpected value: " + Variables.getEnvironmentType());
     };
     
@@ -25,7 +25,7 @@ public class Server
     {
         try
         {
-            InetAddress address = InetAddress.getByName("lebastudios.org");
+            InetAddress address = InetAddress.getByName("rountabletpv.com");
             return address != null && !address.toString().isEmpty();
         }
         catch (UnknownHostException e)
