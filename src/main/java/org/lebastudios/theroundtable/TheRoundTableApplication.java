@@ -41,7 +41,7 @@ public class TheRoundTableApplication extends Application
 {
     public static String getAppVersion()
     {
-        return CorePlugin.getInstance().getPluginData().pluginVersion;
+        return CorePlugin.getInstance().getPluginData().version;
     }
 
     public static String getAppDirectory()
@@ -248,24 +248,24 @@ public class TheRoundTableApplication extends Application
                             {
                                 // We ignore the Core plugin bcs its version represents the installation
                                 // version and cannot be syncing the same way a regular plugin does
-                                return !plugin.getPluginData().pluginId.equals(
-                                        CorePlugin.getInstance().getPluginData().pluginId);
+                                return !plugin.getPluginData().id.equals(
+                                        CorePlugin.getInstance().getPluginData().id);
                             })
                             .forEach(pluign ->
                             {
-                                Plugin plugin = session.get(Plugin.class, pluign.getPluginData().pluginId);
+                                Plugin plugin = session.get(Plugin.class, pluign.getPluginData().id);
 
                                 if (plugin == null)
                                 {
                                     plugin = new Plugin();
-                                    plugin.setId(pluign.getPluginData().pluginId);
+                                    plugin.setId(pluign.getPluginData().id);
                                     plugin.setRepo(URI.create(pluign.getPluginRepoMetadata().url));
-                                    plugin.setVersion(new Version(pluign.getPluginData().pluginVersion));
+                                    plugin.setVersion(new Version(pluign.getPluginData().version));
                                     session.persist(plugin);
                                 }
                                 else
                                 {
-                                    plugin.setVersion(new Version(pluign.getPluginData().pluginVersion));
+                                    plugin.setVersion(new Version(pluign.getPluginData().version));
                                     session.merge(plugin);
                                 }
                             });

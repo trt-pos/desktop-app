@@ -1,9 +1,9 @@
 {
-  "pluginName": "The Round Table Core",
-  "pluginId": "core",
-  "pluginDescription": "The Round Table core plugin representation.",
-  "pluginVersion": "3.0.0",
-  "pluginVendor": "Leba Studios - Software Solutions",
-  "pluginVendorUrl": "https://lebastudios.org",
-  "pluginDependencies": []
+  "name": "The Round Table Core",
+  "id": "core",
+  "description": "The Round Table core plugin representation.",
+  "version": "3.0.0",
+  "vendor": "Leba Studios - Software Solutions",
+  "vendor-url": "https://lebastudios.org",
+  "dependencies": []
 }

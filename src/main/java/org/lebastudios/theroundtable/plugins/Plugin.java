@@ -14,7 +14,7 @@ public record Plugin(PluginData data, PluginRepoData repoData, IPlugin plugin)
     {
         return plugin == null
                 ? ImageManager.getInstance().get(
-                repoData.intoIntrospector().getWebIconUrl(data.pluginId, new Version(data.pluginVersion)),
+                repoData.intoIntrospector().getWebIconUrl(data.id, new Version(data.version)),
                 ImageManager.ImageType.WEB)
                 : plugin.getPluginIcon();
     }
@@ -25,6 +25,6 @@ public record Plugin(PluginData data, PluginRepoData repoData, IPlugin plugin)
         URI repoUri = new URI(repoData.url);
         return new PluginsConfigData().pluginsFolder
                 + repoUri.getHost() + "." + repoUri.getPort()
-                + "/" + data.pluginId + ".jar";
+                + "/" + data.id + ".jar";
     }
 }

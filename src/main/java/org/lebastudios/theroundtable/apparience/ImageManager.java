@@ -70,7 +70,7 @@ public class ImageManager
                 .getPluginOf(plugin)
                 .orElseThrow()
                 .getPluginData()
-                .pluginId;
+                .id;
 
         return get(pluginId, imageName, type);
     }

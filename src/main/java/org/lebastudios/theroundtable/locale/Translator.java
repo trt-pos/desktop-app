@@ -55,7 +55,7 @@ public class Translator
         }
 
         getInstance().resourceBundles.put(
-                PluginsManager.getInstance().getPluginOf(plugin).orElseThrow().getPluginData().pluginId,
+                PluginsManager.getInstance().getPluginOf(plugin).orElseThrow().getPluginData().id,
                 resourceBundle
         );
     }
@@ -81,7 +81,7 @@ public class Translator
                 .getPluginOf(plugin)
                 .orElseThrow()
                 .getPluginData()
-                .pluginId;
+                .id;
         
         return t(pluginId, key);
     }

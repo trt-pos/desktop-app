@@ -53,7 +53,7 @@ public interface IPlugin extends IDatabaseUpdater
     
     default File getPluginFolder()
     {
-        return new File(Directories.getHomeDir(), getPluginData().pluginId);
+        return new File(Directories.getHomeDir(), getPluginData().id);
     }
     
     default Image getPluginIcon()
@@ -93,7 +93,7 @@ public interface IPlugin extends IDatabaseUpdater
     
     default PluginRepoData getPluginRepoMetadata()
     {
-        if (this.getPluginData().pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) 
+        if (this.getPluginData().id.equals(CorePlugin.getInstance().getPluginData().id)) 
         {
             return null;
         }

@@ -106,7 +106,7 @@ public class KeyringManager
     
     public String normalizeKey(IPlugin plugin, String key)
     {
-        return plugin.getPluginData().pluginId + "::" + key;
+        return plugin.getPluginData().id + "::" + key;
     }
     
     private boolean showAccesKeyRingError(Exception e)

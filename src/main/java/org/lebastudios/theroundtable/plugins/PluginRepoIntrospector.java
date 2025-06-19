@@ -105,7 +105,7 @@ public class PluginRepoIntrospector
             return false;
         }
 
-        return new Version(pluginData.pluginVersion).compareTo(version) > 0;
+        return new Version(pluginData.version).compareTo(version) > 0;
     }
 
     public void install(String pluginId, Runnable aferUpdate)

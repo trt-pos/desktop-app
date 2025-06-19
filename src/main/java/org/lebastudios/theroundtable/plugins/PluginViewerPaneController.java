@@ -40,23 +40,23 @@ public class PluginViewerPaneController extends PaneController<PluginViewerPaneC
         iconView.setFitWidth(100);
         
         iconViewContainer.getChildren().add(iconView);
-        pluginNameLabel.setText(pluginData.pluginName);
-        pluginIdLabel.setText(pluginData.pluginId);
-        pluginDescriptionLabel.setText(pluginData.pluginDescription);
-        pluginVendorLabel.setText(pluginData.pluginVendor);
-        pluginVendorUrlLabel.setText(pluginData.pluginVendorUrl);
+        pluginNameLabel.setText(pluginData.name);
+        pluginIdLabel.setText(pluginData.id);
+        pluginDescriptionLabel.setText(pluginData.descriprion);
+        pluginVendorLabel.setText(pluginData.vendor);
+        pluginVendorUrlLabel.setText(pluginData.vendorUrl);
         pluginRequiredCoreVersionLabel.setText(pluginData.requiredCoreVersion());
-        pluginVersionLabel.setText(pluginData.pluginVersion);
+        pluginVersionLabel.setText(pluginData.version);
         
-        if (pluginData.pluginDependencies == null || pluginData.pluginDependencies.length < 2)
+        if (pluginData.dependencies == null || pluginData.dependencies.length < 2)
         {
             ((VBox) getRoot()).getChildren().remove(dependenciesPaneContainer);
         }
         else
         {
-            for (var dependency : pluginData.pluginDependencies)
+            for (var dependency : pluginData.dependencies)
             {
-                if (dependency.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) continue;
+                if (dependency.pluginId.equals(CorePlugin.getInstance().getPluginData().id)) continue;
                 dependenciesPane.getChildren().add(createDependencyNode(dependency));
             }
         }

@@ -69,8 +69,8 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         pluginIcon.setFitHeight(35);
         pluginIcon.setFitWidth(35);
 
-        pluginName.setText(pluginData.pluginName);
-        pluginDescription.setText(pluginData.pluginDescription);
+        pluginName.setText(pluginData.name);
+        pluginDescription.setText(pluginData.descriprion);
         pluginRepo.setText(data == null ? "Built-in" : data.url);
 
         Tooltip tooltip = new Tooltip(Translator.getInstance().t("core:phrase.dependenciesnotsatisfied"));
@@ -91,11 +91,11 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         rootVBox.getChildren().remove(notInstallableButton);
         rootVBox.getChildren().remove(loadingNode);
 
-        if (pluginData.pluginId.equals(CorePlugin.getInstance().getPluginData().pluginId)) return;
+        if (pluginData.id.equals(CorePlugin.getInstance().getPluginData().id)) return;
         
         PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
 
-        if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.pluginId))
+        if (PluginsManager.getInstance().getPluginsRestartPending().containsKey(pluginData.id))
         {
             rootVBox.getChildren().add(restartAppButton);
             return;
@@ -108,15 +108,15 @@ public class PluginLabelController extends PaneController<PluginLabelController>
 
             new Thread(() ->
             {
-                if (repo.needsUpdate(pluginData.pluginId, new Version(pluginData.pluginVersion)))
+                if (repo.needsUpdate(pluginData.id, new Version(pluginData.version)))
                 {
-                    PluginData newVersionData = repo.getPluginData(pluginData.pluginId);
+                    PluginData newVersionData = repo.getPluginData(pluginData.id);
 
                     if (newVersionData == null)
                     {
                         Logs.getInstance().log(
                                 Logs.LogType.WARNING,
-                                "Could not get pluginData for plugin " + pluginData.pluginId
+                                "Could not get pluginData for plugin " + pluginData.id
                         );
                         // TODO: Show error image
                         return;
@@ -165,10 +165,10 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         PluginData pluginData = plugin.data();
         PluginRepoIntrospector repo = plugin.repoData().intoIntrospector();
         
-        new Thread(() -> repo.install(pluginData.pluginId, () ->
+        new Thread(() -> repo.install(pluginData.id, () ->
         {
             PluginsManager.getInstance().getPluginsRestartPending()
-                    .put(pluginData.pluginId, pluginData);
+                    .put(pluginData.id, pluginData);
             onReloadLabelsRequest.invoke();
         })).start();
     }
@@ -210,7 +210,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
             return;
         }
 
-        IPlugin plugin = PluginsManager.getInstance().getPluginsInstalled().get(pluginData.pluginId);
+        IPlugin plugin = PluginsManager.getInstance().getPluginsInstalled().get(pluginData.id);
         
         if (plugin != null && plugin.purgeTask() != null)
         {

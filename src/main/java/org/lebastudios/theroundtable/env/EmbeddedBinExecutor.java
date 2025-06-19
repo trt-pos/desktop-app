@@ -35,7 +35,7 @@ public class EmbeddedBinExecutor
      */
     public <T extends IPlugin> Process execute(Class<T> pluginImpl, String binName, boolean asRoot, String... args) throws IOException
     {
-        String binId = PluginsManager.getInstance().getPluginOf(pluginImpl).orElseThrow().getPluginData().pluginId + ":" + binName;
+        String binId = PluginsManager.getInstance().getPluginOf(pluginImpl).orElseThrow().getPluginData().id + ":" + binName;
         String finalBinName = binName + switch (Platform.getCurrent())
         {
             case WINDOWS -> "-win.exe";

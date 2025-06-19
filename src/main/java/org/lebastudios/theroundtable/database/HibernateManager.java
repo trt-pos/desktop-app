@@ -331,7 +331,7 @@ class HibernateManager
             int i = 0;
             for (var plugin : plugins)
             {
-                updateDatabaseFor(connFactory, plugin.getPluginData().pluginId, plugin);
+                updateDatabaseFor(connFactory, plugin.getPluginData().id, plugin);
                 i++;
                 updateProgress(i, plugins.size());
             }

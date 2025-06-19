@@ -66,13 +66,13 @@ public class PluginLoader
                     {
                         Logs.getInstance().log(
                                 Logs.LogType.WARNING,
-                                "Plugin " + pluginData.pluginName +
+                                "Plugin " + pluginData.name +
                                         " does not specify a required core version so it will be ignored"
                         );
                         continue;
                     }
 
-                    pluginsManager.getPluginsInstalled().put(pluginData.pluginId, plugin);
+                    pluginsManager.getPluginsInstalled().put(pluginData.id, plugin);
                 }
 
             }
@@ -94,15 +94,15 @@ public class PluginLoader
                 {
                     var pluginData = plugin.getPluginData();
 
-                    if (pluginsManager.getPluginsLoaded().containsKey(pluginData.pluginId)) continue;
+                    if (pluginsManager.getPluginsLoaded().containsKey(pluginData.id)) continue;
                     if (!plugin.getPluginData().areDependenciesInstalled()) continue;
 
                     keepTryingToLoad = true;
 
-                    updateMessage("Initializing plugin " + pluginData.pluginName);
+                    updateMessage("Initializing plugin " + pluginData.name);
 
                     // Add plugin to the loaded plugins collection
-                    pluginsManager.getPluginsLoaded().put(plugin.getPluginData().pluginId, plugin);
+                    pluginsManager.getPluginsLoaded().put(plugin.getPluginData().id, plugin);
                     
                     // All the chewcks passed, the plugin can be considered load and the user will be able to use it
                     // Load plugin translations

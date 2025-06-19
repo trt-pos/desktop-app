@@ -17,13 +17,13 @@ public class PluginsManager
 
     static {
         getInstance().getPluginsInstalled().put(
-                CorePlugin.getInstance().getPluginData().pluginId,
+                CorePlugin.getInstance().getPluginData().id,
                 CorePlugin.getInstance()
         );
 
         CorePlugin.getInstance().initialize();
         getInstance().getPluginsLoaded().put(
-                CorePlugin.getInstance().getPluginData().pluginId,
+                CorePlugin.getInstance().getPluginData().id,
                 CorePlugin.getInstance()
         );
     }
@@ -127,17 +127,17 @@ public class PluginsManager
 
     public void uninstallPlugin(PluginData pluginData)
     {
-        pluginsInstalled.remove(pluginData.pluginId);
+        pluginsInstalled.remove(pluginData.id);
     }
 
     public boolean isPluginInstalled(PluginData pluginData)
     {
-        return pluginsInstalled.containsKey(pluginData.pluginId);
+        return pluginsInstalled.containsKey(pluginData.id);
     }
 
     public boolean isPluginLoaded(PluginData pluginData)
     {
-        return pluginsLoaded.containsKey(pluginData.pluginId);
+        return pluginsLoaded.containsKey(pluginData.id);
     }
     
     public Optional<IPlugin> getPluginOf(Class<?> clazz)
