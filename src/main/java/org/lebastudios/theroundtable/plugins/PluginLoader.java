@@ -9,14 +9,14 @@ import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class PluginLoader
@@ -115,12 +115,12 @@ public class PluginLoader
 
         private List<URL> getValidJars()
         {
-            List<File> jars = new ArrayList<>();
-            getInstalledPluginsJars(new File(new PluginsConfigData().load().pluginsFolder), jars);
+            List<File> pluginsFound = getInstalledPluginsJars();
 
-            List<URL> validJars = new ArrayList<>();
+            Set<String> repeatedPluginsIds = new HashSet<>();
+            Map<String, URL> validJarsMap = new HashMap<>();
 
-            for (File jar : jars)
+            for (File jar : pluginsFound)
             {
                 URL jarURL;
 
@@ -142,8 +142,32 @@ public class PluginLoader
                         PluginLoader.class.getClassLoader()
                 ))
                 {
-                    ServiceLoader.load(IPlugin.class, tempClassLoader).iterator().next();
-                    validJars.add(jarURL);
+                    IPlugin plugin = ServiceLoader.load(IPlugin.class, tempClassLoader).iterator().next();
+                    String pluginId = plugin.getPluginData().id;
+                    
+                    if (repeatedPluginsIds.contains(pluginId))
+                    {
+                        Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                "Plugin id " + pluginId + " has been found in multiple plugins: " + jarURL
+                                
+                        );
+                        continue;
+                    }
+                    
+                    if (validJarsMap.containsKey(pluginId))
+                    {
+                        repeatedPluginsIds.add(pluginId);
+                        validJarsMap.remove(pluginId);
+                        
+                        Logs.getInstance().log(
+                                Logs.LogType.WARNING,
+                                "Plugin id " + pluginId + " has been found in multiple plugins: " + jarURL
+                        );
+                        continue;
+                    }
+                    
+                    validJarsMap.put(pluginId, jarURL);
                 }
                 catch (Throwable e)
                 {
@@ -151,42 +175,49 @@ public class PluginLoader
                 }
             }
 
-            return validJars;
+            return new ArrayList<>(validJarsMap.values());
         }
 
-        private void getInstalledPluginsJars(File folder, List<File> jars)
+        private List<File> getInstalledPluginsJars()
         {
-            if (!folder.exists())
+            List<File> foundJars = new ArrayList<>();
+            File pluginsFolder = new File(new PluginsConfigData().load().pluginsFolder);
+            
+            if (!pluginsFolder.exists())
             {
-                return;
+                return foundJars;
+            }
+
+            final var files = pluginsFolder.listFiles();
+            
+            if (files == null)
+            {
+                Logs.getInstance().log(
+                        Logs.LogType.ERROR,
+                        "Error reading plugins folder: " + pluginsFolder.getAbsolutePath()
+                );
+                return foundJars;
             }
             
-            for (File file : folder.listFiles())
+            for (File file : files)
             {
-                if (file.isDirectory())
-                {
-                    getInstalledPluginsJars(file, jars);
-                }
-                else
-                {
-                    if (file.getName().equals("metadata.json"))
-                    {
-                        // Ignore the repo metadata file
-                        continue;
-                    }
-                    
-                    if (!file.getName().endsWith(".jar"))
-                    {
-                        Logs.getInstance().log(
-                                Logs.LogType.WARNING,
-                                "Plugin " + file.getName() + " does not specify a jar so it will be ignored"
-                        );
-                        continue;
-                    }
+                if (!file.isDirectory()) continue;
 
-                    jars.add(file);
+                final var plugins = file.listFiles((_, name) -> name.endsWith(".jar"));
+                
+                if (plugins == null || plugins.length == 0)
+                {
+                    Logs.getInstance().log(
+                            Logs.LogType.WARNING,
+                            "Error reading plugins in directory: " + file.getAbsolutePath()
+                    );
+                    continue;
                 }
+                
+                foundJars.addAll(Arrays.asList(plugins));
             }
+            
+            return foundJars;
         }
     }
 }
