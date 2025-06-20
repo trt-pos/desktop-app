@@ -42,7 +42,6 @@ public class RequestConfigStageController extends StageController<RequestConfigS
         );
         
         paneContainer.setContent(configPaneController.getRoot());
-        configPaneController = configPaneController.getController();
     }
 
     @FXML

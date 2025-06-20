@@ -23,8 +23,8 @@ class ConfigPaneWrapperController extends SetupPaneController
         ((BorderPane) getRoot()).setCenter(configPaneController.getRoot());
         ((BorderPane) getRoot()).setTop(
                 new TitleBuilder(
-                        configPaneController.getController().getTitle(),
-                        configPaneController.getController().getIconName()
+                        configPaneController.getTitle(),
+                        configPaneController.getIconName()
                 ).build()
         );
     }
@@ -32,12 +32,12 @@ class ConfigPaneWrapperController extends SetupPaneController
     @Override
     public void apply()
     {
-        configPaneController.getController().apply();
+        configPaneController.apply();
     }
 
     @Override
     public boolean validate()
     {
-        return configPaneController.getController().validate().success();
+        return configPaneController.validate().success();
     }
 }

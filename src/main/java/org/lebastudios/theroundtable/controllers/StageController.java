@@ -21,7 +21,7 @@ public abstract class StageController<T extends Controller<T>> extends Controlle
             customizeStageBuilder(stageBuilder);
             Stage stage = stageBuilder.build();
 
-            acceptController.accept(getController());
+            acceptController.accept((T) this);
 
             if (shouldWait)
             {

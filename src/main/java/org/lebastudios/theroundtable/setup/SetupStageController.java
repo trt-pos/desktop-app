@@ -79,7 +79,7 @@ public class SetupStageController extends StageController<SetupStageController>
     public void nextButtonAction(ActionEvent actionEvent)
     {
         if (currentPane > setupPanes.length - 1) return;
-        if (currentPane >= 0 && !setupPanes[currentPane].getController().validate()) return;
+        if (currentPane >= 0 && !setupPanes[currentPane].validate()) return;
 
         currentPane++;
 

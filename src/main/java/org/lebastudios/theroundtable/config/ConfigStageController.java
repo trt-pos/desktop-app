@@ -80,7 +80,7 @@ public class ConfigStageController extends StageController<ConfigStageController
             final var root = controller.getRoot();
 
             mainPane.setContent(root);
-            currentPaneController = controller.getController();
+            currentPaneController = controller;
             currentPaneController.updateUI();
             
             errorLabel.setText("");

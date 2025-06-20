@@ -5,15 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.lebastudios.theroundtable.plugins.IPlugin;
-import org.lebastudios.theroundtable.plugins.PluginsManager;
-
-import java.lang.reflect.InvocationTargetException;
 
 public abstract class Controller<T extends Controller<T>>
 {
     @FXML protected Node root;
-    private T controller;
 
     @FXML
     protected void initialize() {}
@@ -36,7 +31,7 @@ public abstract class Controller<T extends Controller<T>>
     protected void loadFXML()
     {
         if (root != null) return;
-        
+
         try
         {
             String viewClassName = this.getClass().getName().replace("Controller", "$View");
@@ -52,11 +47,6 @@ public abstract class Controller<T extends Controller<T>>
             throw new RuntimeException(e);
         }
     }
-    
-    public T getController()
-    {
-        return controller == null ? (T) this : controller;
-    }
 
     public final Parent getParent()
     {
@@ -66,9 +56,9 @@ public abstract class Controller<T extends Controller<T>>
     public final Stage getStage()
     {
         Scene scene = getRoot().getScene();
-        
+
         if (scene == null) return null;
-        
+
         return (Stage) scene.getWindow();
     }
 }
