@@ -16,8 +16,7 @@ import org.lebastudios.theroundtable.MainStageController;
 import org.lebastudios.theroundtable.controllers.PaneController;
 import org.lebastudios.theroundtable.dialogs.ConfirmationTextDialogController;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
-import org.lebastudios.theroundtable.events.Event;
-import org.lebastudios.theroundtable.events.IEventListener;
+import org.lebastudios.theroundtable.events.LocalEvent;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.components.IconButton;
@@ -25,10 +24,11 @@ import org.lebastudios.theroundtable.components.IconTextButton;
 import org.lebastudios.theroundtable.components.LoadingPaneController;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 public class PluginLabelController extends PaneController<PluginLabelController>
 {
-    private static final Event onReloadLabelsRequest = new Event();
+    private static final LocalEvent<Void> onReloadLabelsRequest = new LocalEvent<>();
 
     @FXML public ImageView pluginIcon;
     @FXML public Label pluginName;
@@ -45,7 +45,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
     private HBox rootVBox;
 
     private final Node loadingNode = new LoadingPaneController().getRoot();
-    private final IEventListener onReloadLabelsListener = () -> Platform.runLater(this::updateView);
+    private final Consumer<Void> onReloadLabelsListener = _ -> Platform.runLater(this::updateView);
 
     public PluginLabelController(Plugin plugin)
     {
@@ -169,7 +169,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
         {
             PluginsManager.getInstance().getPluginsRestartPending()
                     .put(pluginData.id, pluginData);
-            onReloadLabelsRequest.invoke();
+            onReloadLabelsRequest.invoke(null);
         })).start();
     }
 
@@ -244,7 +244,7 @@ public class PluginLabelController extends PaneController<PluginLabelController>
             PluginsManager.getInstance().uninstallPlugin(pluginData);
 
             Platform.runLater(() -> MainStageController.getInstance().requestRestart());
-            onReloadLabelsRequest.invoke();
+            onReloadLabelsRequest.invoke(null);
         }
         else
         {

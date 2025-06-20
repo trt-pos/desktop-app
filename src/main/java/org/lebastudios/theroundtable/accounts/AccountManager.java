@@ -2,7 +2,6 @@ package org.lebastudios.theroundtable.accounts;
 
 import lombok.Getter;
 import org.lebastudios.theroundtable.entities.Account;
-import org.lebastudios.theroundtable.events.AccountEvents;
 
 @Getter
 public class AccountManager
@@ -38,13 +37,14 @@ public class AccountManager
 
         if (currentLogged == null) return;
         
-        AccountEvents.OnAccountLogIn.invoke(currentLogged);
+        AccountEvents.onAccountLogIn.invoke(currentLogged);
     }
 
     public void logOut()
     {
-        AccountEvents.OnAccountLogOutBefore.invoke(this.currentLogged);
+        Account account = this.currentLogged;
+        AccountEvents.onAccountLogOutBefore.invoke(account);
         this.currentLogged = null;
-        AccountEvents.OnAccountLogOutAfter.invoke();
+        AccountEvents.onAccountLogOutAfter.invoke(account);
     }
 }

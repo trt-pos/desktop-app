@@ -11,7 +11,7 @@ import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.LogoPaneController;
 import org.lebastudios.theroundtable.apparience.ImageManager;
 import org.lebastudios.theroundtable.controllers.StageController;
-import org.lebastudios.theroundtable.events.AccountEvents;
+import org.lebastudios.theroundtable.accounts.AccountEvents;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginsManager;
@@ -28,7 +28,7 @@ public class ConfigStageController extends StageController<ConfigStageController
 
     static
     {
-        AccountEvents.OnAccountLogOutBefore.addListener(_ -> configStage = null);
+        AccountEvents.onAccountLogOutBefore.addListener(_ -> configStage = null);
     }
     
     @FXML public TreeView<SettingsItem> configSectionsTreeView;

@@ -4,7 +4,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import lombok.Getter;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
-import org.lebastudios.theroundtable.events.Event1;
+import org.lebastudios.theroundtable.events.LocalEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -15,7 +15,7 @@ public abstract class Task<T> extends javafx.concurrent.Task<T>
     private Task<?> rootTask;
     boolean cancelable;
     
-    public final Event1<Task<?>> onSubtaskStarted = new Event1<>();
+    public final LocalEvent<Task<?>> onSubtaskStarted = new LocalEvent<>();
     
     private static final BiConsumer<Throwable, Task<?>> defaultErrorHandler = (e, task) -> 
     {

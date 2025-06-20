@@ -10,7 +10,7 @@ import org.lebastudios.theroundtable.config.CamelotServerConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.env.EmbeddedBinExecutor;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.Task;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class CamelotServiceManager
 
     private CamelotServiceManager()
     {
-        AppLifeCicleEvents.OnAppShutdown.addListener(this::stop);
+        AppLifeCicleEvents.onAppShutdown.addListener((_) -> this.stop());
     }
 
     public Task<Void> initTask()

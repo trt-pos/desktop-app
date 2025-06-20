@@ -3,7 +3,6 @@ package org.lebastudios.theroundtable;
 import javafx.application.Application;
 import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 
 import java.io.File;
 
@@ -12,7 +11,7 @@ public class Launcher
     public static void main(String[] args)
     {
         // Capturing the shutdown event to release resources
-        Runtime.getRuntime().addShutdownHook(new Thread(AppLifeCicleEvents.OnAppShutdown::invoke));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> AppLifeCicleEvents.onAppShutdown.invoke(null)));
 
         Application.launch(TheRoundTableApplication.class);
     }
@@ -26,7 +25,7 @@ public class Launcher
         ProcessBuilder builder = new ProcessBuilder(javaBin, "-jar", jarFile.getPath());
         builder.inheritIO();
         builder.start();
-        AppLifeCicleEvents.OnAppCloseRequest.invoke(new WindowEvent(null, WindowEvent.WINDOW_CLOSE_REQUEST));
+        AppLifeCicleEvents.onAppCloseRequest.invoke(new WindowEvent(null, WindowEvent.WINDOW_CLOSE_REQUEST));
         System.exit(0);
     }
 }

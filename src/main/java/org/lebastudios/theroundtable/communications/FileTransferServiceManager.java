@@ -5,7 +5,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.env.Directories;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -29,7 +29,7 @@ public class FileTransferServiceManager
 
     private FileTransferServiceManager() 
     {
-        AppLifeCicleEvents.OnAppShutdown.addListener(this::stop);
+        AppLifeCicleEvents.onAppShutdown.addListener((_) -> this.stop());
     }
 
     public Task<Void> initTask()

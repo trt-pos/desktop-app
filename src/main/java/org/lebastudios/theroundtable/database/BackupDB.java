@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.database;
 import lombok.SneakyThrows;
 import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.dialogs.InformationTextDialogController;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.tasks.CreateZipTask;
 import org.lebastudios.theroundtable.tasks.Task;
 
@@ -32,7 +32,7 @@ class BackupDB
 
     private BackupDB() 
     {
-        AppLifeCicleEvents.OnAppShutdown.addListener(() ->
+        AppLifeCicleEvents.onAppShutdown.addListener((_) ->
         {
             stop();
             realizeBackup();

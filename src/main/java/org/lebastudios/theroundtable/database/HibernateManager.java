@@ -11,7 +11,7 @@ import org.lebastudios.theroundtable.config.DatabaseConfigData;
 import org.lebastudios.theroundtable.config.DatabaseConfigPaneController;
 import org.lebastudios.theroundtable.config.RequestConfigStageController;
 import org.lebastudios.theroundtable.entities.AppInstallation;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.events.DatabaseEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.PluginLoader;
@@ -31,7 +31,7 @@ class HibernateManager
 
     static
     {
-        AppLifeCicleEvents.OnAppShutdown.addListener(() ->
+        AppLifeCicleEvents.onAppShutdown.addListener((_) ->
         {
             if (instance.sessionFactory == null) return;
 
@@ -47,7 +47,7 @@ class HibernateManager
                 session.merge(appInstallation);
             });
 
-            DatabaseEvents.onDatabaseClose.invoke();
+            DatabaseEvents.onDatabaseClose.invoke(null);
             instance.sessionFactory.close();
         });
     }
@@ -160,7 +160,7 @@ class HibernateManager
             if (sessionFactory != null)
             {
                 updateMessage("Closing database");
-                DatabaseEvents.onDatabaseClose.invoke();
+                DatabaseEvents.onDatabaseClose.invoke(null);
                 sessionFactory.close();
                 sessionFactory = null;
             }
@@ -183,7 +183,7 @@ class HibernateManager
             {
                 sessionFactory = executeSubtask(new BuildSessionFactoryTask());
                 connection = new DatabaseConfigData().load().getConnection();
-                DatabaseEvents.onDatabaseInit.invoke();
+                DatabaseEvents.onDatabaseInit.invoke(null);
             }
             catch (Exception e)
             {

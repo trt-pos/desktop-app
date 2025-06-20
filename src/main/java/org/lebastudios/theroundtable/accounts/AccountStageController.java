@@ -17,7 +17,7 @@ import org.lebastudios.theroundtable.apparience.UIEffects;
 import org.lebastudios.theroundtable.controllers.StageController;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.entities.Account;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
+import org.lebastudios.theroundtable.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.components.StageBuilder;
 
 import java.util.List;
@@ -102,7 +102,7 @@ public class AccountStageController extends StageController<AccountStageControll
     {
         stageBuilder.setStageConsumer(stage -> stage.setOnCloseRequest(e ->
         {
-            AppLifeCicleEvents.OnAppCloseRequest.invoke(e);
+            AppLifeCicleEvents.onAppCloseRequest.invoke(e);
 
             if (!e.isConsumed())
             {

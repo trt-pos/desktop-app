@@ -2,12 +2,14 @@ package org.lebastudios.theroundtable.events;
 
 import lombok.NonNull;
 
-public class SingleListenerEvent2<T, P> extends Event2<T, P>
+import java.util.function.Consumer;
+
+public class SingleListenerLocalEvent<T> extends LocalEvent<T>
 {
     private boolean hasListener = false;
 
     @Override
-    public void addListener(@NonNull IEventListener2<T, P> listener)
+    public synchronized void addListener(@NonNull Consumer<T> listener)
     {
         if (hasListener)
         {
@@ -21,7 +23,7 @@ public class SingleListenerEvent2<T, P> extends Event2<T, P>
     }
 
     @Override
-    public void removeListener(@NonNull IEventListener2<T, P> listener)
+    public synchronized void removeListener(@NonNull Consumer<T> listener)
     {
         if (!getActiveListeners().contains(listener))
         {

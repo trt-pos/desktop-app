@@ -20,7 +20,6 @@ import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.entities.AppInstallation;
 import org.lebastudios.theroundtable.entities.Plugin;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
-import org.lebastudios.theroundtable.events.AppLifeCicleEvents;
 import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
@@ -288,7 +287,7 @@ public class TheRoundTableApplication extends Application
 
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e ->
         {
-            AppLifeCicleEvents.OnAppCloseRequest.invoke(e);
+            AppLifeCicleEvents.onAppCloseRequest.invoke(e);
 
             if (!e.isConsumed())
             {

@@ -9,7 +9,7 @@ import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.database.PluginTable;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
-import org.lebastudios.theroundtable.events.AccountEvents;
+import org.lebastudios.theroundtable.accounts.AccountEvents;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.Version;
 
@@ -28,7 +28,7 @@ import java.util.Enumeration;
 public class AppInstallation
 {
     static {
-        AccountEvents.OnAccountLogIn.addListener(account ->
+        AccountEvents.onAccountLogIn.addListener(account ->
         {
             Database.getInstance().connectTransaction(session ->
             {
@@ -38,7 +38,7 @@ public class AppInstallation
             });
         });
         
-        AccountEvents.OnAccountLogOutAfter.addListener(() ->
+        AccountEvents.onAccountLogOutAfter.addListener((_) ->
         {
             Database.getInstance().connectTransaction(session ->
             {

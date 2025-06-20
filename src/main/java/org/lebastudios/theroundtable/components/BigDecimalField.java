@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import lombok.Getter;
 import org.lebastudios.theroundtable.apparience.UIEffects;
-import org.lebastudios.theroundtable.events.Event1;
+import org.lebastudios.theroundtable.events.LocalEvent;
 
 import java.math.BigDecimal;
 
@@ -19,7 +19,7 @@ public class BigDecimalField extends HBox
     private BigDecimal value;
     @Getter private String labelValue;
     
-    @Getter private final Event1<BigDecimal> onValueChangeEvent = new Event1<>();
+    @Getter private final LocalEvent<BigDecimal> onValueChangeEvent = new LocalEvent<>();
 
     public BigDecimalField(String labelValue)
     {

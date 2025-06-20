@@ -1,8 +1,9 @@
-package org.lebastudios.theroundtable.events;
+package org.lebastudios.theroundtable.accounts;
 
 import javafx.application.Application;
 import org.lebastudios.theroundtable.config.PreferencesConfigData;
 import org.lebastudios.theroundtable.entities.Account;
+import org.lebastudios.theroundtable.events.LocalEvent;
 import org.lebastudios.theroundtable.themes.Theme;
 
 import java.io.File;
@@ -12,12 +13,12 @@ import java.net.URISyntaxException;
 
 public final class AccountEvents
 {
-    public static final Event1<Account> OnAccountLogIn = new Event1<>();
-    public static final Event1<Account> OnAccountLogOutBefore = new Event1<>();
-    public static final Event OnAccountLogOutAfter = new Event();
+    public static final LocalEvent<Account> onAccountLogIn = new LocalEvent<>();
+    public static final LocalEvent<Account> onAccountLogOutBefore = new LocalEvent<>();
+    public static final LocalEvent<Account> onAccountLogOutAfter = new LocalEvent<>();
     
     static {
-        OnAccountLogIn.addListener(_ -> {
+        onAccountLogIn.addListener(_ -> {
             String styleURL;
             try
             {
