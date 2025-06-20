@@ -1,5 +1,6 @@
 package org.lebastudios.theroundtable.remotecontrol;
 
+import org.lebastudios.theroundtable.CorePlugin;
 import org.lebastudios.theroundtable.Launcher;
 import org.lebastudios.theroundtable.TheRoundTableApplication;
 import org.lebastudios.theroundtable.camelot.converters.StringConverter;
@@ -7,7 +8,7 @@ import org.lebastudios.theroundtable.database.Database;
 import org.lebastudios.theroundtable.dialogs.ExceptionDialogController;
 import org.lebastudios.theroundtable.entities.AppInstallation;
 import org.lebastudios.theroundtable.env.TrtUUIDReader;
-import org.lebastudios.theroundtable.events.CamelotEvent;
+import org.lebastudios.theroundtable.camelot.CamelotEvent;
 import org.lebastudios.theroundtable.plugins.PluginSyncronizer;
 
 class RemoteControlEvents
@@ -68,7 +69,7 @@ class RemoteControlEvents
     {
         public RemoteControlEvent(String eventName)
         {
-            super("core-plugin:remote-control-" + eventName, new StringConverter());
+            super(CorePlugin.class, "remote-control-" + eventName, new StringConverter());
 
             this.addListener(converter ->
             {

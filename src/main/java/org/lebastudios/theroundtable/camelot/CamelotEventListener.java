@@ -4,7 +4,7 @@ import org.lebastudios.theroundtable.logs.Logs;
 
 import java.text.ParseException;
 
-public abstract class CamelotEventListener<T>
+abstract class CamelotEventListener<T>
 {
     private final FromBytes<T> bytesParser;
     

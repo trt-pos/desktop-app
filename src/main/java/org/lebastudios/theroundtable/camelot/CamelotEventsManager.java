@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CamelotEventsManager
+class CamelotEventsManager
 {
     private static CamelotEventsManager instance;
 

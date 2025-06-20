@@ -3,7 +3,7 @@ package org.lebastudios.theroundtable.events;
 /**
  * Abstract class for the event system. This class is used to create events that can be invoked without parameters.
  */
-public class Event extends EventHandler<IEventMethod>
+public class Event extends EventHandler<IEventListener>
 {
     public void invoke()
     {

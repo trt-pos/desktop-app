@@ -1,6 +1,6 @@
 package org.lebastudios.theroundtable.events;
 
-public interface IEventMethod1<T>
+public interface IEventListener1<T>
 {
     void invoke(T t);
 }

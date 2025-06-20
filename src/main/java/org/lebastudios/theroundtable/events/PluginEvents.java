@@ -18,7 +18,7 @@ public final class PluginEvents
     public static final Event1<IPlugin> onPluginLoaded = new Event1<>();
     public static final Event1<IPlugin> onPluginUnloaded = new Event1<>();
 
-    // First String is the Package name and second is the event name
+    // The First String is the Package name and the second is the event name
     private static final Map<String, Map<String, EventReflexionModel>> events =
             Collections.synchronizedMap(new HashMap<>());
 

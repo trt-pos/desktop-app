@@ -1,6 +1,6 @@
 package org.lebastudios.theroundtable.events;
 
-public class Event5<A, B, C, D, E> extends EventHandler<IEventMethod5<A, B, C, D, E>>
+public class Event5<A, B, C, D, E> extends EventHandler<IEventListener5<A, B, C, D, E>>
 {
     public void invoke(A a, B b, C c, D d, E e)
     {
