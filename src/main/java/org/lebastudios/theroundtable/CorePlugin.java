@@ -131,10 +131,6 @@ public class CorePlugin implements IPlugin
                 .instantiate()
         );
 
-        IconButton tmp = new IconButton("asdfasdfasdf.png");
-        tmp.setOnAction(_ -> MainStageController.getInstance().setCentralNode(new ReportPaneController()));
-        buttons.add(tmp);
-
         buttons.add(settingsButton);
 
         if (AccountManager.getInstance().isAccountAdmin())
