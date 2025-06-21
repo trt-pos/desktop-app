@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.embed.swing.SwingNode?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.lebastudios.theroundtable.reports.ReportPaneController"
+      prefHeight="800.0" prefWidth="600.0" alignment="CENTER">
+    <SwingNode fx:id="swingNode" VBox.vgrow="ALWAYS"/>
+</VBox>

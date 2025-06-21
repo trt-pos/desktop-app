@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.swing.JRViewer;
+import net.sf.jasperreports.view.JasperViewer;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.accounts.PrivilegeScalationStageController;
@@ -24,6 +27,7 @@ import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.*;
+import org.lebastudios.theroundtable.reports.ReportPaneController;
 import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.themes.Theme;
@@ -32,6 +36,8 @@ import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.SceneBuilder;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,9 +73,6 @@ public class TheRoundTableApplication extends Application
         // module for the core plugin and use TRT as a framework
         Translator.getInstance().loadT(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
 
-        // Starting Camelot Service -> Plugins -> Database
-        // This order cannot be changed, loading the plugins updates the database so hibernate
-        // needs to wait for the plugins to do their thing
         new Task<Void>()
         {
             @Override

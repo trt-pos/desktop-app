@@ -3,6 +3,8 @@ package org.lebastudios.theroundtable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import org.lebastudios.theroundtable.accounts.AccountManager;
+import org.lebastudios.theroundtable.components.IconButton;
+import org.lebastudios.theroundtable.components.LabeledIconButton;
 import org.lebastudios.theroundtable.config.*;
 import org.lebastudios.theroundtable.entities.Account;
 import org.lebastudios.theroundtable.entities.AppInstallation;
@@ -13,8 +15,7 @@ import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.plugins.IPlugin;
 import org.lebastudios.theroundtable.plugins.PluginsStageController;
 import org.lebastudios.theroundtable.remotecontrol.RemoteControlPaneController;
-import org.lebastudios.theroundtable.components.IconButton;
-import org.lebastudios.theroundtable.components.LabeledIconButton;
+import org.lebastudios.theroundtable.reports.ReportPaneController;
 import org.lebastudios.theroundtable.themes.Theme;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.List;
                 "org/lebastudios/theroundtable/remotecontrol",
                 "org/lebastudios/theroundtable/components",
                 "org/lebastudios/theroundtable/rustdesk",
+                "org/lebastudios/theroundtable/reports",
                 "org/lebastudios/theroundtable",
         }
 )
@@ -129,9 +131,11 @@ public class CorePlugin implements IPlugin
                 .instantiate()
         );
 
-        buttons.add(
-                settingsButton
-        );
+        IconButton tmp = new IconButton("asdfasdfasdf.png");
+        tmp.setOnAction(_ -> MainStageController.getInstance().setCentralNode(new ReportPaneController()));
+        buttons.add(tmp);
+
+        buttons.add(settingsButton);
 
         if (AccountManager.getInstance().isAccountAdmin())
         {
