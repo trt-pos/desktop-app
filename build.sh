@@ -65,9 +65,8 @@ fi
 
 rm -rf "output"
 
-bash build-camelot.sh &
-mvn clean package -P desktop &
-wait
+bash build-camelot.sh
+bash mvnw clean package
 
 # Asignar variables
 PLATFORM=$1
