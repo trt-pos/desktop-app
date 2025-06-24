@@ -10,9 +10,9 @@ build-for-platform() {
   OUTPUT_DIR="output/$BUILD_IDENTIFIER"
   export APP_ZIP_PATH="../../../../$OUTPUT_DIR.zip"
   
-  mkdir -p "$OUTPUT_DIR"
+  mkdir -p "$OUTPUT_DIR/bin"
   
-  cp -r "bin" "$OUTPUT_DIR"
+  cp "target/core.jar" "$OUTPUT_DIR/bin/desktop-app.jar"
   cp -r "images" "$OUTPUT_DIR"
   
   if [ "$PLATFORM" == "linux" ]; then
