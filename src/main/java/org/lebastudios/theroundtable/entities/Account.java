@@ -110,10 +110,23 @@ public class Account
             };
         }
 
+        public String translate()
+        {
+            return switch (this)
+            {
+                case ROOT -> Translator.getInstance().t("core:enum.accounttype.root");
+                case ADMIN -> Translator.getInstance().t("core:enum.accounttype.admin");
+                case MANAGER -> Translator.getInstance().t("core:enum.accounttype.manager");
+                case CASHIER -> Translator.getInstance().t("core:enum.accounttype.cashier");
+                case ACCOUNTANT -> Translator.getInstance().t("core:enum.accounttype.accountant");
+            };
+                
+        }
+        
         @Override
         public String toString()
         {
-            return Translator.getInstance().t("core:enum.accounttype." + this.name().toLowerCase());
+            return this.translate();
         }
     }
 
