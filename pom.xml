@@ -183,6 +183,16 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.34</version>
                         </path>
+                        <path>
+                            <groupId>com.github.trt-pos</groupId>
+                            <artifactId>fxml2java</artifactId>
+                            <version>v0.5.0</version>
+                        </path>
+                        <path>
+                            <groupId>com.github.trt-pos</groupId>
+                            <artifactId>core</artifactId>
+                            <version>abb47ebca9</version>
+                        </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
