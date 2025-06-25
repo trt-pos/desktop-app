@@ -67,7 +67,7 @@ public class EntityFormDialogController<T> extends FormDialogController<T>
     @Override
     protected void loadFXML()
     {
-        //this.root = new org.lebastudios.theroundtable.dialogs.FormDialog$View(this);
+        this.root = new org.lebastudios.theroundtable.dialogs.FormDialog$View(this);
         this.initialize();
     }
 }
