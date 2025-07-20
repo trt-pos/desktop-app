@@ -66,6 +66,8 @@ public class TheRoundTableApplication extends Application
 
         Application.setUserAgentStylesheet(styleURL);
         
+        //TODO: Check for needed services like keyring
+         
         // Would like to differenciate between CorePlugin translations and basic app translations
         // cause this is executed twice,
         // one here and another when loading the plugins.

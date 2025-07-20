@@ -27,7 +27,7 @@ public class AccountSetupPaneController extends SetupPaneController
         ((BorderPane) getRoot()).setTop(
                 new TitleBuilder(
                         Translator.getInstance().t("core:setup.title.adminconfig"),
-                        "admin-user.png"
+                        "core:admin-user.png"
                 ).build()
         );
         errorLabel.setText("");
