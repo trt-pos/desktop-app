@@ -7,7 +7,7 @@ build-for-platform() {
   BUILD_ARCH="x64"
   BUILD_SPECS="$PLATFORM-$BUILD_ARCH";
   BUILD_IDENTIFIER="theroundtable-$BUILD_SPECS"
-  OUTPUT_DIR="output/$BUILD_IDENTIFIER"
+  OUTPUT_DIR="$(pwd)/output/$BUILD_IDENTIFIER"
   export APP_ZIP_PATH="../../../../$OUTPUT_DIR.zip"
   
   mkdir -p "$OUTPUT_DIR/bin"
@@ -19,7 +19,7 @@ build-for-platform() {
       (
           cd "app-launcher" || exit
           cross build --target x86_64-unknown-linux-gnu --release -p app_launcher
-          mv "target/x86_64-unknown-linux-gnu/release/app_launcher" "../$OUTPUT_DIR/start"
+          mv "target/x86_64-unknown-linux-gnu/release/app_launcher" "$OUTPUT_DIR/start"
       )
       (
         cd "output" || exit
@@ -35,7 +35,7 @@ build-for-platform() {
       (
           cd "app-launcher" || exit
           cross build --target x86_64-pc-windows-gnu --release -p app_launcher
-          mv "target/x86_64-pc-windows-gnu/release/app_launcher.exe" "../$OUTPUT_DIR/start.exe"
+          mv "target/x86_64-pc-windows-gnu/release/app_launcher.exe" "$OUTPUT_DIR/start.exe"
       )
       (
         cd "output" || exit

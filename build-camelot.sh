@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 
-OUTPUT_DIR="src/main/resources/org/lebastudios/theroundtable/bin"
+OUTPUT_DIR="$(pwd)/src/main/resources/org/lebastudios/theroundtable/bin"
 
 mkdir "$OUTPUT_DIR"
   
@@ -13,8 +13,8 @@ mkdir "$OUTPUT_DIR"
   
   wait 
   
-  cp "target/x86_64-unknown-linux-gnu/release/camelot" "../$OUTPUT_DIR/camelot-linux"
-  cp "target/x86_64-pc-windows-gnu/release/camelot.exe" "../$OUTPUT_DIR/camelot-win.exe"
+  cp "target/x86_64-unknown-linux-gnu/release/camelot" "$OUTPUT_DIR/camelot-linux"
+  cp "target/x86_64-pc-windows-gnu/release/camelot.exe" "$OUTPUT_DIR/camelot-win.exe"
 )
   
   
