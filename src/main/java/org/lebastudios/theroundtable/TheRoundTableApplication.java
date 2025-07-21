@@ -6,9 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.SneakyThrows;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.swing.JRViewer;
-import net.sf.jasperreports.view.JasperViewer;
 import org.lebastudios.theroundtable.accounts.AccountManager;
 import org.lebastudios.theroundtable.accounts.AccountStageController;
 import org.lebastudios.theroundtable.accounts.PrivilegeScalationStageController;
@@ -27,7 +24,6 @@ import org.lebastudios.theroundtable.locale.LocaleManager;
 import org.lebastudios.theroundtable.locale.Translator;
 import org.lebastudios.theroundtable.logs.Logs;
 import org.lebastudios.theroundtable.plugins.*;
-import org.lebastudios.theroundtable.reports.ReportPaneController;
 import org.lebastudios.theroundtable.server.CheckAppUpdateTask;
 import org.lebastudios.theroundtable.setup.SetupStageController;
 import org.lebastudios.theroundtable.themes.Theme;
@@ -36,11 +32,11 @@ import org.lebastudios.theroundtable.tasks.Task;
 import org.lebastudios.theroundtable.components.SceneBuilder;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.github.javakeyring.Keyring;
 
 public class TheRoundTableApplication extends Application
 {
@@ -66,14 +62,28 @@ public class TheRoundTableApplication extends Application
 
         Application.setUserAgentStylesheet(styleURL);
         
-        //TODO: Check for needed services like keyring
-         
         // Would like to differenciate between CorePlugin translations and basic app translations
         // cause this is executed twice,
         // one here and another when loading the plugins.
         // Maybe the solution is to create a separated
         // module for the core plugin and use TRT as a framework
         Translator.getInstance().loadT(CorePlugin.class, LocaleManager.getInstance().getActualLocale());
+        
+        // Check for needed services like keyring
+        try 
+        {
+            Keyring.create();
+        }
+        catch (Exception e)
+        {
+            new ExceptionDialogController(e).instantiate(controller -> {
+                controller.titledPane.setText(Translator.getInstance().t("core:error.missingservice"));
+            }, true);
+            
+            TheRoundTableApplication.exitAplication(0);
+        }
+        
+        // TODO: Avoid creating PrintService more than one, maybe that is causing the print lag
 
         new Task<Void>()
         {

@@ -129,5 +129,11 @@ fabric.properties
 .env
 *.iml
 
+# Language server
+.factorypath
+
+# Zed config folder
+.settings/
+
 # Igoring binaries included inside the jar
 src/main/resources/org/lebastudios/theroundtable/bin/
