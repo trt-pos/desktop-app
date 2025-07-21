@@ -41,8 +41,8 @@ public class DateRangePicker extends HBox
     {
         super(10);
 
-        Label fromLabel = new Label(Translator.getInstance().t(CorePlugin.class, "components.rangedatepicker.from"));
-        Label toLabel = new Label(Translator.getInstance().t(CorePlugin.class, "components.rangedatepicker.to"));
+        Label fromLabel = new Label(Translator.getInstance().t("core:components.rangedatepicker.from"));
+        Label toLabel = new Label(Translator.getInstance().t("core:components.rangedatepicker.to"));
         
         getChildren().addAll(fromLabel, startDatePicker, toLabel, endDatePicker);
         this.setAlignment(Pos.CENTER);
