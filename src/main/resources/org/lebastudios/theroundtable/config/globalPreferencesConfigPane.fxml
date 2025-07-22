@@ -25,6 +25,16 @@
         <TextField fx:id="dateTimeFormatterTextField" prefWidth="200" prefHeight="30"/>
     </HBox>
     
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" text="%core:config.dateformatter"/>
+        <TextField fx:id="dateFormatterTextField" prefWidth="200" prefHeight="30"/>
+    </HBox>
+    
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label maxWidth="Infinity" HBox.hgrow="ALWAYS" text="%core:config.timeformatter"/>
+        <TextField fx:id="timeFormatterTextField" prefWidth="200" prefHeight="30"/>
+    </HBox>
+    
     <TitledPane text="%core:config.advanced" expanded="false">
         <content>
             <HBox>

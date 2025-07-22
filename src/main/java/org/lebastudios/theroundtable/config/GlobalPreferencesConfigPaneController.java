@@ -17,6 +17,8 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
     @FXML public ChoiceBox<Language> languageChoiceBox;
     @FXML public ChoiceBox<Currency> currencyChoiceBox;
     @FXML public TextField dateTimeFormatterTextField;
+    @FXML public TextField dateFormatterTextField;
+    @FXML public TextField timeFormatterTextField;
 
     @FXML public CheckBox proxyEnabledCheckBox;
     @FXML public TextField proxyHostTextField;
@@ -61,6 +63,8 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
         configData.language = languageChoiceBox.getValue();
         configData.currency = currencyChoiceBox.getValue();
         configData.dateTimeFormatter = dateTimeFormatterTextField.getText();
+        configData.dateFormatter = dateFormatterTextField.getText();
+        configData.timeFormatter = timeFormatterTextField.getText();
 
         configData.proxyData.enabled = proxyEnabledCheckBox.isSelected();
         configData.proxyData.proxyAddress = proxyHostTextField.getText();
@@ -85,6 +89,8 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
         languageChoiceBox.setValue(configData.language);
         currencyChoiceBox.setValue(configData.currency);
         dateTimeFormatterTextField.setText(configData.dateTimeFormatter);
+        dateFormatterTextField.setText(configData.dateFormatter);
+        timeFormatterTextField.setText(configData.timeFormatter);
 
         proxyEnabledCheckBox.setSelected(configData.proxyData.enabled);
         proxyHostTextField.setText(configData.proxyData.proxyAddress);
@@ -122,6 +128,18 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
             return ValidationResult.invalid();
         }
         
+        if (dateFormatterTextField.getText().isBlank())
+        {
+            UIEffects.shakeNode(dateFormatterTextField);
+            return ValidationResult.invalid();
+        }
+        
+        if (timeFormatterTextField.getText().isBlank())
+        {
+            UIEffects.shakeNode(timeFormatterTextField);
+            return ValidationResult.invalid();
+        }
+        
         try
         {
             DateTimeFormatter.ofPattern(dateTimeFormatterTextField.getText());
@@ -129,6 +147,26 @@ public class GlobalPreferencesConfigPaneController extends ConfigPaneController<
         catch (IllegalArgumentException e)
         {
             UIEffects.shakeNode(dateTimeFormatterTextField);
+            return ValidationResult.invalid();
+        }
+        
+        try
+        {
+            DateTimeFormatter.ofPattern(dateFormatterTextField.getText());
+        }
+        catch (IllegalArgumentException e)
+        {
+            UIEffects.shakeNode(dateFormatterTextField);
+            return ValidationResult.invalid();
+        }
+        
+        try
+        {
+            DateTimeFormatter.ofPattern(timeFormatterTextField.getText());
+        }
+        catch (IllegalArgumentException e)
+        {
+            UIEffects.shakeNode(timeFormatterTextField);
             return ValidationResult.invalid();
         }
         

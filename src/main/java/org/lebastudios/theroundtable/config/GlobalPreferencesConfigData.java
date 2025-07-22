@@ -6,32 +6,15 @@ import org.lebastudios.theroundtable.locale.Language;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class GlobalPreferencesConfigData extends ConfigData<GlobalPreferencesConfigData>
 {
-    private static String defaultDateTimeFormatter()
-    {
-        Locale locale = Locale.ITALY;
-
-        int dateStyle = DateFormat.MEDIUM;
-        int timeStyle = DateFormat.MEDIUM;
-
-        DateFormat df = DateFormat.getDateTimeInstance(dateStyle, timeStyle, locale);
-
-        if (df instanceof SimpleDateFormat) {
-            return  ((SimpleDateFormat) df).toPattern();
-        }
-        
-        return "dd/MM/yyyy HH:mm:ss";
-    }
-
     public Language language = Language.getDefault();
     public Currency currency = Currency.getDefault();
-    public String dateTimeFormatter = defaultDateTimeFormatter();
+    public String dateTimeFormatter = "dd/MM/yyyy HH:mm:ss";
+    public String timeFormatter = "HH:mm:ss";
+    public String dateFormatter = "dd/MM/yyyy";
 
     public ProxyData proxyData = new ProxyData();
     public ProxyData intraNetProxyData = new ProxyData();

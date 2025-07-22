@@ -13,7 +13,7 @@ public abstract class JsonFile<T extends JsonFile<T>> implements FilePersistence
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     
-    @SneakyThrows
+    @SneakyThrows @SuppressWarnings("")
     public T load()
     {
         File file = this.getFile();
